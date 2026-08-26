@@ -1268,7 +1268,7 @@ defineExpose({
         <div class="content-foot" v-if="conPaginacion">
             <div class="row mt-1">
                 <div class="my-1 col-md-3">
-                    <select class="form-control rounded-0" v-model="per_page">
+                    <select class="form-select rounded-0" v-model="per_page">
                         <option v-for="item in filter_page" :value="item">
                             Mostrar {{ item }} registros
                         </option>

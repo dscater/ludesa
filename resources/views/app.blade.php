@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="light">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="{{ asset('imgs/medinter.ico') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ asset('imgs/medinter.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('imgs/ludesa.jpeg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('imgs/ludesa.jpeg') }}" type="image/x-icon">
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -37,7 +37,7 @@
     @inertiaHead
 </head>
 
-<body class="app-blank layout-fixed layout-navbar-fixed">
+<body class="layout-fixed sidebar-expand-lg fixed-header">
     @inertia
 </body>
 

@@ -67,13 +67,13 @@ const headers = [
         sortable: true,
     },
     {
-        label: "TIPO",
-        key: "tipo",
+        label: "ROLE",
+        key: "role.nombre",
         sortable: true,
     },
     {
-        label: "SUCURSAL",
-        key: "sucursal.nombre",
+        label: "TIPO",
+        key: "tipo",
         sortable: true,
     },
     {
@@ -150,11 +150,11 @@ onMounted(async () => {
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fa fa-users"></i> Usuarios</h1>
+                    <h3 class="m-0"><i class="fa fa-users"></i> Usuarios</h3>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
+                    <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
@@ -187,23 +187,19 @@ onMounted(async () => {
                     <div class="col-md-8 my-1">
                         <div class="row justify-content-end">
                             <div class="col-md-5">
-                                <div
-                                    class="input-group"
-                                    style="align-items: end"
-                                >
+                                <div class="input-group">
                                     <input
                                         v-model="multiSearch.search"
                                         placeholder="Buscar"
+                                        type="search"
                                         class="form-control border-1 border-right-0"
                                     />
-                                    <div class="input-append">
-                                        <button
-                                            class="btn btn-default rounded-0 border-left-0"
-                                            @click="updateDatos"
-                                        >
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </div>
+                                    <button
+                                        class="btn btn-light bg-white rounded-0 border-left-0"
+                                        @click="updateDatos"
+                                    >
+                                        <i class="fa fa-search"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -225,6 +221,17 @@ onMounted(async () => {
                             :header-class="'bg__primary'"
                             fixed-header
                         >
+                            <template #tipo="{ item }">
+                                <div class="w-100 text-center">
+                                    <span>{{ item.tipo }}</span>
+                                    <span
+                                        v-if="item.tipo == 'CENTRO MÉDICO'"
+                                        class="text-muted font-weight-bold d-block"
+                                    >
+                                        "{{ item.centro.nombre }}"
+                                    </span>
+                                </div>
+                            </template>
                             <template #foto="{ item }">
                                 <img
                                     class="direct-chat-img"
@@ -235,7 +242,7 @@ onMounted(async () => {
 
                             <template #acceso="{ item }">
                                 <div
-                                    class="badge text-sm"
+                                    class="badge text-sm text-wrap"
                                     :class="[
                                         item.acceso == 1
                                             ? 'bg-success'

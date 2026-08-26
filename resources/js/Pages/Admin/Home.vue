@@ -247,8 +247,8 @@ const renderChart2 = (containerId, categories, total_final, data) => {
 };
 
 onMounted(() => {
-    generarReporte1();
-    generarReporte2();
+    // generarReporte1();
+    // generarReporte2();
     appStore.stopLoading();
 });
 </script>
@@ -258,11 +258,11 @@ onMounted(() => {
         <template #header>
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Inicio</h1>
+                    <h3 class="m-0"><i class="fa fa-home"></i> Inicio</h3>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
+                    <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item active">Inicio</li>
                     </ol>
                 </div>
@@ -280,19 +280,19 @@ onMounted(() => {
 
                         <p class="font-weight-600">{{ item.label }}</p>
                     </div>
-                    <div class="icon">
+                    <div class="small-box-icon">
                         <i class="text-dark fa" :class="[item.icon]"></i>
                     </div>
                     <Link
                         :href="route(item.url)"
-                        class="small-box-footer bg-item"
+                        class="small-box-footer bg-item link-light link-underline-opacity-0 link-underline-opacity-50-hover"
                         >Ver más <i class="fa fa-arrow-alt-circle-right"></i
                     ></Link>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
@@ -325,7 +325,7 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </Content>
 </template>
 <style scoped>

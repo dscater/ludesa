@@ -5,6 +5,7 @@
     --bg4: #e1f5fe;
     --bg5: #5b6b79;
     --bg6: #f3f3f3;
+    --bgWhite: #ffffff;
     --bg2t: rgba(0, 94, 141, 0.822);
     --bgVerificado: rgb(243, 253, 150);
     --bgVerificado2: rgb(251, 255, 218);
@@ -22,4 +23,6 @@
     --bgYellow: yellow;
     --bgPrecargado: #f59e0b;
     --bgNuevo: #22c55e;
+    --bgActivo: #13ce66;
+    --bgInactivo: #ff4949;
 }

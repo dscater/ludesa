@@ -14,6 +14,14 @@ body {
     color: var(--bg1) !important;
 }
 
+.text-bg6 {
+    color: var(--bg6) !important;
+}
+
+.text-bgDarkGray {
+    color: var(--bgDarkGray) !important;
+}
+
 .font-weight-600 {
     font-weight: 600;
 }
@@ -33,4 +41,20 @@ body {
 table.table thead,
 table.table tbody {
     /* font-size: 0.87em; */
+}
+
+.text-md {
+    font-size: 0.9rem;
+}
+
+.text-sm {
+    font-size: 0.82rem;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+}
+
+.text-xxs {
+    font-size: 0.65rem;
 }

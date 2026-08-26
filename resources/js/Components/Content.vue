@@ -1,8 +1,8 @@
 <script setup></script>
 <template>
-    <div class="content-wrapper">
+    <main class="app-main">
         <!-- Content Header (Page header) -->
-        <div class="content-header" v-if="$slots.header">
+        <div class="app-content-header" v-if="$slots.header">
             <div class="container-fluid">
                 <slot name="header"></slot>
             </div>
@@ -11,11 +11,11 @@
         <!-- /.content-header -->
 
         <!-- Main content -->
-        <div class="content" id="contentAdmin">
+        <div class="app-content" id="contentAdmin">
             <div class="container-fluid">
                 <slot />
             </div>
         </div>
         <!-- /.content -->
-    </div>
+    </main>
 </template>

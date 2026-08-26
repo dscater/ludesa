@@ -46,7 +46,7 @@ const cargarSucursals = async () => {
 const cargarUsers = async () => {
     const response = await axios.get(route("usuarios.byTipo"), {
         params: {
-            tipo: ["MÉDICO", "GERENTE"],
+            tipo: "MÉDICO",
         },
     });
     listUsers.value = response.data.usuarios;

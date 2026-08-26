@@ -30,6 +30,13 @@ const listExpedido = [
     { value: "BN", label: "Beni" },
 ];
 
+const listRoles = ref([]);
+const cargarRoles = () => {
+    axios.get(route("roles.listado")).then((response) => {
+        listRoles.value = response.data.roles;
+    });
+};
+
 const listTipos = ref([]);
 const cargarTipoUsuarios = () => {
     axios.get(route("tipo_usuarios.listado")).then((response) => {
@@ -145,12 +152,16 @@ const cerrarFormulario = () => {
 };
 
 const cargarListas = () => {
-    cargarTipoUsuarios();
+    cargarRoles();
     cargarSucursals();
+    cargarTipoUsuarios();
 };
 
-const options = ref([]);
-const loading = ref(false);
+const descripcionTipo = computed(() => {
+    const tipo = listTipos.value.find((item) => item.value === form.tipo);
+    return tipo ? tipo.descripcion : null;
+});
+
 onMounted(() => {
     foto.value.value = null;
     cargarListas();
@@ -169,15 +180,13 @@ onMounted(() => {
             <h4 class="modal-title text-white" v-html="tituloDialog"></h4>
             <button
                 type="button"
-                class="close"
+                class="btn-close btn-close-white"
                 @click.prevent="cerrarFormulario()"
-            >
-                <span aria-hidden="true">×</span>
-            </button>
+            ></button>
         </template>
 
         <template #body>
-            <form @submit.prevent="enviarFormulario()">
+            <form @submit.prevent="enviarFormulario()" class="container-fluid">
                 <p class="text-muted text-xs mb-0">
                     Todos los campos con
                     <span class="text-danger">(*)</span> son obligatorios.
@@ -353,8 +362,11 @@ onMounted(() => {
                             v-model="form.tipo"
                         >
                             <option value="">- Seleccione -</option>
-                            <option v-for="item in listTipos" :value="item">
-                                {{ item }}
+                            <option
+                                v-for="item in listTipos"
+                                :value="item.value"
+                            >
+                                {{ item.label }}
                             </option>
                         </select>
 
@@ -366,8 +378,43 @@ onMounted(() => {
                                 {{ form.errors?.tipo }}
                             </li>
                         </ul>
+                        <small
+                            class="text-muted text-xs"
+                            v-if="descripcionTipo"
+                            >{{ descripcionTipo }}</small
+                        >
                     </div>
                     <div class="col-md-4 mt-2">
+                        <label class="required">Seleccionar Role</label>
+                        <el-select
+                            :class="{
+                                'parsley-error': form.errors?.role_id,
+                            }"
+                            no-data-text="Sin datos"
+                            no-data-match="Sin resultados"
+                            size="large"
+                            placeholder="- Seleccione -"
+                            v-model="form.role_id"
+                            filterable
+                        >
+                            <el-option
+                                v-for="item in listRoles"
+                                :key="item.id"
+                                :value="item.id"
+                                :label="item.nombre"
+                            ></el-option>
+                        </el-select>
+
+                        <ul
+                            v-if="form.errors?.role_id"
+                            class="list-unstyled text-danger"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.role_id }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mt-2" v-if="form.tipo == 'EMPLEADO'">
                         <label class="required">Seleccionar Sucursal</label>
                         <el-select
                             :class="{
@@ -431,6 +478,10 @@ onMounted(() => {
                                 --el-switch-off-color: #ff4949;
                             "
                         />
+                        <br />
+                        <small class="text-muted text-xs"
+                            >Inhabilita/Habilita el acceso al sistema</small
+                        >
                     </div>
                 </div>
             </form>
@@ -438,7 +489,7 @@ onMounted(() => {
         <template #footer>
             <button
                 type="button"
-                class="btn btn-default"
+                class="btn btn-light"
                 @click.prevent="cerrarFormulario()"
             >
                 Cerrar

@@ -14,16 +14,48 @@ table .bg-principal,
     color: white;
 }
 
+.bg6 {
+    background-color: var(--bg6);
+}
+
 .bg-item {
     background-color: var(--bg1) !important;
+}
+
+.bgGrayLight {
+    background-color: var(--bgGrayLight);
 }
 
 .bgVerificado {
     background-color: var(--bgVerificado);
 }
 
+.bgPrecargado {
+    background-color: var(--bgPrecargado);
+}
+
+.bgActivo {
+    background-color: var(--bgActivo);
+}
+
+.bgInactivo {
+    background-color: var(--bgInactivo);
+}
+
 .bgWhite {
     background-color: var(--bgWhite);
+}
+
+.bgYellow {
+    background-color: var(--bgYellow);
+}
+
+.bgYellow2 {
+    background-color: var(--bgYellow2);
+}
+
+.bgDark {
+    background-color: var(--bgDark);
 }
 
 .btn-alert-success:active,
@@ -44,11 +76,6 @@ table .bg-dark-principal,
     color: white;
 }
 
-.nav-header.bg-principal {
-    background-color: var(--bgDark);
-    color: white;
-}
-
 .modal-body.bg-principal b,
 .modal-body.bg-principal .fot-weight-bold {
     color: var(--bg6);
@@ -65,4 +92,9 @@ table .bg-dark-principal,
 
 .modal .modal-header button.close {
     color: white;
+}
+
+/* LOGIN */
+body.app-blank.login {
+    background-color: var(--bgGrayLight);
 }

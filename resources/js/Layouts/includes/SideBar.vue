@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref, nextTick } from "vue";
+import { onMounted, onUnmounted, ref, nextTick, reactive } from "vue";
 import { router, usePage, Link } from "@inertiajs/vue3";
 import ItemMenu from "@/Components/ItemMenu.vue";
 import { useSideBar } from "@/composables/useSidebar.js";
@@ -11,37 +11,51 @@ const configuracionStore = useConfiguracionStore();
 const appStore = useAppStore();
 const usuario = ref(null);
 const permisos = ref([]);
-const toggleSubMenu = (e) => {
-    e.stopPropagation();
-    const elem = e.currentTarget;
-    if (
-        elem.classList.contains("menu-is-opening") &&
-        elem.classList.contains("menu-open")
-    ) {
-        elem.classList.remove("menu-is-opening");
-        elem.classList.remove("menu-open");
-        toggleSubMenuELem(elem, false);
-    } else {
-        elem.classList.add("menu-is-opening");
-        elem.classList.add("menu-open");
-        toggleSubMenuELem(elem, true);
-    }
+const route_current = ref("");
+
+const toggleSubMenu = (menu) => {
+    openMenus[menu] = !openMenus[menu];
 };
 
-const route_current = ref("");
+const sincronizarMenus = () => {
+    Object.keys(openMenus).forEach((key) => {
+        openMenus[key] = false;
+    });
+
+    if (
+        route_current.value == "campeonatos.index" ||
+        route_current.value == "usuarios.index"
+    ) {
+        openMenus.campeonatos = true;
+    }
+
+    // if (
+    //     route_current.value == "reportes.usuarios" ||
+    //     route_current.value == "reportes.casos_epidemiologicos" ||
+    //     route_current.value == "reportes.alerta_epidemiologicas" ||
+    //     route_current.value == "reportes.seguimientos"
+    // ) {
+    //     openMenus.reportes = true;
+    // }
+};
+
+const openMenus = reactive({
+    usuarios: false,
+    campeonatos: false,
+    reportes: false,
+});
+
 router.on("navigate", (event) => {
     route_current.value = route().current();
+    sincronizarMenus();
     closeSidebar();
 });
 
 onMounted(() => {
-    configuracionStore.initConfiguracion();
     usuario.value = appStore.getUsuario;
     permisos.value = auth.user.permisos;
-    // Selecciona el elemento del widget
-    var sidebarSearchElement = $('[data-widget="sidebar-search"]');
-    // Configura manualmente el texto de "no encontrado"
-    sidebarSearchElement.data("notFoundText", "Sin resultados");
+    route_current.value = route().current();
+    sincronizarMenus();
 });
 
 const salir = () => {
@@ -73,37 +87,40 @@ onUnmounted(() => {});
 </script>
 <template>
     <!-- Main Sidebar Container -->
-    <aside class="main-sidebar sidebar-light-primary elevation-1">
+    <aside class="app-sidebar shadow bgWhite">
         <!-- Brand Logo -->
-        <a
-            :href="route('inicio')"
-            class="brand-link d-flex justify-content-center align-items-center py-0"
-            style="height: 57px"
-        >
-            <img
-                :src="configuracionStore.oConfiguracion.url_logo"
-                alt="Logo"
-                class=""
-                style="opacity: 1; height: 80%"
-            />
-            <span class="brand-text font-weight-600 ml-1">{{
-                configuracionStore.oConfiguracion.nombre_sistema
-            }}</span>
-        </a>
-
+        <div class="sidebar-brand bg1">
+            <a
+                :href="route('inicio')"
+                class="brand-link d-flex justify-content-center align-items-center py-0"
+            >
+                <img
+                    :src="configuracionStore.oConfiguracion.url_logo"
+                    alt="Logo"
+                    class="rounded-circle"
+                    style="max-height: 51px"
+                />
+                <span class="brand-text font-weight-600 ml-1 text-white">{{
+                    configuracionStore.oConfiguracion.nombre_sistema
+                }}</span>
+            </a>
+        </div>
         <!-- Sidebar -->
-        <div class="sidebar p-0">
+        <div class="sidebar-wrapper">
             <!-- Sidebar user panel (optional) -->
-            <div class="user-panel mt-3 pb-2 d-flex">
+            <div class="user-panel mt-3 pb-2 d-flex border-bottom">
                 <div class="image">
                     <img
                         :src="usuario?.url_foto"
-                        class="img-circle elevation-2"
+                        class="rounded-circle elevation-2 user-image"
                         alt="User Image"
                     />
                 </div>
                 <div class="info">
-                    <Link :href="route('profile.edit')" class="d-block">
+                    <Link
+                        :href="route('profile.edit')"
+                        class="d-block text-decoration-none"
+                    >
                         <div class="nombre">
                             {{ usuario?.nombre }} {{ usuario?.paterno }}
                             {{ usuario?.materno }}
@@ -116,108 +133,117 @@ onUnmounted(() => {});
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <ul
-                    class="nav nav-pills nav-sidebar flex-column"
-                    data-widget="treeview"
-                    role="menu"
+                    class="nav sidebar-menu flex-column"
+                    data-bs-toggle="treeview"
+                    role="navigation"
+                    aria-label="Main navigation"
                     data-accordion="false"
+                    id="navigation"
                 >
                     <ItemMenu
                         :label="'Inicio'"
                         :ruta="'inicio'"
                         :icon="'fa fa-home'"
                     ></ItemMenu>
-                    <li
-                        class="nav-header font-weight-bold"
+                    <ItemMenu
                         v-if="
                             permisos == '*' ||
-                            permisos.includes('usuarios.index') ||
-                            permisos.includes('clientes.index') ||
-                            permisos.includes('sucursals.index') ||
-                            permisos.includes('tipo_certificados.index') ||
-                            permisos.includes('certificados.index')
+                            permisos.includes('campeonatos.index')
                         "
+                        :label="'Partidos'"
+                        :ruta="'campeonatos.index'"
+                        :icon="'fa fa-table'"
+                    ></ItemMenu>
+                    <li
+                        class="nav-item"
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('campeonatos.index') ||
+                            permisos.includes('campeonato_inscripcions.index')
+                        "
+                        :class="{ 'menu-open': openMenus.campeonatos }"
                     >
-                        ADMINISTRACIÓN
+                        <a
+                            href="#"
+                            class="nav-link"
+                            :class="[
+                                route_current == 'campeonatos.index' ||
+                                route_current == 'campeonato_inscripcions.index'
+                                    ? 'active menu-is-opening menu-open'
+                                    : '',
+                            ]"
+                            @click.prevent="toggleSubMenu('campeonatos')"
+                        >
+                            <i class="nav-icon fa fa-list"></i>
+                            <p>
+                                Campeonatos
+                                <i class="nav-arrow fa fa-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul
+                            class="nav nav-treeview"
+                            role="navigation"
+                            aria-label="Navigation 4"
+                            :style="{
+                                maxHeight: openMenus.campeonatos
+                                    ? '500px'
+                                    : '0px',
+                            }"
+                        >
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('campeonatos.index') ||
+                                    permisos.includes(
+                                        'campeonato_inscripcions.index',
+                                    )
+                                "
+                                :label="'Lista de Campeonatos'"
+                                :ruta="'campeonatos.index'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('campeonatos.index')
+                                "
+                                :label="'Inscripción de Carreras'"
+                                :ruta="'campeonatos.index'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('campeonatos.index')
+                                "
+                                :label="'Pagos Pendientes'"
+                                :ruta="'campeonatos.index'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                        </ul>
                     </li>
                     <ItemMenu
                         v-if="
-                            permisos == '*' || permisos.includes('pagos.index')
-                        "
-                        :label="'Arqueo de Caja'"
-                        :ruta="'pagos.index'"
-                        :icon="'fa fa-cash-register'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
                             permisos == '*' ||
-                            permisos.includes('recepcion_pagos.index')
+                            permisos.includes('campeonatos.index')
                         "
-                        :label="'Recepción de Pagos'"
-                        :ruta="'recepcion_pagos.index'"
-                        :icon="'fa fa-clipboard-check'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' || permisos.includes('cobros.index')
-                        "
-                        :label="'Cobros'"
-                        :ruta="'cobros.index'"
-                        :icon="'fa fa-hand-holding-usd'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('certificados.index')
-                        "
-                        :arrayRutaClassActive="[
-                            'certificados.index',
-                            'certificados.create',
-                            'certificados.edit',
-                        ]"
-                        :label="'Certificados'"
-                        :ruta="'certificados.index'"
-                        :icon="'fa fa-clipboard-list'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('clientes.index')
-                        "
-                        :label="'Clientes'"
-                        :ruta="'clientes.index'"
+                        :label="'Jugadores'"
+                        :ruta="'campeonatos.index'"
                         :icon="'fa fa-user-friends'"
                     ></ItemMenu>
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
-                            permisos.includes('tipo_certificados.index')
+                            permisos.includes('campeonatos.index')
                         "
-                        :label="'Tipo de Certificados'"
-                        :ruta="'tipo_certificados.index'"
-                        :icon="'fa fa-list'"
+                        :label="'Carreras'"
+                        :ruta="'campeonatos.index'"
+                        :icon="'fa fa-list-alt'"
                     ></ItemMenu>
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
-                            permisos.includes('tramitadors.index')
-                        "
-                        :label="'Tramitadores'"
-                        :ruta="'tramitadors.index'"
-                        :icon="'fa fa-address-book'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('sucursals.index')
-                        "
-                        :label="'Sucursales'"
-                        :ruta="'sucursals.index'"
-                        :icon="'fa fa-building'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('usuarios.index')
+                            permisos.includes('campeonatos.index')
                         "
                         :label="'Usuarios'"
                         :ruta="'usuarios.index'"
@@ -228,14 +254,7 @@ onUnmounted(() => {});
                         v-if="
                             permisos == '*' ||
                             permisos.includes('reportes.usuarios') ||
-                            permisos.includes('reportes.clientes') ||
-                            permisos.includes('reportes.certificados') ||
-                            permisos.includes(
-                                'reportes.certificados_interno',
-                            ) ||
-                            permisos.includes('reportes.historial_accions') ||
-                            permisos.includes('reportes.gcemitidos') ||
-                            permisos.includes('reportes.gmemitidos')
+                            permisos.includes('reportes.usuarios')
                         "
                     >
                         REPORTES
@@ -243,64 +262,10 @@ onUnmounted(() => {});
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
-                            permisos.includes('reportes.gcemitidos')
-                        "
-                        :label="'Cantidad de Certificados Emitidos'"
-                        :ruta="'reportes.gcemitidos'"
-                        :icon="'fa fa-chart-bar'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.gmemitidos')
-                        "
-                        :label="'Ingresos por Certificados Emitidos'"
-                        :ruta="'reportes.gmemitidos'"
-                        :icon="'fa fa-chart-bar'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.certificados_interno')
-                        "
-                        :label="'Certificados Emitidos Interno'"
-                        :ruta="'reportes.certificados_interno'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.certificados')
-                        "
-                        :label="'Certificados Emitidos Externo'"
-                        :ruta="'reportes.certificados'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
                             permisos.includes('reportes.usuarios')
                         "
                         :label="'Lista de Usuarios'"
                         :ruta="'reportes.usuarios'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.clientes')
-                        "
-                        :label="'Lista de Clientes'"
-                        :ruta="'reportes.clientes'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.historial_accions')
-                        "
-                        :label="'Log de Usuarios'"
-                        :ruta="'reportes.historial_accions'"
                         :icon="'fa fa-file-pdf'"
                     ></ItemMenu>
                     <li class="nav-header font-weight-bold">OTROS</li>

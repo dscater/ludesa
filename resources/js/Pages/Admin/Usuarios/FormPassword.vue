@@ -14,7 +14,6 @@ const props = defineProps({
 
 const muestra_form = ref(props.muestra_formulario);
 const enviando = ref(false);
-const verPassword = ref(false);
 const form = useForm({
     password: "",
 });
@@ -73,6 +72,8 @@ const enviarFormulario = () => {
     });
 };
 
+const verPassword = ref(false);
+
 const emits = defineEmits(["cerrar-formulario", "envio-formulario"]);
 
 watch(muestra_form, (newVal) => {
@@ -98,22 +99,22 @@ const cerrarFormulario = () => {
             <h4 class="modal-title text-white" v-html="tituloDialog"></h4>
             <button
                 type="button"
-                class="close"
+                class="btn-close btn-close-white"
                 @click.prevent="cerrarFormulario()"
-            >
-                <span aria-hidden="true">×</span>
-            </button>
+            ></button>
         </template>
 
         <template #body>
             <form @submit.prevent="enviarFormulario()">
                 <div class="row">
                     <div class="px-4 text-center col-md-12">
-                        <span class="text-body-2 h3"
+                        <span class="text-body-2 h4"
                             >{{ formUser.nombre }}
                             {{ formUser.paterno }}
                             {{ formUser.materno }}</span
                         >
+                        <br />
+                        <span>{{ formUser.role?.nombre }}</span>
                     </div>
                 </div>
                 <div class="row">
@@ -127,21 +128,18 @@ const cerrarFormulario = () => {
                                 v-model="form.password"
                                 :type="verPassword ? 'text' : 'password'"
                             />
-                            <div class="input-group-append">
-                                <button
-                                    class="btn btn-default"
-                                    @click.prevent="verPassword = !verPassword"
-                                >
-                                    <i
-                                        class="fa"
-                                        :class="[
-                                            verPassword
-                                                ? 'fa fa-eye'
-                                                : 'fa fa-eye-slash',
-                                        ]"
-                                    ></i>
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                class="btn btn-light bg-white rounded-0 border-left-0"
+                                @click.prevent="verPassword = !verPassword"
+                            >
+                                <i
+                                    class="fa"
+                                    :class="[
+                                        verPassword ? 'fa-eye' : 'fa-eye-slash',
+                                    ]"
+                                ></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -150,7 +148,7 @@ const cerrarFormulario = () => {
         <template #footer>
             <button
                 type="button"
-                class="btn btn-default"
+                class="btn btn-light"
                 @click.prevent="cerrarFormulario()"
             >
                 Cerrar

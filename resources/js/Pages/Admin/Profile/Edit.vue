@@ -122,11 +122,11 @@ const enviaFormulario = () => {
         <template #header>
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Perfil</h1>
+                    <h4 class="m-0"><i class="fa fa-user"></i> Perfil</h4>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
+                    <ol class="breadcrumb float-end">
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
@@ -145,7 +145,7 @@ const enviaFormulario = () => {
                             <div class="info_foto w-100 text-center">
                                 <img class="image" :src="user.url_foto" />
                                 <h4 class="mt-1 mb-1">
-                                    {{ user.role?.nombre }}
+                                    {{ user.tipo }}
                                 </h4>
                                 <label
                                     v-if="!imagen_cargada"

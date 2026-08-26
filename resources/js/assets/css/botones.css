@@ -38,6 +38,11 @@ body .btn.btn-success:hover {
     background-color: var(--bgSuccesst);
     color: white;
 }
+
+body .app-wrapper .app-main .app-content .btn {
+    font-size: 0.93em;
+}
+
 .btn-principal {
     color: white;
     background-color: var(--bg6);
@@ -80,10 +85,13 @@ body .btn.btn-success:hover {
 .btn-error {
     background-color: #c82333;
 }
-
+.page-item .page-link {
+    font-size: 0.9em;
+}
 .page-item.active .page-link {
     background-color: var(--bg3);
     border-color: var(--bg3);
+    color: var(--bgWhite);
 }
 
 .content-header h1 {

@@ -91,13 +91,13 @@ onMounted(() => {
 
 <template>
     <Head title="Login"></Head>
-    <div class="container-fluid contenedor_login">
+    <div class="container-fluid">
         <!-- BEGIN login -->
         <div class="row">
             <div
-                class="col-md-6 offset-md-3 col-lg-4 offset-lg-4 col-xl-3 offset-xl-4 my-5"
+                class="col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 my-5"
             >
-                <div class="card mt-5">
+                <div class="card my-5">
                     <div class="card-header text-center">
                         <img
                             :src="oConfiguracion.url_logo"
@@ -118,14 +118,18 @@ onMounted(() => {
                             </h5>
                             <div class="row">
                                 <div class="col-12">
-                                    <div class="input-group form-floating">
-                                        <div class="input-group-prepend">
-                                            <span
-                                                class="input-group-text bg-primary"
-                                            >
-                                                <i class="fa fa-user"></i>
-                                            </span>
-                                        </div>
+                                    <label
+                                        for="usuario"
+                                        class="d-flex"
+                                        style="z-index: 100"
+                                        >Usuario</label
+                                    >
+                                    <div class="input-group">
+                                        <span
+                                            class="input-group-text bg-principal text-white"
+                                        >
+                                            <i class="fa fa-user"></i>
+                                        </span>
                                         <input
                                             type="text"
                                             name="usuario"
@@ -137,12 +141,6 @@ onMounted(() => {
                                             ref="inputUsuario"
                                             @keypress.enter="enviarFormulario"
                                         />
-                                        <label
-                                            for="usuario"
-                                            class="d-flex align-items-center text-gray-600 fs-13px ml-5"
-                                            style="z-index: 100"
-                                            >Usuario</label
-                                        >
                                     </div>
                                     <ul
                                         v-if="errors?.usuario"
@@ -153,15 +151,19 @@ onMounted(() => {
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="col-12">
-                                    <div class="input-group form-floating mt-3">
-                                        <div class="input-group-prepend">
-                                            <span
-                                                class="input-group-text bg-primary"
-                                            >
-                                                <i class="fa fa-key"></i>
-                                            </span>
-                                        </div>
+                                <div class="col-12 mt-2">
+                                    <label
+                                        for="password"
+                                        class="d-flex"
+                                        style="z-index: 100"
+                                        >Contraseña</label
+                                    >
+                                    <div class="input-group">
+                                        <span
+                                            class="input-group-text bg-principal text-white"
+                                        >
+                                            <i class="fa fa-key"></i>
+                                        </span>
                                         <input
                                             :type="
                                                 muestra_password
@@ -176,15 +178,9 @@ onMounted(() => {
                                             placeholder="Contraseña"
                                             @keypress.enter="enviarFormulario"
                                         />
-                                        <label
-                                            for="password"
-                                            class="d-flex align-items-center text-gray-600 fs-13px ml-5"
-                                            style="z-index: 100"
-                                            >Contraseña</label
-                                        >
                                         <div class="input-group-append">
                                             <button
-                                                class="btn btn-default"
+                                                class="btn btn-deafult bg-white border rounded-0"
                                                 type="button"
                                                 @click="
                                                     muestra_password =

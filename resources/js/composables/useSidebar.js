@@ -78,15 +78,27 @@ export const useSideBar = () => {
 
     const toggleSubMenuELem = (el, show) => {
         const subMenu = el.nextElementSibling;
-        if (subMenu) {
-            subMenu.style.display = show ? "block" : "none";
-            subMenu.style.height = show ? subMenu.scrollHeight + "px" : "0";
+
+        if (!subMenu) return;
+
+        subMenu.style.overflow = "hidden";
+        subMenu.style.transition = "max-height 0.3s ease";
+
+        if (show) {
+            subMenu.style.display = "block";
+
+            // fuerza recálculo
+            subMenu.offsetHeight;
+
+            subMenu.style.maxHeight = subMenu.scrollHeight + "px";
+        } else {
+            subMenu.style.maxHeight = "0px";
         }
     };
 
     function handleClickOutside(event) {
         const toggleButton = document.querySelector(".toggleButton");
-        const element = document.querySelector(".main-sidebar");
+        const element = document.querySelector(".app-sidebar");
         if (element) {
             if (
                 !element.contains(event.target) &&

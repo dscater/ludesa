@@ -50,52 +50,22 @@ class UserController extends Controller
                     "url" => "usuarios.index"
                 ];
             }
-            if ($permisos == '*' || (is_array($permisos) && in_array('cobros.index', $permisos))) {
-                $certificados = Certificado::select("certificados.id");
-                $certificados->where("status", 1);
-                $certificados->where("saldo", ">", 0);
-                if (Auth::user()->tipo == 'MÉDICO') {
-                    $fecha_actual = Carbon::now("America/La_Paz")->format("Y-m-d");
-                    $user = Auth::user();
-                    $login_user = LoginUser::where("user_id", $user->id)
-                        ->where("fecha", $fecha_actual)
-                        ->orderBy("id", "desc")
-                        ->get()
-                        ->first();
-                    $certificados->where("sucursal_id", $login_user->sucursal_id ?? '');
-                }
-                $certificados = $certificados->count();
-                $array_infos[] = [
-                    'label' => 'COBROS',
-                    'cantidad' => $certificados,
-                    'color' => 'bgWhite',
-                    'icon' => "fa-hand-holding-usd",
-                    "url" => "cobros.index"
-                ];
-            }
-            if ($permisos == '*' || (is_array($permisos) && in_array('clientes.index', $permisos))) {
-                $array_infos[] = [
-                    'label' => 'CLIENTES',
-                    'cantidad' => Cliente::where('status', 1)->count(),
-                    'color' => 'bgWhite',
-                    'icon' => "fa-user-friends",
-                    "url" => "clientes.index"
-                ];
-            }
-            if ($permisos == '*' || (is_array($permisos) && in_array('certificados.index', $permisos))) {
-                $certificados = Certificado::select("certificados.id");
-                if (Auth::user()->tipo == 'MÉDICO') {
-                    $certificados->where("user_id", Auth::user()->id);
-                }
-                $certificados = $certificados->where("status", 1)->count();
-                $array_infos[] = [
-                    'label' => 'CERTIFICADOS',
-                    'cantidad' => $certificados,
-                    'color' => 'bgWhite',
-                    'icon' => "fa-clipboard-list",
-                    "url" => "certificados.index"
-                ];
-            }
+
+            $array_infos[] = [
+                'label' => 'CARRERAS',
+                'cantidad' => 0,
+                'color' => 'bgWhite',
+                'icon' => "fa-list",
+                "url" => "usuarios.index"
+            ];
+
+            $array_infos[] = [
+                'label' => 'PARTIDOS PENDIENTES',
+                'cantidad' => 0,
+                'color' => 'bgWhite',
+                'icon' => "fa-table",
+                "url" => "usuarios.index"
+            ];
         }
 
 

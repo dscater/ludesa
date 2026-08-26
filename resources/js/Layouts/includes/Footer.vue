@@ -3,7 +3,6 @@ import { onMounted, onBeforeUnmount } from "vue";
 import { useConfiguracionStore } from "@/stores/configuracion/configuracionStore";
 const configuracionStore = useConfiguracionStore();
 onMounted(() => {
-    configuracionStore.initConfiguracion();
     document.getElementsByTagName("body")[0].classList.add("login");
 });
 onBeforeUnmount(() => {
@@ -13,7 +12,7 @@ onBeforeUnmount(() => {
 
 <template>
     <!-- Main Footer -->
-    <footer class="main-footer">
+    <footer class="app-footer bgYellow2">
         <!-- To the right -->
         <!-- <div class="float-right d-none d-sm-inline">
             <a href="https://github.com/dscater" target="_blank"
