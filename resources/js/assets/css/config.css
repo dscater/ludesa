@@ -1,0 +1,288 @@
+@import "./variables.css";
+
+/* GENERAL */
+.modal-body ul,
+.modal-body p,
+.seccion ul,
+.seccion p {
+    text-align: justify;
+}
+
+td .descripcion {
+    color: black !important;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.content-wrapper {
+    background-color: var(--bg6);
+}
+
+.text-principal {
+    color: var(--bg3) !important;
+}
+
+.text-secundario {
+    color: var(--bg6) !important;
+}
+
+.text-secundario2 {
+    color: var(--bg7) !important;
+}
+
+.text-precargado {
+    color: var(--bgPrecargado) !important;
+}
+
+.bg1,
+.bg1:hover {
+    background-color: var(--bg1);
+    color: white;
+}
+
+.alert-danger,
+.bg-danger {
+    background-color: var(--bgDanger) !important;
+}
+.bg-danger2 {
+    background-color: var(--bgDanger2);
+}
+.bg-azul-claro {
+    background-color: var(--bgAzulClaro);
+    transition: all 0.3s;
+}
+
+.bg-yellow {
+    background-color: var(--bgYellow);
+}
+
+.text-yellow {
+    color: var(--bgYellow);
+}
+
+.bg-color1 {
+    background-color: var(--bg1);
+    color: var(--bgDarkPrincipal) !important;
+}
+
+.bg-color1:hover {
+    background-color: var(--bg2);
+    color: white !important;
+}
+
+.bg-azul-claro:hover {
+    color: black;
+    background-color: var(--bgAzulClaroH);
+}
+
+.text-principal:hover {
+    color: var(--bg3);
+}
+
+.dropdown-menu {
+    background-color: var(--bg7);
+    padding: 10px 15px;
+}
+
+.content-wrapper h1,
+.content-wrapper h2,
+.content-wrapper h3,
+.content-wrapper h4,
+.content-wrapper h5 {
+    color: var(--bg3);
+}
+
+.content-wrapper .descripcion {
+    color: white;
+}
+
+.content-wrapper .breadcrumb {
+    padding: 5px;
+}
+
+.content-wrapper .breadcrumb li.breadcrumb-item a {
+    color: var(--bg1) !important;
+}
+
+.content-wrapper .breadcrumb li.active a,
+.content-wrapper .breadcrumb li.active {
+    font-weight: bold;
+    color: var(--bg1);
+}
+
+.loading {
+    z-index: -1;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: var(--bgWhite);
+    transition: 0.3s;
+    opacity: 0;
+    height: 100vh;
+    width: 100vw;
+    margin-top: -3.57rem;
+}
+
+.loading.show {
+    opacity: 1;
+    z-index: 9999;
+}
+
+label.required::after {
+    font-family: "Epunda_Slab";
+    font-weight: 400;
+    content: " (*)";
+    color: red;
+}
+
+/* MODAL */
+.modal-open .modal.show {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Fondo semitransparente */
+.modal-open .modal.show {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Estado inicial (oculto) */
+.modal.fade .modal-dialog {
+    transform: scale(0.8);
+    opacity: 0;
+    transition: all 0.3s ease-out;
+}
+
+/* Estado final (visible) */
+.modal.fade.show .modal-dialog {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* SIDEBAR */
+body .main-sidebar {
+    position: fixed;
+    /* background-color: var(--bgDarkGray); */
+    font-size: 0.8em;
+}
+
+body .main-sidebar {
+    max-height: 100vh !important;
+    overflow: hidden;
+}
+
+.user-panel .info {
+    width: 100%;
+}
+.user-panel .image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.user-panel .info .nombre {
+    font-size: 0.93em;
+}
+.user-panel .info .tipo {
+    font-size: 0.87em;
+    font-weight: 400;
+    color: var(--bgGray);
+}
+
+.user-panel {
+    margin-bottom: 0px;
+}
+
+@media (max-width: 965px) {
+    body .main-sidebar .sidebar {
+        max-height: calc(100vh - 150px) !important;
+        overflow: auto;
+    }
+}
+
+body .sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
+    border-radius: 0;
+    background-color: var(--bg1);
+    color: white !important;
+    width: 100%;
+}
+
+body .sidebar-dark-success .nav-sidebar > .nav-item > .nav-link {
+    width: 100%;
+}
+.sidebar a {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--bg5) !important;
+}
+
+/* MI TABLE */
+.mi-table {
+    font-size: 0.75rem;
+    border-radius: 8px;
+}
+
+body table.table tbody tr .accion .btn.accion_icon {
+    width: 40px;
+    margin: 1px;
+}
+
+body table.table tbody tr td {
+    vertical-align: middle;
+}
+
+body .mi-table thead.bg__primary tr th {
+    color: white;
+    background-color: var(--bg1);
+}
+
+body .mi-table thead.bg__danger tr th {
+    color: white;
+    background-color: var(--bgDanger);
+}
+
+body .mi-table .mi-content-header table.tablaFixeada td,
+body .mi-table .content-table table.tablaFixeada td,
+body .mi-table .mi-content-header table.tablaFixeada th {
+    border: none;
+    border-bottom: solid 1px var(--bgWhite);
+}
+
+body .mi-table .content-table {
+    border: solid 1px var(--bgGrayLight);
+    border-radius: 0px 0px 20px 20px;
+}
+
+body .mi-table .content-table table,
+body .mi-table .content-data,
+body .mi-table .mi-content-scroll {
+    border-radius: 0px 0px 20px 20px;
+}
+
+body .table-bordered td,
+.table-bordered th {
+    border: none;
+    border-bottom: 1px solid var(--bgGrayLight);
+}
+
+body .mi-table .content-table tr:hover .fixed-column .mi-celda,
+body .mi-table .content-table tr:hover .fixed-column-right .mi-celda,
+body .mi-table .content-table tr:hover .fixed-column,
+body .mi-table .content-table tbody tr:hover td {
+    background-color: var(--bgGrayLight);
+}
+
+body .mi-table table thead tr th .iheader .accion {
+    color: white;
+}
+
+body .mi-table table thead tr th .iheader .accion.active {
+    color: white;
+}
+
+.small-box {
+    border-radius: 10px !important;
+    overflow: hidden;
+}
