@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 26-08-2026 a las 18:18:26
+-- Tiempo de generación: 24-09-2026 a las 15:54:31
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -29,12 +29,23 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `campeonatos` (
   `id` bigint UNSIGNED NOT NULL,
-  `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `periodo` int NOT NULL,
   `gestion` int NOT NULL,
-  `estado` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descripcion` text COLLATE utf8mb4_unicode_ci,
+  `estado` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'VIGENTE',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `campeonatos`
+--
+
+INSERT INTO `campeonatos` (`id`, `nombre`, `periodo`, `gestion`, `tipo`, `descripcion`, `estado`, `created_at`, `updated_at`) VALUES
+(1, 'CAMPEONATO 1', 1, 2026, 'FUTSAL', 'DESC FUTSAL CAMPEONATO 1', 'VIGENTE', '2026-09-24 15:53:39', '2026-09-24 15:53:39'),
+(2, 'CAMPEONATO 1', 1, 2026, 'CAMPO', 'CAMPEONATO DE CAMPO', 'VIGENTE', '2026-09-24 15:53:54', '2026-09-24 15:53:54');
 
 -- --------------------------------------------------------
 
@@ -58,11 +69,23 @@ CREATE TABLE `campeonato_inscripcions` (
 
 CREATE TABLE `carreras` (
   `id` bigint UNSIGNED NOT NULL,
-  `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descripcion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descripcion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `carreras`
+--
+
+INSERT INTO `carreras` (`id`, `nombre`, `descripcion`, `created_at`, `updated_at`) VALUES
+(1, 'CARRERA 1', 'DESC CARRERA 1', '2026-09-24 15:16:39', '2026-09-24 15:16:39'),
+(2, 'CARRERA 2', '', '2026-09-24 15:16:49', '2026-09-24 15:16:49'),
+(3, 'CARRERA 3', '', '2026-09-24 15:16:56', '2026-09-24 15:16:56'),
+(4, 'CARRERA 4', '', '2026-09-24 15:17:03', '2026-09-24 15:17:03'),
+(5, 'CARRRERA 5', '', '2026-09-24 15:17:09', '2026-09-24 15:17:49'),
+(6, 'CARRERA 6', '', '2026-09-24 15:17:15', '2026-09-24 15:17:39');
 
 -- --------------------------------------------------------
 
@@ -75,8 +98,8 @@ CREATE TABLE `carrera_jugadors` (
   `campeonato_id` bigint UNSIGNED NOT NULL,
   `carrera_id` bigint UNSIGNED NOT NULL,
   `jugador_id` bigint UNSIGNED NOT NULL,
-  `posicion` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nro` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `posicion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nro` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -89,15 +112,15 @@ CREATE TABLE `carrera_jugadors` (
 
 CREATE TABLE `configuracions` (
   `id` bigint UNSIGNED NOT NULL,
-  `nombre_sistema` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `alias` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `razon_social` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nit` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `dir` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `fono` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `actividad` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `correo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `logo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nombre_sistema` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `razon_social` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nit` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dir` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fono` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `actividad` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `correo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -118,16 +141,37 @@ INSERT INTO `configuracions` (`id`, `nombre_sistema`, `alias`, `razon_social`, `
 CREATE TABLE `historial_accions` (
   `id` bigint UNSIGNED NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
-  `accion` varchar(155) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descripcion` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `accion` varchar(155) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `datos_original` json DEFAULT NULL,
   `datos_nuevo` json DEFAULT NULL,
-  `modulo` varchar(155) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modulo` varchar(155) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `historial_accions`
+--
+
+INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `datos_original`, `datos_nuevo`, `modulo`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
+(1, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA', '{\"id\": 1, \"nombre\": \"CARRERA 1\", \"created_at\": \"2026-09-24T15:15:39.000000Z\", \"updated_at\": \"2026-09-24T15:15:39.000000Z\", \"descripcion\": \"CARRERA 1\"}', NULL, 'CARRERAS', '2026-09-24', '11:15:39', '2026-09-24 15:15:39', '2026-09-24 15:15:39'),
+(2, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA CARRERA', '{\"id\": 1, \"nombre\": \"CARRERA 1\", \"created_at\": \"2026-09-24T15:15:39.000000Z\", \"updated_at\": \"2026-09-24T15:15:39.000000Z\", \"descripcion\": \"CARRERA 1\"}', '{\"id\": 1, \"nombre\": \"CARRERA 12\", \"created_at\": \"2026-09-24T15:15:39.000000Z\", \"updated_at\": \"2026-09-24T15:15:51.000000Z\", \"descripcion\": \"DESC CARRERA 1\"}', 'CARRERAS', '2026-09-24', '11:15:51', '2026-09-24 15:15:51', '2026-09-24 15:15:51'),
+(3, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA CARRERA', '{\"id\": 1, \"nombre\": \"CARRERA 12\", \"created_at\": \"2026-09-24T15:15:39.000000Z\", \"updated_at\": \"2026-09-24T15:15:51.000000Z\", \"descripcion\": \"DESC CARRERA 1\"}', '{\"id\": 1, \"nombre\": \"CARRERA 1\", \"created_at\": \"2026-09-24T15:15:39.000000Z\", \"updated_at\": \"2026-09-24T15:15:58.000000Z\", \"descripcion\": \"DESC CARRERA 1\"}', 'CARRERAS', '2026-09-24', '11:15:58', '2026-09-24 15:15:58', '2026-09-24 15:15:58'),
+(4, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA', '{\"id\": 1, \"nombre\": \"CARRERA 1\", \"created_at\": \"2026-09-24T15:16:39.000000Z\", \"updated_at\": \"2026-09-24T15:16:39.000000Z\", \"descripcion\": \"DESC CARRERA 1\"}', NULL, 'CARRERAS', '2026-09-24', '11:16:40', '2026-09-24 15:16:40', '2026-09-24 15:16:40'),
+(5, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA', '{\"id\": 2, \"nombre\": \"CARRERA 2\", \"created_at\": \"2026-09-24T15:16:49.000000Z\", \"updated_at\": \"2026-09-24T15:16:49.000000Z\", \"descripcion\": \"\"}', NULL, 'CARRERAS', '2026-09-24', '11:16:49', '2026-09-24 15:16:49', '2026-09-24 15:16:49'),
+(6, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA', '{\"id\": 3, \"nombre\": \"CARRERA 3\", \"created_at\": \"2026-09-24T15:16:56.000000Z\", \"updated_at\": \"2026-09-24T15:16:56.000000Z\", \"descripcion\": \"\"}', NULL, 'CARRERAS', '2026-09-24', '11:16:56', '2026-09-24 15:16:56', '2026-09-24 15:16:56'),
+(7, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA', '{\"id\": 4, \"nombre\": \"CARRERA 4\", \"created_at\": \"2026-09-24T15:17:03.000000Z\", \"updated_at\": \"2026-09-24T15:17:03.000000Z\", \"descripcion\": \"\"}', NULL, 'CARRERAS', '2026-09-24', '11:17:03', '2026-09-24 15:17:03', '2026-09-24 15:17:03'),
+(8, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA', '{\"id\": 5, \"nombre\": \"CARRR+\", \"created_at\": \"2026-09-24T15:17:09.000000Z\", \"updated_at\": \"2026-09-24T15:17:09.000000Z\", \"descripcion\": \"\"}', NULL, 'CARRERAS', '2026-09-24', '11:17:09', '2026-09-24 15:17:09', '2026-09-24 15:17:09'),
+(9, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA', '{\"id\": 6, \"nombre\": \"CARRERA 5\", \"created_at\": \"2026-09-24T15:17:15.000000Z\", \"updated_at\": \"2026-09-24T15:17:15.000000Z\", \"descripcion\": \"\"}', NULL, 'CARRERAS', '2026-09-24', '11:17:15', '2026-09-24 15:17:15', '2026-09-24 15:17:15'),
+(10, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA CARRERA', '{\"id\": 6, \"nombre\": \"CARRERA 5\", \"created_at\": \"2026-09-24T15:17:15.000000Z\", \"updated_at\": \"2026-09-24T15:17:15.000000Z\", \"descripcion\": \"\"}', '{\"id\": 6, \"nombre\": \"CARRERA 6\", \"created_at\": \"2026-09-24T15:17:15.000000Z\", \"updated_at\": \"2026-09-24T15:17:39.000000Z\", \"descripcion\": \"\"}', 'CARRERAS', '2026-09-24', '11:17:39', '2026-09-24 15:17:39', '2026-09-24 15:17:39'),
+(11, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA CARRERA', '{\"id\": 5, \"nombre\": \"CARRR+\", \"created_at\": \"2026-09-24T15:17:09.000000Z\", \"updated_at\": \"2026-09-24T15:17:09.000000Z\", \"descripcion\": \"\"}', '{\"id\": 5, \"nombre\": \"CARRRERA 5\", \"created_at\": \"2026-09-24T15:17:09.000000Z\", \"updated_at\": \"2026-09-24T15:17:49.000000Z\", \"descripcion\": \"\"}', 'CARRERAS', '2026-09-24', '11:17:49', '2026-09-24 15:17:49', '2026-09-24 15:17:49'),
+(12, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN CAMPEONATO', '{\"id\": 1, \"tipo\": \"FUTSAL\", \"nombre\": \"CAMPEONATO 1\", \"gestion\": \"2026\", \"periodo\": \"1\", \"created_at\": \"2026-09-24T15:52:12.000000Z\", \"updated_at\": \"2026-09-24T15:52:12.000000Z\", \"descripcion\": \"CAMPEONATO DE FUTSAL\"}', NULL, 'CAMPEONATOS', '2026-09-24', '11:52:12', '2026-09-24 15:52:12', '2026-09-24 15:52:12'),
+(13, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN CAMPEONATO', '{\"id\": 1, \"tipo\": \"FUTSAL\", \"estado\": \"VIGENTE\", \"nombre\": \"CAMPEONATO 1\", \"gestion\": 2026, \"periodo\": 1, \"created_at\": \"2026-09-24T15:52:12.000000Z\", \"updated_at\": \"2026-09-24T15:52:12.000000Z\", \"descripcion\": \"CAMPEONATO DE FUTSAL\"}', '{\"id\": 1, \"tipo\": \"CAMPO\", \"estado\": \"VIGENTE\", \"nombre\": \"CAMPEONATO 12\", \"gestion\": \"2027\", \"periodo\": \"12\", \"created_at\": \"2026-09-24T15:52:12.000000Z\", \"updated_at\": \"2026-09-24T15:53:07.000000Z\", \"descripcion\": \"CAMPEONATO DE FUTSALS\"}', 'CAMPEONATOS', '2026-09-24', '11:53:07', '2026-09-24 15:53:07', '2026-09-24 15:53:07'),
+(14, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN CAMPEONATO', '{\"id\": 1, \"tipo\": \"FUTSAL\", \"nombre\": \"CAMPEONATO 1\", \"gestion\": \"2026\", \"periodo\": \"1\", \"created_at\": \"2026-09-24T15:53:39.000000Z\", \"updated_at\": \"2026-09-24T15:53:39.000000Z\", \"descripcion\": \"DESC FUTSAL CAMPEONATO 1\"}', NULL, 'CAMPEONATOS', '2026-09-24', '11:53:39', '2026-09-24 15:53:39', '2026-09-24 15:53:39'),
+(15, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN CAMPEONATO', '{\"id\": 2, \"tipo\": \"CAMPO\", \"nombre\": \"CAMPEONATO 1\", \"gestion\": \"2026\", \"periodo\": \"1\", \"created_at\": \"2026-09-24T15:53:54.000000Z\", \"updated_at\": \"2026-09-24T15:53:54.000000Z\", \"descripcion\": \"CAMPEONATO DE CAMPO\"}', NULL, 'CAMPEONATOS', '2026-09-24', '11:53:54', '2026-09-24 15:53:54', '2026-09-24 15:53:54');
 
 -- --------------------------------------------------------
 
@@ -137,13 +181,13 @@ CREATE TABLE `historial_accions` (
 
 CREATE TABLE `jugadors` (
   `id` bigint UNSIGNED NOT NULL,
-  `nombres` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `apes` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ci` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `correo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `fono` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `dir` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `foto` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nombres` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `apes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ci` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `correo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fono` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dir` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `foto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -156,7 +200,7 @@ CREATE TABLE `jugadors` (
 
 CREATE TABLE `migrations` (
   `id` int UNSIGNED NOT NULL,
-  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -198,7 +242,7 @@ CREATE TABLE `partidos` (
   `pago_visitante` tinyint(1) NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
-  `estado` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `estado` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -214,7 +258,7 @@ CREATE TABLE `partido_detalles` (
   `campeonato_id` bigint UNSIGNED NOT NULL,
   `partido_id` bigint UNSIGNED NOT NULL,
   `carrera_id` bigint UNSIGNED NOT NULL,
-  `tarjeta` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tarjeta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `carrera_jugador_id` bigint UNSIGNED NOT NULL,
   `total` decimal(24,2) NOT NULL,
   `pagado` tinyint(1) NOT NULL,
@@ -261,19 +305,19 @@ CREATE TABLE `partido_jugadors` (
 
 CREATE TABLE `users` (
   `id` bigint UNSIGNED NOT NULL,
-  `usuario` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `paterno` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `materno` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ci` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ci_exp` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `dir` varchar(600) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `correo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `fono` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `usuario` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `paterno` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `materno` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ci` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ci_exp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dir` varchar(600) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `correo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fono` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `acceso` int NOT NULL,
-  `tipo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `foto` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tipo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `foto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_registro` date NOT NULL,
   `status` int NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
@@ -397,7 +441,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `campeonatos`
 --
 ALTER TABLE `campeonatos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `campeonato_inscripcions`
@@ -409,7 +453,7 @@ ALTER TABLE `campeonato_inscripcions`
 -- AUTO_INCREMENT de la tabla `carreras`
 --
 ALTER TABLE `carreras`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `carrera_jugadors`
@@ -427,7 +471,7 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `jugadors`

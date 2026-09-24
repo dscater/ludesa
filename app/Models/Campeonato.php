@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Campeonato extends Model
 {
-    //
+    protected $fillable = [
+        "nombre",
+        "periodo",
+        "gestion",
+        "tipo",
+        "descripcion",
+        "estado",
+    ];
 }

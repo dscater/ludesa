@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class TipoCertificadoUpdateRequest extends FormRequest
+class CarreraStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,7 @@ class TipoCertificadoUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nombre" => "required|string|unique:tipo_certificados,nombre," . $this->tipo_certificado->id,
-            "precio" => "required|numeric|decimal:0,2|min:0",
+            "nombre" => "required|string|unique:carreras,nombre",
             "descripcion" => "nullable|string",
         ];
     }
@@ -35,10 +34,6 @@ class TipoCertificadoUpdateRequest extends FormRequest
             "nombre.required" => "Debes completar este campo",
             "nombre.string" => "Debes ingresar un texto valido",
             "nombre.unique" => "Este nombre ya fue registrado",
-            "precio.requried" => "Debes completar este campo",
-            "precio.numeric" => "Debes ingresar un valor númerico",
-            "precio.decimal" => "Debes ingresar un valor con hasta 2 decimales",
-            "precio.min" => "Debes ingresar como minimo :min",
             "descripcion.string" => "Debes ingresar un texto valido"
         ];
     }

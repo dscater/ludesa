@@ -1,24 +1,23 @@
 import { useForm } from "@inertiajs/vue3";
 
-export const useTipoCertificados = () => {
+export const useCarreras = () => {
     const initialState = {
         id: 0,
         nombre: "",
-        precio: "",
         descripcion: "",
         _method: "POST",
     };
 
     const form = useForm({ ...initialState });
 
-    const setTipoCertificado = (item) => {
+    const setCarrera = (item) => {
         form.clearErrors();
         form.reset();
         Object.assign(form, item);
         form._method = "PUT";
     };
 
-    const limpiarTipoCertificado = () => {
+    const limpiarCarrera = () => {
         form.clearErrors();
         form.reset();
         form.defaults({ ...initialState });
@@ -26,7 +25,7 @@ export const useTipoCertificados = () => {
 
     return {
         form,
-        setTipoCertificado,
-        limpiarTipoCertificado,
+        setCarrera,
+        limpiarCarrera,
     };
 };

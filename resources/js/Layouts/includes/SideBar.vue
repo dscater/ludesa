@@ -234,10 +234,10 @@ onUnmounted(() => {});
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
-                            permisos.includes('campeonatos.index')
+                            permisos.includes('carreras.index')
                         "
                         :label="'Carreras'"
-                        :ruta="'campeonatos.index'"
+                        :ruta="'carreras.index'"
                         :icon="'fa fa-list-alt'"
                     ></ItemMenu>
                     <ItemMenu

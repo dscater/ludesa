@@ -70,7 +70,7 @@ onBeforeUnmount(() => {
             <li class="nav-item">
                 <a
                     class="nav-link toggleButton"
-                    data-lte-toggle="sidebar"
+                    data-bs-toggle="sidebar"
                     href="#"
                     role="button"
                     @click="toggleSidebar"

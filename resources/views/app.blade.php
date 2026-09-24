@@ -37,7 +37,7 @@
     @inertiaHead
 </head>
 
-<body class="layout-fixed sidebar-expand-lg fixed-header">
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary fixed-header">
     @inertia
 </body>
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SincronizacionController;
+use App\Http\Controllers\TipoCampeonatoController;
 use App\Http\Controllers\TipoUsuarioController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsuarioController;
@@ -75,7 +76,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
 
     // TIPO USUARIOS
-    Route::get("tipo_usuarios/listado", [TipoUsuarioController::class, 'listado'])->name("tipo_usuarios.listado");
+    Route::get("tipo_campeonatos/listado", [TipoCampeonatoController::class, 'listado'])->name("tipo_campeonatos.listado");
 
     // CAMPEONATOS
     Route::get("campeonatos/paginado", [CampeonatoController::class, 'paginado'])->name("campeonatos.paginado");

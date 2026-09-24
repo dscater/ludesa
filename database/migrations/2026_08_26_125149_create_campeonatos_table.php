@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('campeonatos', function (Blueprint $table) {
             $table->id();
             $table->string("nombre");
+            $table->integer("periodo");
             $table->integer("gestion");
-            $table->string("estado"); //VIGENTE, FINALIZADO
+            $table->string("tipo"); //FUTSAL, CAMPO
+            $table->text("descripcion")->nullable();
+            $table->string("estado")->default("VIGENTE"); //VIGENTE, FINALIZADO
             $table->timestamps();
         });
     }
