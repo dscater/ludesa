@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class CarreraService
@@ -20,9 +21,26 @@ class CarreraService
 
     public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
 
-    public function listado(): Collection
+    public function listado($campeonato_id = null, $sin_inscripcion = false): Collection
     {
-        $carreras = Carrera::select("carreras.*")->get();
+        $carreras = Carrera::select("carreras.*");
+
+        if ($campeonato_id) {
+            // Log::debug($sin_inscripcion);
+            if ($sin_inscripcion) {
+                // Carreras que NO están inscritas en este campeonato
+                $carreras->whereDoesntHave("campeonato_inscripcions", function ($query) use ($campeonato_id) {
+                    $query->where("campeonato_id", $campeonato_id);
+                });
+            } else {
+                // Carreras que SÍ están inscritas en este campeonato
+                $carreras->whereHas("campeonato_inscripcions", function ($query) use ($campeonato_id) {
+                    $query->where("campeonato_id", $campeonato_id);
+                });
+            }
+        }
+
+        $carreras = $carreras->get();
         return $carreras;
     }
     /**

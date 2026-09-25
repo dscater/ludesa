@@ -38,10 +38,13 @@ class CarreraController extends Controller
      *
      * @return JsonResponse
      */
-    public function listado(): JsonResponse
+    public function listado(Request $request): JsonResponse
     {
         return response()->JSON([
-            "carreras" => $this->carreraService->listado()
+            "carreras" => $this->carreraService->listado(
+                $request->input("campeonato_id", null),
+                $request->input("sin_inscripcion", false)
+            )
         ]);
     }
 

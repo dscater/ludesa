@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 24-09-2026 a las 15:54:31
+-- Tiempo de generación: 25-09-2026 a las 15:47:33
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -57,9 +57,30 @@ CREATE TABLE `campeonato_inscripcions` (
   `id` bigint UNSIGNED NOT NULL,
   `campeonato_id` bigint UNSIGNED NOT NULL,
   `carrera_id` bigint UNSIGNED NOT NULL,
+  `pj` int NOT NULL DEFAULT '0',
+  `pts` int NOT NULL DEFAULT '0',
+  `gf` int NOT NULL DEFAULT '0',
+  `gc` int NOT NULL DEFAULT '0',
+  `dg` int NOT NULL DEFAULT '0',
+  `pg` int NOT NULL DEFAULT '0',
+  `pe` int NOT NULL DEFAULT '0',
+  `pp` int NOT NULL DEFAULT '0',
+  `estado` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PARTICIPANTE',
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `campeonato_inscripcions`
+--
+
+INSERT INTO `campeonato_inscripcions` (`id`, `campeonato_id`, `carrera_id`, `pj`, `pts`, `gf`, `gc`, `dg`, `pg`, `pe`, `pp`, `estado`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'PARTICIPANTE', '2026-09-25', '11:19:19', '2026-09-25 15:19:27', '2026-09-25 15:19:27'),
+(2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'PARTICIPANTE', '2026-09-25', '11:36:28', '2026-09-25 15:38:29', '2026-09-25 15:38:29'),
+(3, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 'PARTICIPANTE', '2026-09-25', '11:38:47', '2026-09-25 15:39:22', '2026-09-25 15:39:22'),
+(4, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 'PARTICIPANTE', '2026-09-25', '11:38:47', '2026-09-25 15:39:30', '2026-09-25 15:39:30');
 
 -- --------------------------------------------------------
 
@@ -97,9 +118,11 @@ CREATE TABLE `carrera_jugadors` (
   `id` bigint UNSIGNED NOT NULL,
   `campeonato_id` bigint UNSIGNED NOT NULL,
   `carrera_id` bigint UNSIGNED NOT NULL,
+  `campeonato_inscripcion_id` bigint UNSIGNED NOT NULL,
   `jugador_id` bigint UNSIGNED NOT NULL,
   `posicion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `nro` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fecha_registro` date NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -171,7 +194,25 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (12, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN CAMPEONATO', '{\"id\": 1, \"tipo\": \"FUTSAL\", \"nombre\": \"CAMPEONATO 1\", \"gestion\": \"2026\", \"periodo\": \"1\", \"created_at\": \"2026-09-24T15:52:12.000000Z\", \"updated_at\": \"2026-09-24T15:52:12.000000Z\", \"descripcion\": \"CAMPEONATO DE FUTSAL\"}', NULL, 'CAMPEONATOS', '2026-09-24', '11:52:12', '2026-09-24 15:52:12', '2026-09-24 15:52:12'),
 (13, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN CAMPEONATO', '{\"id\": 1, \"tipo\": \"FUTSAL\", \"estado\": \"VIGENTE\", \"nombre\": \"CAMPEONATO 1\", \"gestion\": 2026, \"periodo\": 1, \"created_at\": \"2026-09-24T15:52:12.000000Z\", \"updated_at\": \"2026-09-24T15:52:12.000000Z\", \"descripcion\": \"CAMPEONATO DE FUTSAL\"}', '{\"id\": 1, \"tipo\": \"CAMPO\", \"estado\": \"VIGENTE\", \"nombre\": \"CAMPEONATO 12\", \"gestion\": \"2027\", \"periodo\": \"12\", \"created_at\": \"2026-09-24T15:52:12.000000Z\", \"updated_at\": \"2026-09-24T15:53:07.000000Z\", \"descripcion\": \"CAMPEONATO DE FUTSALS\"}', 'CAMPEONATOS', '2026-09-24', '11:53:07', '2026-09-24 15:53:07', '2026-09-24 15:53:07'),
 (14, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN CAMPEONATO', '{\"id\": 1, \"tipo\": \"FUTSAL\", \"nombre\": \"CAMPEONATO 1\", \"gestion\": \"2026\", \"periodo\": \"1\", \"created_at\": \"2026-09-24T15:53:39.000000Z\", \"updated_at\": \"2026-09-24T15:53:39.000000Z\", \"descripcion\": \"DESC FUTSAL CAMPEONATO 1\"}', NULL, 'CAMPEONATOS', '2026-09-24', '11:53:39', '2026-09-24 15:53:39', '2026-09-24 15:53:39'),
-(15, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN CAMPEONATO', '{\"id\": 2, \"tipo\": \"CAMPO\", \"nombre\": \"CAMPEONATO 1\", \"gestion\": \"2026\", \"periodo\": \"1\", \"created_at\": \"2026-09-24T15:53:54.000000Z\", \"updated_at\": \"2026-09-24T15:53:54.000000Z\", \"descripcion\": \"CAMPEONATO DE CAMPO\"}', NULL, 'CAMPEONATOS', '2026-09-24', '11:53:54', '2026-09-24 15:53:54', '2026-09-24 15:53:54');
+(15, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN CAMPEONATO', '{\"id\": 2, \"tipo\": \"CAMPO\", \"nombre\": \"CAMPEONATO 1\", \"gestion\": \"2026\", \"periodo\": \"1\", \"created_at\": \"2026-09-24T15:53:54.000000Z\", \"updated_at\": \"2026-09-24T15:53:54.000000Z\", \"descripcion\": \"CAMPEONATO DE CAMPO\"}', NULL, 'CAMPEONATOS', '2026-09-24', '11:53:54', '2026-09-24 15:53:54', '2026-09-24 15:53:54'),
+(16, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"123456\", \"id\": 1, \"dir\": \"LOS PEDREGALES\", \"apes\": \"PERES MAMANI\", \"fono\": \"7777777\", \"correo\": \"juan@gmail.com\", \"nombres\": \"JUAN\", \"created_at\": \"2026-09-25T14:27:59.000000Z\", \"updated_at\": \"2026-09-25T14:27:59.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:27:59', '2026-09-25 14:27:59', '2026-09-25 14:27:59'),
+(17, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN JUGADOR', '{\"ci\": \"123456\", \"id\": 1, \"dir\": \"LOS PEDREGALES\", \"apes\": \"PERES MAMANI\", \"fono\": \"7777777\", \"foto\": null, \"correo\": \"juan@gmail.com\", \"nombres\": \"JUAN\", \"created_at\": \"2026-09-25T14:27:59.000000Z\", \"updated_at\": \"2026-09-25T14:27:59.000000Z\", \"fecha_registro\": \"2026-09-25\"}', '{\"ci\": \"123456\", \"id\": 1, \"dir\": \"LOS PEDREGALES\", \"apes\": \"PERES FERNANDEZ\", \"fono\": \"7777777\", \"foto\": \"11790346681.jpg\", \"correo\": \"juan@gmail.com\", \"nombres\": \"JUAN JOSE\", \"created_at\": \"2026-09-25T14:27:59.000000Z\", \"updated_at\": \"2026-09-25T14:31:21.000000Z\", \"fecha_registro\": \"2026-09-25\"}', 'JUGADORES', '2026-09-25', '10:31:21', '2026-09-25 14:31:21', '2026-09-25 14:31:21'),
+(18, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"123456\", \"id\": 1, \"dir\": \"LOS PEDREGALES\", \"apes\": \"PERES MAMANI\", \"fono\": \"7777777\", \"foto\": \"11790346743.jpg\", \"correo\": \"juan@gmail.com\", \"nombres\": \"JUAN JOSE\", \"created_at\": \"2026-09-25T14:32:23.000000Z\", \"updated_at\": \"2026-09-25T14:32:23.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:32:23', '2026-09-25 14:32:23', '2026-09-25 14:32:23'),
+(19, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"23423424\", \"id\": 2, \"dir\": \"\", \"apes\": \"MARTINEZ\", \"fono\": null, \"correo\": null, \"nombres\": \"FELIX\", \"created_at\": \"2026-09-25T14:33:08.000000Z\", \"updated_at\": \"2026-09-25T14:33:08.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:33:08', '2026-09-25 14:33:08', '2026-09-25 14:33:08'),
+(20, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"234244\", \"id\": 3, \"dir\": \"\", \"apes\": \"GONZALES\", \"fono\": null, \"correo\": null, \"nombres\": \"CARLOS\", \"created_at\": \"2026-09-25T14:33:23.000000Z\", \"updated_at\": \"2026-09-25T14:33:23.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:33:23', '2026-09-25 14:33:23', '2026-09-25 14:33:23'),
+(21, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"1233132123\", \"id\": 4, \"dir\": \"\", \"apes\": \"CONDORI\", \"fono\": null, \"correo\": null, \"nombres\": \"ALEX\", \"created_at\": \"2026-09-25T14:33:34.000000Z\", \"updated_at\": \"2026-09-25T14:33:34.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:33:34', '2026-09-25 14:33:34', '2026-09-25 14:33:34'),
+(22, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"123123\", \"id\": 5, \"dir\": \"\", \"apes\": \"SALINAS\", \"fono\": null, \"correo\": null, \"nombres\": \"FRANZ\", \"created_at\": \"2026-09-25T14:33:43.000000Z\", \"updated_at\": \"2026-09-25T14:33:43.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:33:43', '2026-09-25 14:33:43', '2026-09-25 14:33:43'),
+(23, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"12312331\", \"id\": 6, \"dir\": \"\", \"apes\": \"GONZALES\", \"fono\": null, \"correo\": null, \"nombres\": \"ENRIQUE\", \"created_at\": \"2026-09-25T14:33:56.000000Z\", \"updated_at\": \"2026-09-25T14:33:56.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:33:56', '2026-09-25 14:33:56', '2026-09-25 14:33:56'),
+(24, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"123124124\", \"id\": 7, \"dir\": \"\", \"apes\": \"BAUTISTA\", \"fono\": null, \"correo\": null, \"nombres\": \"JUAN\", \"created_at\": \"2026-09-25T14:34:04.000000Z\", \"updated_at\": \"2026-09-25T14:34:04.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:34:04', '2026-09-25 14:34:04', '2026-09-25 14:34:04'),
+(25, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"213123132\", \"id\": 8, \"dir\": \"\", \"apes\": \"CASTRO\", \"fono\": null, \"correo\": null, \"nombres\": \"EDGAR\", \"created_at\": \"2026-09-25T14:34:14.000000Z\", \"updated_at\": \"2026-09-25T14:34:14.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:34:14', '2026-09-25 14:34:14', '2026-09-25 14:34:14'),
+(26, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"123123123\", \"id\": 9, \"dir\": \"\", \"apes\": \"MARTINEZ\", \"fono\": null, \"correo\": null, \"nombres\": \"SANDRO\", \"created_at\": \"2026-09-25T14:34:23.000000Z\", \"updated_at\": \"2026-09-25T14:34:23.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:34:23', '2026-09-25 14:34:23', '2026-09-25 14:34:23'),
+(27, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"34124112\", \"id\": 10, \"dir\": \"\", \"apes\": \"CALLISAYA\", \"fono\": null, \"correo\": null, \"nombres\": \"FELIPE\", \"created_at\": \"2026-09-25T14:34:35.000000Z\", \"updated_at\": \"2026-09-25T14:34:35.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:34:35', '2026-09-25 14:34:35', '2026-09-25 14:34:35'),
+(28, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"12312312\", \"id\": 11, \"dir\": \"\", \"apes\": \"PATZI\", \"fono\": null, \"correo\": null, \"nombres\": \"JOHN\", \"created_at\": \"2026-09-25T14:34:45.000000Z\", \"updated_at\": \"2026-09-25T14:34:45.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:34:45', '2026-09-25 14:34:45', '2026-09-25 14:34:45'),
+(29, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR', '{\"ci\": \"2131241242\", \"id\": 12, \"dir\": \"\", \"apes\": \"MAMANI\", \"fono\": null, \"correo\": null, \"nombres\": \"CARLOS\", \"created_at\": \"2026-09-25T14:34:56.000000Z\", \"updated_at\": \"2026-09-25T14:34:56.000000Z\", \"fecha_registro\": \"2026-09-25\"}', NULL, 'JUGADORES', '2026-09-25', '10:34:56', '2026-09-25 14:34:56', '2026-09-25 14:34:56'),
+(30, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 1, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"carrera_id\": \"1\", \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-25T15:19:27.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-25', '11:19:28', '2026-09-25 15:19:28', '2026-09-25 15:19:28'),
+(31, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 2, \"hora\": \"11:36:28\", \"fecha\": \"2026-09-25\", \"carrera_id\": \"2\", \"created_at\": \"2026-09-25T15:38:29.000000Z\", \"updated_at\": \"2026-09-25T15:38:29.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-25', '11:38:29', '2026-09-25 15:38:29', '2026-09-25 15:38:29'),
+(32, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 3, \"hora\": \"11:38:47\", \"fecha\": \"2026-09-25\", \"carrera_id\": \"3\", \"created_at\": \"2026-09-25T15:39:22.000000Z\", \"updated_at\": \"2026-09-25T15:39:22.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-25', '11:39:22', '2026-09-25 15:39:22', '2026-09-25 15:39:22'),
+(33, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 4, \"hora\": \"11:38:47\", \"fecha\": \"2026-09-25\", \"carrera_id\": \"4\", \"created_at\": \"2026-09-25T15:39:30.000000Z\", \"updated_at\": \"2026-09-25T15:39:30.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-25', '11:39:30', '2026-09-25 15:39:30', '2026-09-25 15:39:30');
 
 -- --------------------------------------------------------
 
@@ -184,13 +225,32 @@ CREATE TABLE `jugadors` (
   `nombres` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `apes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ci` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `correo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `correo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fono` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dir` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `foto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fecha_registro` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `jugadors`
+--
+
+INSERT INTO `jugadors` (`id`, `nombres`, `apes`, `ci`, `correo`, `fono`, `dir`, `foto`, `fecha_registro`, `created_at`, `updated_at`) VALUES
+(1, 'JUAN JOSE', 'PERES MAMANI', '123456', 'juan@gmail.com', '7777777', 'LOS PEDREGALES', '11790346743.jpg', '2026-09-25', '2026-09-25 14:32:23', '2026-09-25 14:32:23'),
+(2, 'FELIX', 'MARTINEZ', '23423424', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:33:08', '2026-09-25 14:33:08'),
+(3, 'CARLOS', 'GONZALES', '234244', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:33:23', '2026-09-25 14:33:23'),
+(4, 'ALEX', 'CONDORI', '1233132123', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:33:34', '2026-09-25 14:33:34'),
+(5, 'FRANZ', 'SALINAS', '123123', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:33:43', '2026-09-25 14:33:43'),
+(6, 'ENRIQUE', 'GONZALES', '12312331', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:33:56', '2026-09-25 14:33:56'),
+(7, 'JUAN', 'BAUTISTA', '123124124', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:34:04', '2026-09-25 14:34:04'),
+(8, 'EDGAR', 'CASTRO', '213123132', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:34:14', '2026-09-25 14:34:14'),
+(9, 'SANDRO', 'MARTINEZ', '123123123', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:34:23', '2026-09-25 14:34:23'),
+(10, 'FELIPE', 'CALLISAYA', '34124112', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:34:35', '2026-09-25 14:34:35'),
+(11, 'JOHN', 'PATZI', '12312312', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:34:45', '2026-09-25 14:34:45'),
+(12, 'CARLOS', 'MAMANI', '2131241242', NULL, NULL, '', NULL, '2026-09-25', '2026-09-25 14:34:56', '2026-09-25 14:34:56');
 
 -- --------------------------------------------------------
 
@@ -362,7 +422,8 @@ ALTER TABLE `carrera_jugadors`
   ADD PRIMARY KEY (`id`),
   ADD KEY `carrera_jugadors_campeonato_id_foreign` (`campeonato_id`),
   ADD KEY `carrera_jugadors_carrera_id_foreign` (`carrera_id`),
-  ADD KEY `carrera_jugadors_jugador_id_foreign` (`jugador_id`);
+  ADD KEY `carrera_jugadors_jugador_id_foreign` (`jugador_id`),
+  ADD KEY `carrera_jugadors_campeonato_inscripcion_id_foreign` (`campeonato_inscripcion_id`);
 
 --
 -- Indices de la tabla `configuracions`
@@ -447,7 +508,7 @@ ALTER TABLE `campeonatos`
 -- AUTO_INCREMENT de la tabla `campeonato_inscripcions`
 --
 ALTER TABLE `campeonato_inscripcions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `carreras`
@@ -471,13 +532,13 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `jugadors`
 --
 ALTER TABLE `jugadors`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -531,6 +592,7 @@ ALTER TABLE `campeonato_inscripcions`
 --
 ALTER TABLE `carrera_jugadors`
   ADD CONSTRAINT `carrera_jugadors_campeonato_id_foreign` FOREIGN KEY (`campeonato_id`) REFERENCES `campeonatos` (`id`),
+  ADD CONSTRAINT `carrera_jugadors_campeonato_inscripcion_id_foreign` FOREIGN KEY (`campeonato_inscripcion_id`) REFERENCES `campeonato_inscripcions` (`id`),
   ADD CONSTRAINT `carrera_jugadors_carrera_id_foreign` FOREIGN KEY (`carrera_id`) REFERENCES `carreras` (`id`),
   ADD CONSTRAINT `carrera_jugadors_jugador_id_foreign` FOREIGN KEY (`jugador_id`) REFERENCES `jugadors` (`id`);
 

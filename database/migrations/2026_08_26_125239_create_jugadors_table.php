@@ -16,10 +16,11 @@ return new class extends Migration
             $table->string("nombres");
             $table->string("apes");
             $table->string("ci");
-            $table->string("correo");
+            $table->string("correo")->nullable();
             $table->string("fono")->nullable();
             $table->string("dir")->nullable();
             $table->string("foto")->nullable();
+            $table->date("fecha_registro")->nullable();
             $table->timestamps();
         });
     }

@@ -5,6 +5,7 @@ use App\Http\Controllers\CampeonatoInscripcionController;
 use App\Http\Controllers\CarreraController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\InicioController;
+use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SincronizacionController;
@@ -99,6 +100,12 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
         ["index", "store", "edit", "show", "update", "destroy"]
     );
 
+    // CARRERAS
+    Route::get("jugadors/paginado", [JugadorController::class, 'paginado'])->name("jugadors.paginado");
+    Route::get("jugadors/listado", [JugadorController::class, 'listado'])->name("jugadors.listado");
+    Route::resource("jugadors", JugadorController::class)->only(
+        ["index", "store", "edit", "show", "update", "destroy"]
+    );
 
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");

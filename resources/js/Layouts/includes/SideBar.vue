@@ -24,7 +24,7 @@ const sincronizarMenus = () => {
 
     if (
         route_current.value == "campeonatos.index" ||
-        route_current.value == "usuarios.index"
+        route_current.value == "campeonato_inscripcions.index"
     ) {
         openMenus.campeonatos = true;
     }
@@ -205,10 +205,12 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('campeonatos.index')
+                                    permisos.includes(
+                                        'campeonato_inscripcions.index',
+                                    )
                                 "
                                 :label="'Inscripción de Carreras'"
-                                :ruta="'campeonatos.index'"
+                                :ruta="'campeonato_inscripcions.index'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                             <ItemMenu
@@ -225,10 +227,10 @@ onUnmounted(() => {});
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
-                            permisos.includes('campeonatos.index')
+                            permisos.includes('jugadors.index')
                         "
                         :label="'Jugadores'"
-                        :ruta="'campeonatos.index'"
+                        :ruta="'jugadors.index'"
                         :icon="'fa fa-user-friends'"
                     ></ItemMenu>
                     <ItemMenu

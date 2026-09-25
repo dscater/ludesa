@@ -10,8 +10,8 @@ class Campeonato extends Model
         "nombre",
         "periodo",
         "gestion",
-        "tipo",
+        "tipo", //FUTSAL, CAMPO
         "descripcion",
-        "estado",
+        "estado", //VIGENTE, FINALIZADO
     ];
 }

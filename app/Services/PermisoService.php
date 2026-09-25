@@ -46,11 +46,32 @@ class PermisoService
             "campeonatos.update",
             "campeonatos.destroy",
 
+            "campeonato_inscripcions.paginado",
+            "campeonato_inscripcions.index",
+            "campeonato_inscripcions.listado",
+            "campeonato_inscripcions.create",
+            "campeonato_inscripcions.store",
+            "campeonato_inscripcions.edit",
+            "campeonato_inscripcions.show",
+            "campeonato_inscripcions.update",
+            "campeonato_inscripcions.destroy",
+
+            "jugadors.paginado",
+            "jugadors.index",
+            "jugadors.listado",
+            "jugadors.create",
+            "jugadors.store",
+            "jugadors.edit",
+            "jugadors.show",
+            "jugadors.update",
+            "jugadors.destroy",
+
             "reportes.usuarios",
             "reportes.r_usuarios",
 
         ],
         "AUXILIAR" => [],
+        "MESA" => [],
     ];
 
 

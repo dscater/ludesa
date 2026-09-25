@@ -10,4 +10,9 @@ class Carrera extends Model
         "nombre",
         "descripcion",
     ];
+
+    public function campeonato_inscripcions()
+    {
+        return $this->hasMany(CampeonatoInscripcion::class, "carrera_id");
+    }
 }

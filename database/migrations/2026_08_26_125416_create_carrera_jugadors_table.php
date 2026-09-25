@@ -15,13 +15,16 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("campeonato_id");
             $table->unsignedBigInteger("carrera_id");
+            $table->unsignedBigInteger("campeonato_inscripcion_id");
             $table->unsignedBigInteger("jugador_id");
             $table->string("posicion");
             $table->string("nro");
+            $table->date("fecha_registro");
             $table->timestamps();
 
             $table->foreign("campeonato_id")->on("campeonatos")->references("id");
             $table->foreign("carrera_id")->on("carreras")->references("id");
+            $table->foreign("campeonato_inscripcion_id")->on("campeonato_inscripcions")->references("id");
             $table->foreign("jugador_id")->on("jugadors")->references("id");
         });
     }
