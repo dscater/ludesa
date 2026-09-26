@@ -78,6 +78,18 @@ class PermisoService
             "carrera_jugadors.update",
             "carrera_jugadors.destroy",
 
+            "partidos.paginado",
+            "partidos.index",
+            "partidos.listado",
+            "partidos.create",
+            "partidos.store",
+            "partidos.edit",
+            "partidos.show",
+            "partidos.update",
+            "partidos.destroy",
+            "partidos.iniciarPartido",
+            "partidos.ver",
+
             "reportes.usuarios",
             "reportes.r_usuarios",
 

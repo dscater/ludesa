@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 26-09-2026 a las 14:24:18
+-- Tiempo de generación: 26-09-2026 a las 20:14:45
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -35,6 +35,8 @@ CREATE TABLE `campeonatos` (
   `tipo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` text COLLATE utf8mb4_unicode_ci,
   `estado` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'VIGENTE',
+  `fecha_registro` date DEFAULT NULL,
+  `fecha_fin` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -43,9 +45,9 @@ CREATE TABLE `campeonatos` (
 -- Volcado de datos para la tabla `campeonatos`
 --
 
-INSERT INTO `campeonatos` (`id`, `nombre`, `periodo`, `gestion`, `tipo`, `descripcion`, `estado`, `created_at`, `updated_at`) VALUES
-(1, 'CAMPEONATO 1', 1, 2026, 'FUTSAL', 'DESC FUTSAL CAMPEONATO 1', 'VIGENTE', '2026-09-24 15:53:39', '2026-09-24 15:53:39'),
-(2, 'CAMPEONATO 1', 1, 2026, 'CAMPO', 'CAMPEONATO DE CAMPO', 'VIGENTE', '2026-09-24 15:53:54', '2026-09-24 15:53:54');
+INSERT INTO `campeonatos` (`id`, `nombre`, `periodo`, `gestion`, `tipo`, `descripcion`, `estado`, `fecha_registro`, `fecha_fin`, `created_at`, `updated_at`) VALUES
+(1, 'CAMPEONATO 1', 1, 2026, 'FUTSAL', 'DESC FUTSAL CAMPEONATO 1', 'VIGENTE', NULL, NULL, '2026-09-24 15:53:39', '2026-09-24 15:53:39'),
+(2, 'CAMPEONATO 1', 1, 2026, 'CAMPO', 'CAMPEONATO DE CAMPO', 'VIGENTE', NULL, NULL, '2026-09-24 15:53:54', '2026-09-24 15:53:54');
 
 -- --------------------------------------------------------
 
@@ -242,7 +244,14 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (51, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA CARRERA EN UN CAMPEONATO', '{\"dg\": 0, \"gc\": 0, \"gf\": 0, \"id\": 1, \"pe\": 0, \"pg\": 0, \"pj\": 0, \"pp\": 0, \"pts\": 0, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"estado\": \"PARTICIPANTE\", \"carrera_id\": 5, \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-26T14:22:02.000000Z\", \"campeonato_id\": 1}', '{\"dg\": 0, \"gc\": 0, \"gf\": 0, \"id\": 1, \"pe\": 0, \"pg\": 0, \"pj\": 0, \"pp\": 0, \"pts\": 0, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"estado\": \"PARTICIPANTE\", \"carrera_id\": \"1\", \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-26T14:22:46.000000Z\", \"campeonato_id\": \"1\"}', 'CAMPEONATO INSCRIPCION', '2026-09-26', '10:22:46', '2026-09-26 14:22:46', '2026-09-26 14:22:46'),
 (52, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA CARRERA EN UN CAMPEONATO', '{\"dg\": 0, \"gc\": 0, \"gf\": 0, \"id\": 1, \"pe\": 0, \"pg\": 0, \"pj\": 0, \"pp\": 0, \"pts\": 0, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"estado\": \"PARTICIPANTE\", \"carrera_id\": 1, \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-26T14:22:46.000000Z\", \"campeonato_id\": 1}', '{\"dg\": 0, \"gc\": 0, \"gf\": 0, \"id\": 1, \"pe\": 0, \"pg\": 0, \"pj\": 0, \"pp\": 0, \"pts\": 0, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"estado\": \"PARTICIPANTE\", \"carrera_id\": \"6\", \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-26T14:22:57.000000Z\", \"campeonato_id\": \"1\"}', 'CAMPEONATO INSCRIPCION', '2026-09-26', '10:22:57', '2026-09-26 14:22:57', '2026-09-26 14:22:57'),
 (53, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 5, \"hora\": \"10:21:21\", \"fecha\": \"2026-09-26\", \"carrera_id\": \"1\", \"created_at\": \"2026-09-26T14:23:42.000000Z\", \"updated_at\": \"2026-09-26T14:23:42.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-26', '10:23:42', '2026-09-26 14:23:42', '2026-09-26 14:23:42'),
-(54, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR EN UNA CARRERA', '{\"id\": 8, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T14:24:01.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T14:24:01.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 5}', NULL, 'CARRERA JUGADOR', '2026-09-26', '10:24:01', '2026-09-26 14:24:01', '2026-09-26 14:24:01');
+(54, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR EN UNA CARRERA', '{\"id\": 8, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T14:24:01.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T14:24:01.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 5}', NULL, 'CARRERA JUGADOR', '2026-09-26', '10:24:01', '2026-09-26 14:24:01', '2026-09-26 14:24:01'),
+(55, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PARTIDO', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"pago_local\": 0, \"updated_at\": \"2026-09-26T18:49:41.000000Z\", \"ci_local_id\": \"5\", \"total_local\": 0, \"visitante_id\": 1, \"campeonato_id\": \"1\", \"pago_visitante\": 0, \"ci_visitante_id\": \"2\", \"total_visitante\": 0}', NULL, 'CARRERA JUGADOR', '2026-09-26', '14:49:41', '2026-09-26 18:49:41', '2026-09-26 18:49:41'),
+(56, 1, 'MODIFICACIÓN', 'EL USUARIO admin INICIO UN PARTIDO', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"PENDIENTE\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T19:12:55.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:30:43.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:30:43.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:30:43.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:30:43.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 5}, {\"id\": 3, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:30:43.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:30:43.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 6, \"campeonato_inscripcion_id\": 5}]}', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"INICIADO\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T19:30:43.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:30:43.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:30:43.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:30:43.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:30:43.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 5}, {\"id\": 3, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:30:43.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:30:43.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 6, \"campeonato_inscripcion_id\": 5}]}', 'CARRERA JUGADOR', '2026-09-26', '15:30:43', '2026-09-26 19:30:43', '2026-09-26 19:30:43'),
+(57, 1, 'MODIFICACIÓN', 'EL USUARIO admin INICIO UN PARTIDO', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"PENDIENTE\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T19:30:43.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}, {\"id\": 3, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 6, \"campeonato_inscripcion_id\": 2}]}', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"INICIADO\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}, {\"id\": 3, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 6, \"campeonato_inscripcion_id\": 2}]}', 'CARRERA JUGADOR', '2026-09-26', '15:34:11', '2026-09-26 19:34:11', '2026-09-26 19:34:11'),
+(58, 1, 'MODIFICACIÓN', 'EL USUARIO admin INICIO UN PARTIDO', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"PENDIENTE\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}, {\"id\": 3, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 6, \"campeonato_inscripcion_id\": 2}, {\"id\": 4, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:46.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:46.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}, {\"id\": 5, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:46.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:46.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 6, \"campeonato_inscripcion_id\": 2}]}', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"INICIADO\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T19:34:46.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}, {\"id\": 3, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:11.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:11.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 6, \"campeonato_inscripcion_id\": 2}, {\"id\": 4, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:46.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:46.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}, {\"id\": 5, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:34:46.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:34:46.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 6, \"campeonato_inscripcion_id\": 2}]}', 'CARRERA JUGADOR', '2026-09-26', '15:34:46', '2026-09-26 19:34:46', '2026-09-26 19:34:46'),
+(59, 1, 'MODIFICACIÓN', 'EL USUARIO admin INICIO UN PARTIDO', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"PENDIENTE\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T19:34:46.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:36:07.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:36:07.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:36:07.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:36:07.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}]}', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"INICIADO\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T19:36:07.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T19:36:07.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:36:07.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T19:36:07.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T19:36:07.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}]}', 'CARRERA JUGADOR', '2026-09-26', '15:36:07', '2026-09-26 19:36:07', '2026-09-26 19:36:07'),
+(60, 1, 'MODIFICACIÓN', 'EL USUARIO admin INICIO UN PARTIDO', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"PENDIENTE\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T19:36:07.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T20:11:43.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T20:11:43.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T20:11:43.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T20:11:43.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}]}', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"INICIADO\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T20:11:43.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T20:11:43.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T20:11:43.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T20:11:43.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T20:11:43.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}]}', 'CARRERA JUGADOR', '2026-09-26', '16:11:43', '2026-09-26 20:11:43', '2026-09-26 20:11:43'),
+(61, 1, 'MODIFICACIÓN', 'EL USUARIO admin INICIO UN PARTIDO', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"PENDIENTE\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T20:11:43.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T20:12:57.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T20:12:57.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T20:12:57.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T20:12:57.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}, {\"id\": 3, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T20:12:57.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T20:12:57.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 6, \"campeonato_inscripcion_id\": 2}]}', '{\"id\": 1, \"hora\": \"09:00:00\", \"fecha\": \"2026-09-27\", \"estado\": \"INICIADO\", \"local_id\": 1, \"created_at\": \"2026-09-26T18:49:41.000000Z\", \"ganador_id\": null, \"pago_local\": 0, \"updated_at\": \"2026-09-26T20:12:57.000000Z\", \"ci_local_id\": 5, \"goles_local\": 0, \"total_local\": \"0.00\", \"visitante_id\": 1, \"campeonato_id\": 1, \"pago_visitante\": 0, \"ci_visitante_id\": 2, \"goles_visitante\": 0, \"total_visitante\": \"0.00\", \"partido_detalles\": [{\"id\": 1, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 1, \"created_at\": \"2026-09-26T20:12:57.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T20:12:57.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 8, \"campeonato_inscripcion_id\": 5}, {\"id\": 2, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T20:12:57.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T20:12:57.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 5, \"campeonato_inscripcion_id\": 2}, {\"id\": 3, \"goles\": 0, \"rojas\": 0, \"titular\": 0, \"amarillas\": 0, \"carrera_id\": 2, \"created_at\": \"2026-09-26T20:12:57.000000Z\", \"partido_id\": 1, \"updated_at\": \"2026-09-26T20:12:57.000000Z\", \"total_rojas\": \"0\", \"pagado_rojas\": 0, \"campeonato_id\": 1, \"total_amarillas\": \"0.00\", \"pagado_amarillas\": 0, \"carrera_jugador_id\": 6, \"campeonato_inscripcion_id\": 2}]}', 'CARRERA JUGADOR', '2026-09-26', '16:12:57', '2026-09-26 20:12:57', '2026-09-26 20:12:57');
 
 -- --------------------------------------------------------
 
@@ -334,10 +343,17 @@ CREATE TABLE `partidos` (
   `pago_visitante` tinyint(1) NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
-  `estado` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `estado` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PENDIENTE',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `partidos`
+--
+
+INSERT INTO `partidos` (`id`, `campeonato_id`, `ci_local_id`, `local_id`, `ci_visitante_id`, `visitante_id`, `goles_local`, `goles_visitante`, `ganador_id`, `total_local`, `pago_local`, `total_visitante`, `pago_visitante`, `fecha`, `hora`, `estado`, `created_at`, `updated_at`) VALUES
+(1, 1, 5, 1, 2, 1, 0, 0, NULL, 0.00, 0, 0.00, 0, '2026-09-27', '09:00:00', 'INICIADO', '2026-09-26 18:49:41', '2026-09-26 20:12:57');
 
 -- --------------------------------------------------------
 
@@ -348,47 +364,30 @@ CREATE TABLE `partidos` (
 CREATE TABLE `partido_detalles` (
   `id` bigint UNSIGNED NOT NULL,
   `campeonato_id` bigint UNSIGNED NOT NULL,
+  `partido_id` bigint UNSIGNED NOT NULL,
   `campeonato_inscripcion_id` bigint UNSIGNED NOT NULL,
-  `partido_id` bigint UNSIGNED NOT NULL,
   `carrera_id` bigint UNSIGNED NOT NULL,
-  `tarjeta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `carrera_jugador_id` bigint UNSIGNED NOT NULL,
-  `total` decimal(24,2) NOT NULL,
-  `pagado` tinyint(1) NOT NULL,
+  `titular` tinyint(1) NOT NULL DEFAULT '0',
+  `amarillas` int NOT NULL DEFAULT '0',
+  `total_amarillas` decimal(24,2) NOT NULL DEFAULT '0.00',
+  `pagado_amarillas` tinyint(1) NOT NULL DEFAULT '0',
+  `goles` int NOT NULL DEFAULT '0',
+  `rojas` int NOT NULL DEFAULT '0',
+  `total_rojas` decimal(10,0) NOT NULL DEFAULT '0',
+  `pagado_rojas` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
 --
--- Estructura de tabla para la tabla `partido_gols`
+-- Volcado de datos para la tabla `partido_detalles`
 --
 
-CREATE TABLE `partido_gols` (
-  `id` bigint UNSIGNED NOT NULL,
-  `campeonato_id` bigint UNSIGNED NOT NULL,
-  `partido_id` bigint UNSIGNED NOT NULL,
-  `carrera_jugador_id` bigint UNSIGNED NOT NULL,
-  `goles` int NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `partido_jugadors`
---
-
-CREATE TABLE `partido_jugadors` (
-  `id` bigint UNSIGNED NOT NULL,
-  `campeonato_id` bigint UNSIGNED NOT NULL,
-  `partido_id` bigint UNSIGNED NOT NULL,
-  `carrera_jugador_id` bigint UNSIGNED NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO `partido_detalles` (`id`, `campeonato_id`, `partido_id`, `campeonato_inscripcion_id`, `carrera_id`, `carrera_jugador_id`, `titular`, `amarillas`, `total_amarillas`, `pagado_amarillas`, `goles`, `rojas`, `total_rojas`, `pagado_rojas`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 5, 1, 8, 0, 0, 0.00, 0, 0, 0, 0, 0, '2026-09-26 20:12:57', '2026-09-26 20:12:57'),
+(2, 1, 1, 2, 2, 5, 0, 0, 0.00, 0, 0, 0, 0, 0, '2026-09-26 20:12:57', '2026-09-26 20:12:57'),
+(3, 1, 1, 2, 2, 6, 0, 0, 0.00, 0, 0, 0, 0, 0, '2026-09-26 20:12:57', '2026-09-26 20:12:57');
 
 -- --------------------------------------------------------
 
@@ -507,24 +506,6 @@ ALTER TABLE `partido_detalles`
   ADD KEY `partido_detalles_campeonato_inscripcion_id_foreign` (`campeonato_inscripcion_id`);
 
 --
--- Indices de la tabla `partido_gols`
---
-ALTER TABLE `partido_gols`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `partido_gols_campeonato_id_foreign` (`campeonato_id`),
-  ADD KEY `partido_gols_partido_id_foreign` (`partido_id`),
-  ADD KEY `partido_gols_carrera_jugador_id_foreign` (`carrera_jugador_id`);
-
---
--- Indices de la tabla `partido_jugadors`
---
-ALTER TABLE `partido_jugadors`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `partido_jugadors_campeonato_id_foreign` (`campeonato_id`),
-  ADD KEY `partido_jugadors_partido_id_foreign` (`partido_id`),
-  ADD KEY `partido_jugadors_carrera_jugador_id_foreign` (`carrera_jugador_id`);
-
---
 -- Indices de la tabla `users`
 --
 ALTER TABLE `users`
@@ -568,7 +549,7 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT de la tabla `jugadors`
@@ -586,25 +567,13 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT de la tabla `partidos`
 --
 ALTER TABLE `partidos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `partido_detalles`
 --
 ALTER TABLE `partido_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `partido_gols`
---
-ALTER TABLE `partido_gols`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `partido_jugadors`
---
-ALTER TABLE `partido_jugadors`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
@@ -658,22 +627,6 @@ ALTER TABLE `partido_detalles`
   ADD CONSTRAINT `partido_detalles_carrera_id_foreign` FOREIGN KEY (`carrera_id`) REFERENCES `carreras` (`id`),
   ADD CONSTRAINT `partido_detalles_carrera_jugador_id_foreign` FOREIGN KEY (`carrera_jugador_id`) REFERENCES `carrera_jugadors` (`id`),
   ADD CONSTRAINT `partido_detalles_partido_id_foreign` FOREIGN KEY (`partido_id`) REFERENCES `partidos` (`id`);
-
---
--- Filtros para la tabla `partido_gols`
---
-ALTER TABLE `partido_gols`
-  ADD CONSTRAINT `partido_gols_campeonato_id_foreign` FOREIGN KEY (`campeonato_id`) REFERENCES `campeonatos` (`id`),
-  ADD CONSTRAINT `partido_gols_carrera_jugador_id_foreign` FOREIGN KEY (`carrera_jugador_id`) REFERENCES `carrera_jugadors` (`id`),
-  ADD CONSTRAINT `partido_gols_partido_id_foreign` FOREIGN KEY (`partido_id`) REFERENCES `partidos` (`id`);
-
---
--- Filtros para la tabla `partido_jugadors`
---
-ALTER TABLE `partido_jugadors`
-  ADD CONSTRAINT `partido_jugadors_campeonato_id_foreign` FOREIGN KEY (`campeonato_id`) REFERENCES `campeonatos` (`id`),
-  ADD CONSTRAINT `partido_jugadors_carrera_jugador_id_foreign` FOREIGN KEY (`carrera_jugador_id`) REFERENCES `carrera_jugadors` (`id`),
-  ADD CONSTRAINT `partido_jugadors_partido_id_foreign` FOREIGN KEY (`partido_id`) REFERENCES `partidos` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

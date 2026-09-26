@@ -17,10 +17,15 @@ return new class extends Migration
             $table->unsignedBigInteger("partido_id");
             $table->unsignedBigInteger("campeonato_inscripcion_id");
             $table->unsignedBigInteger("carrera_id");
-            $table->string("tarjeta"); //ROJA, AMARILLA 
             $table->unsignedBigInteger("carrera_jugador_id");
-            $table->decimal("total", 24, 2);
-            $table->boolean("pagado");
+            $table->boolean("titular")->default(0);
+            $table->int("amarillas")->default(0); // AMARILLAS 
+            $table->decimal("total_amarillas", 24, 2)->default(0);
+            $table->boolean("pagado_amarillas")->default(0);
+            $table->int("rojas")->default(0); // ROJAS 
+            $table->decimal("total_rojas", 24, 2)->default(0);
+            $table->boolean("pagado_rojas")->default(0);
+            $table->int("goles");
             $table->timestamps();
 
 

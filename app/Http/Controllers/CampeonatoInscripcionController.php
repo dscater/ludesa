@@ -38,10 +38,10 @@ class CampeonatoInscripcionController extends Controller
      *
      * @return JsonResponse
      */
-    public function listado(): JsonResponse
+    public function listado(Request $request): JsonResponse
     {
         return response()->JSON([
-            "campeonato_inscripcions" => $this->campeonato_inscripcionService->listado()
+            "campeonato_inscripcions" => $this->campeonato_inscripcionService->listado($request->input("campeonato_id", ""))
         ]);
     }
 

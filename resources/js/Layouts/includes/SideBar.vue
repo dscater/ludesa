@@ -148,10 +148,10 @@ onUnmounted(() => {});
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
-                            permisos.includes('campeonatos.index')
+                            permisos.includes('partidos.index')
                         "
                         :label="'Partidos'"
-                        :ruta="'campeonatos.index'"
+                        :ruta="'partidos.index'"
                         :icon="'fa fa-table'"
                     ></ItemMenu>
                     <li
@@ -209,7 +209,7 @@ onUnmounted(() => {});
                                         'campeonato_inscripcions.index',
                                     )
                                 "
-                                :label="'Inscripción de Carreras'"
+                                :label="'Inscripciones'"
                                 :ruta="'campeonato_inscripcions.index'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>

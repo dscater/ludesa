@@ -22,7 +22,8 @@ class CampeonatoService
 
     public function listado(): Collection
     {
-        $campeonatos = Campeonato::select("campeonatos.*")->get();
+        $campeonatos = Campeonato::select("campeonatos.*")
+            ->orderBy("created_at", "desc")->get();
         return $campeonatos;
     }
     /**
@@ -88,6 +89,7 @@ class CampeonatoService
             "gestion" => $datos["gestion"],
             "tipo" => mb_strtoupper($datos["tipo"]),
             "descripcion" => mb_strtoupper($datos["descripcion"]) ?? NULL,
+            "fecha_registro" => date("Y-m-d"),
         ]);
 
         // registrar accion

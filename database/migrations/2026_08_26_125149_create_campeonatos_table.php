@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string("tipo"); //FUTSAL, CAMPO
             $table->text("descripcion")->nullable();
             $table->string("estado")->default("VIGENTE"); //VIGENTE, FINALIZADO
+            $table->date("fecha_registro")->nullable();
+            $table->date("fecha_fin")->nullable();
             $table->timestamps();
         });
     }

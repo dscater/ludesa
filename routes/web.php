@@ -7,6 +7,7 @@ use App\Http\Controllers\CarreraJugadorController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\JugadorController;
+use App\Http\Controllers\PartidoController;
 use App\Http\Controllers\PosicionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
@@ -116,6 +117,15 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("carrera_jugadors/listado", [CarreraJugadorController::class, 'listado'])->name("carrera_jugadors.listado");
     Route::resource("carrera_jugadors", CarreraJugadorController::class)->only(
         ["index", "edit", "store", "show", "update", "destroy"]
+    );
+
+    // PARTIDOS
+    Route::get("partidos/paginado", [PartidoController::class, 'paginado'])->name("partidos.paginado");
+    Route::get("partidos/listado", [PartidoController::class, 'listado'])->name("partidos.listado");
+    Route::put("partidos/iniciarPartido/{partido}", [PartidoController::class, 'iniciarPartido'])->name("partidos.iniciarPartido");
+    Route::get("partidos/ver/{partido}", [PartidoController::class, 'ver'])->name("partidos.ver");
+    Route::resource("partidos", PartidoController::class)->only(
+        ["index", "store", "edit", "show", "update", "destroy"]
     );
 
     // REPORTES

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->boolean("pago_visitante");
             $table->date("fecha");
             $table->time("hora");
-            $table->string("estado"); //PENDIENTE, FINALIZADO
+            $table->string("estado")->default("PENDIENTE"); //PENDIENTE, INICIADO, FINALIZADO
             $table->timestamps();
 
             $table->foreign("campeonato_id")->on("campeonatos")->references("id");

@@ -21,15 +21,30 @@ class CampeonatoInscripcionService
 
     public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
 
-    public function listado(): Collection
+    public function listado($campeonato_id = null, $jugadores = true): Collection
     {
-        $campeonato_inscripcions = CampeonatoInscripcion::select("campeonato_inscripcions.*")
-            ->with([
+
+        $relaciones = [
+            "campeonato:id,periodo,gestion,nombre,tipo",
+            "carrera:id,nombre",
+            "carrera_jugadors"
+        ];
+
+        if (!$jugadores)
+            $relaciones = [
                 "campeonato:id,periodo,gestion,nombre,tipo",
                 "carrera:id,nombre",
-                "carrera_jugadors.*"
-            ])
-            ->get();
+            ];
+
+
+        $campeonato_inscripcions = CampeonatoInscripcion::select("campeonato_inscripcions.*")
+            ->with($relaciones);
+
+        if ($campeonato_id) {
+            $campeonato_inscripcions->where("campeonato_id", $campeonato_id);
+        }
+
+        $campeonato_inscripcions = $campeonato_inscripcions->get();
         return $campeonato_inscripcions;
     }
     /**
