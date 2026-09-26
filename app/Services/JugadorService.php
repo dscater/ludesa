@@ -23,12 +23,38 @@ class JugadorService
     private $modulo = "JUGADORES";
 
     public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
-
-    public function listado($activo = null): Collection
-    {
+    public function listado(
+        $campeonato_id = null,
+        $sin_inscripcion = false,
+        $jugador_id = null,
+    ): Collection {
         $jugadors = Jugador::select("jugadors.*");
-        $jugadors = $jugadors->get();
-        return $jugadors;
+
+        if ($campeonato_id) {
+            if ($sin_inscripcion) {
+                $jugadors->where(function ($query) use ($campeonato_id, $jugador_id) {
+                    // Jugadores que NO están inscritos
+                    $query->whereDoesntHave("carrera_jugadors", function ($q) use ($campeonato_id) {
+                        $q->where("campeonato_id", $campeonato_id);
+                    });
+
+                    // Si estamos editando, incluir al jugador actual
+                    if ($jugador_id) {
+                        $query->orWhere("jugadors.id", $jugador_id);
+                    }
+                });
+            } else {
+                // Jugadores que SÍ están inscritos
+                $jugadors->whereHas("carrera_jugadors", function ($query) use ($campeonato_id) {
+                    $query->where("campeonato_id", $campeonato_id);
+                });
+            }
+        }
+
+
+        $sql = (clone $jugadors)->toSql();
+        Log::debug($sql);
+        return $jugadors->get();
     }
     /**
      * Lista de jugadors paginado con filtros

@@ -43,7 +43,8 @@ class CarreraController extends Controller
         return response()->JSON([
             "carreras" => $this->carreraService->listado(
                 $request->input("campeonato_id", null),
-                $request->input("sin_inscripcion", false)
+                $request->input("sin_inscripcion", false),
+                $request->input("carrera_id", null),
             )
         ]);
     }

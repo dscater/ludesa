@@ -41,7 +41,11 @@ class JugadorController extends Controller
     public function listado(Request $request): JsonResponse
     {
         return response()->JSON([
-            "jugadors" => $this->jugadorService->listado($request->input("activo", null))
+            "jugadors" => $this->jugadorService->listado(
+                $request->input("campeonato_id", null),
+                $request->input("sin_inscripcion", false),
+                $request->input("jugador_id", null),
+            )
         ]);
     }
 

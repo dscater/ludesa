@@ -23,7 +23,13 @@ class CampeonatoInscripcionService
 
     public function listado(): Collection
     {
-        $campeonato_inscripcions = CampeonatoInscripcion::select("campeonato_inscripcions.*")->get();
+        $campeonato_inscripcions = CampeonatoInscripcion::select("campeonato_inscripcions.*")
+            ->with([
+                "campeonato:id,periodo,gestion,nombre,tipo",
+                "carrera:id,nombre",
+                "carrera_jugadors.*"
+            ])
+            ->get();
         return $campeonato_inscripcions;
     }
     /**
@@ -46,7 +52,8 @@ class CampeonatoInscripcionService
         $campeonato_inscripcions = CampeonatoInscripcion::select("campeonato_inscripcions.*")
             ->with([
                 "campeonato:id,periodo,gestion,nombre,tipo",
-                "carrera:id,nombre"
+                "carrera:id,nombre",
+                "carrera_jugadors"
             ]);
 
         // Búsqueda en múltiples columnas con LIKE
@@ -119,6 +126,16 @@ class CampeonatoInscripcionService
 
         if ($existe) {
             throw new Exception("Esta carrera ya fue registrada en el Campeonato");
+        }
+
+        if ($old_campeonato_inscripcion->carrera_id != $datos["carrera_id"]) {
+            // ACTUALIZAR CARRERA JUGADORS SI SE CAMBIO LA CARRERA
+            $carrera_jugadors = CarreraJugador::where("campeonato_inscripcion_id", $campeonato_inscripcion->id)
+                ->get();
+            foreach ($carrera_jugadors as $item) {
+                $item->carrera_id = $datos["carrera_id"];
+                $item->save();
+            }
         }
 
         $campeonato_inscripcion->update([

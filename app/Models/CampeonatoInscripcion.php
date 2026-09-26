@@ -43,4 +43,9 @@ class CampeonatoInscripcion extends Model
     {
         return $this->belongsTo(Carrera::class, 'carrera_id');
     }
+
+    public function carrera_jugadors()
+    {
+        return $this->hasMany(CarreraJugador::class, 'campeonato_inscripcion_id');
+    }
 }

@@ -36,6 +36,8 @@ class PermisoService
 
             "tipo_campeonatos.listado",
 
+            "posicions.listado",
+
             "campeonatos.paginado",
             "campeonatos.index",
             "campeonatos.listado",
@@ -65,6 +67,16 @@ class PermisoService
             "jugadors.show",
             "jugadors.update",
             "jugadors.destroy",
+
+            "carrera_jugadors.paginado",
+            "carrera_jugadors.index",
+            "carrera_jugadors.listado",
+            "carrera_jugadors.create",
+            "carrera_jugadors.store",
+            "carrera_jugadors.edit",
+            "carrera_jugadors.show",
+            "carrera_jugadors.update",
+            "carrera_jugadors.destroy",
 
             "reportes.usuarios",
             "reportes.r_usuarios",

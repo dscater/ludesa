@@ -3,9 +3,11 @@
 use App\Http\Controllers\CampeonatoController;
 use App\Http\Controllers\CampeonatoInscripcionController;
 use App\Http\Controllers\CarreraController;
+use App\Http\Controllers\CarreraJugadorController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\JugadorController;
+use App\Http\Controllers\PosicionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SincronizacionController;
@@ -75,9 +77,11 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
         ["index", "store"]
     );
 
-
-    // TIPO USUARIOS
+    // TIPO CAMPEONATOS
     Route::get("tipo_campeonatos/listado", [TipoCampeonatoController::class, 'listado'])->name("tipo_campeonatos.listado");
+
+    // POSICIONS
+    Route::get("posicions/listado", [PosicionController::class, 'listado'])->name("posicions.listado");
 
     // CAMPEONATOS
     Route::get("campeonatos/paginado", [CampeonatoController::class, 'paginado'])->name("campeonatos.paginado");
@@ -105,6 +109,13 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("jugadors/listado", [JugadorController::class, 'listado'])->name("jugadors.listado");
     Route::resource("jugadors", JugadorController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
+    );
+
+    // CARRERA JUGADORS
+    Route::get("carrera_jugadors/paginado", [CarreraJugadorController::class, 'paginado'])->name("carrera_jugadors.paginado");
+    Route::get("carrera_jugadors/listado", [CarreraJugadorController::class, 'listado'])->name("carrera_jugadors.listado");
+    Route::resource("carrera_jugadors", CarreraJugadorController::class)->only(
+        ["index", "edit", "store", "show", "update", "destroy"]
     );
 
     // REPORTES

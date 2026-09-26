@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 25-09-2026 a las 15:47:33
+-- Tiempo de generación: 26-09-2026 a las 14:24:18
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -77,10 +77,10 @@ CREATE TABLE `campeonato_inscripcions` (
 --
 
 INSERT INTO `campeonato_inscripcions` (`id`, `campeonato_id`, `carrera_id`, `pj`, `pts`, `gf`, `gc`, `dg`, `pg`, `pe`, `pp`, `estado`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'PARTICIPANTE', '2026-09-25', '11:19:19', '2026-09-25 15:19:27', '2026-09-25 15:19:27'),
 (2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'PARTICIPANTE', '2026-09-25', '11:36:28', '2026-09-25 15:38:29', '2026-09-25 15:38:29'),
 (3, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 'PARTICIPANTE', '2026-09-25', '11:38:47', '2026-09-25 15:39:22', '2026-09-25 15:39:22'),
-(4, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 'PARTICIPANTE', '2026-09-25', '11:38:47', '2026-09-25 15:39:30', '2026-09-25 15:39:30');
+(4, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 'PARTICIPANTE', '2026-09-25', '11:38:47', '2026-09-25 15:39:30', '2026-09-25 15:39:30'),
+(5, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'PARTICIPANTE', '2026-09-26', '10:21:21', '2026-09-26 14:23:42', '2026-09-26 14:23:42');
 
 -- --------------------------------------------------------
 
@@ -126,6 +126,15 @@ CREATE TABLE `carrera_jugadors` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `carrera_jugadors`
+--
+
+INSERT INTO `carrera_jugadors` (`id`, `campeonato_id`, `carrera_id`, `campeonato_inscripcion_id`, `jugador_id`, `posicion`, `nro`, `fecha_registro`, `created_at`, `updated_at`) VALUES
+(5, 1, 2, 2, 3, 'PORTERO', '1', '2026-09-26', '2026-09-26 13:34:22', '2026-09-26 13:34:22'),
+(6, 1, 2, 2, 4, 'DEFENSA', '5', '2026-09-26', '2026-09-26 13:34:50', '2026-09-26 14:12:16'),
+(8, 1, 1, 5, 1, 'PORTERO', '1', '2026-09-26', '2026-09-26 14:24:01', '2026-09-26 14:24:01');
 
 -- --------------------------------------------------------
 
@@ -212,7 +221,28 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (30, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 1, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"carrera_id\": \"1\", \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-25T15:19:27.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-25', '11:19:28', '2026-09-25 15:19:28', '2026-09-25 15:19:28'),
 (31, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 2, \"hora\": \"11:36:28\", \"fecha\": \"2026-09-25\", \"carrera_id\": \"2\", \"created_at\": \"2026-09-25T15:38:29.000000Z\", \"updated_at\": \"2026-09-25T15:38:29.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-25', '11:38:29', '2026-09-25 15:38:29', '2026-09-25 15:38:29'),
 (32, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 3, \"hora\": \"11:38:47\", \"fecha\": \"2026-09-25\", \"carrera_id\": \"3\", \"created_at\": \"2026-09-25T15:39:22.000000Z\", \"updated_at\": \"2026-09-25T15:39:22.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-25', '11:39:22', '2026-09-25 15:39:22', '2026-09-25 15:39:22'),
-(33, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 4, \"hora\": \"11:38:47\", \"fecha\": \"2026-09-25\", \"carrera_id\": \"4\", \"created_at\": \"2026-09-25T15:39:30.000000Z\", \"updated_at\": \"2026-09-25T15:39:30.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-25', '11:39:30', '2026-09-25 15:39:30', '2026-09-25 15:39:30');
+(33, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 4, \"hora\": \"11:38:47\", \"fecha\": \"2026-09-25\", \"carrera_id\": \"4\", \"created_at\": \"2026-09-25T15:39:30.000000Z\", \"updated_at\": \"2026-09-25T15:39:30.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-25', '11:39:30', '2026-09-25 15:39:30', '2026-09-25 15:39:30'),
+(34, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR EN UNA CARRERA', '{\"id\": 1, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:45:55.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T12:45:55.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', NULL, 'CARRERA JUGADOR', '2026-09-26', '08:45:55', '2026-09-26 12:45:55', '2026-09-26 12:45:55'),
+(35, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR EN UNA CARRERA', '{\"id\": 2, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:47:32.000000Z\", \"jugador_id\": 2, \"updated_at\": \"2026-09-26T12:47:32.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', NULL, 'CARRERA JUGADOR', '2026-09-26', '08:47:32', '2026-09-26 12:47:32', '2026-09-26 12:47:32'),
+(36, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN JUGADOR EN UNA CARRERA', '{\"id\": 2, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:47:32.000000Z\", \"jugador_id\": 2, \"updated_at\": \"2026-09-26T12:47:32.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', '{\"id\": 2, \"nro\": \"2\", \"posicion\": \"DEFENSA\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:47:32.000000Z\", \"jugador_id\": 2, \"updated_at\": \"2026-09-26T13:16:03.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', 'CARRERA JUGADOR', '2026-09-26', '09:16:03', '2026-09-26 13:16:03', '2026-09-26 13:16:03'),
+(37, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN JUGADOR EN UNA CARRERA', '{\"id\": 2, \"nro\": \"2\", \"posicion\": \"DEFENSA\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:47:32.000000Z\", \"jugador_id\": 2, \"updated_at\": \"2026-09-26T13:16:03.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', '{\"id\": 2, \"nro\": \"2\", \"posicion\": \"MEDIOCAMPO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:47:32.000000Z\", \"jugador_id\": 2, \"updated_at\": \"2026-09-26T13:18:35.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', 'CARRERA JUGADOR', '2026-09-26', '09:18:35', '2026-09-26 13:18:35', '2026-09-26 13:18:35'),
+(38, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN JUGADOR EN UNA CARRERA', '{\"id\": 2, \"nro\": \"2\", \"posicion\": \"MEDIOCAMPO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:47:32.000000Z\", \"jugador_id\": 2, \"updated_at\": \"2026-09-26T13:18:35.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', '{\"id\": 2, \"nro\": \"2\", \"posicion\": \"DELANTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:47:32.000000Z\", \"jugador_id\": 2, \"updated_at\": \"2026-09-26T13:19:01.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', 'CARRERA JUGADOR', '2026-09-26', '09:19:01', '2026-09-26 13:19:01', '2026-09-26 13:19:01'),
+(39, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN JUGADOR EN UNA CARRERA', '{\"id\": 2, \"nro\": \"2\", \"posicion\": \"DELANTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:47:32.000000Z\", \"jugador_id\": 2, \"updated_at\": \"2026-09-26T13:19:01.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', '{\"id\": 2, \"nro\": \"2\", \"posicion\": \"MEDIOCAMPO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:47:32.000000Z\", \"jugador_id\": 2, \"updated_at\": \"2026-09-26T13:19:17.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', 'CARRERA JUGADOR', '2026-09-26', '09:19:17', '2026-09-26 13:19:17', '2026-09-26 13:19:17'),
+(40, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR EN UNA CARRERA', '{\"id\": 3, \"nro\": \"2\", \"posicion\": \"DEFENSA\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T13:22:11.000000Z\", \"jugador_id\": 2, \"updated_at\": \"2026-09-26T13:22:11.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', NULL, 'CARRERA JUGADOR', '2026-09-26', '09:22:11', '2026-09-26 13:22:11', '2026-09-26 13:22:11'),
+(41, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR EN UNA CARRERA', '{\"id\": 4, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 2, \"created_at\": \"2026-09-26T13:30:17.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T13:30:17.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 2}', NULL, 'CARRERA JUGADOR', '2026-09-26', '09:30:17', '2026-09-26 13:30:17', '2026-09-26 13:30:17'),
+(42, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR EN UNA CARRERA', '{\"id\": 5, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 2, \"created_at\": \"2026-09-26T13:34:22.000000Z\", \"jugador_id\": 3, \"updated_at\": \"2026-09-26T13:34:22.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 2}', NULL, 'CARRERA JUGADOR', '2026-09-26', '09:34:22', '2026-09-26 13:34:22', '2026-09-26 13:34:22'),
+(43, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR EN UNA CARRERA', '{\"id\": 6, \"nro\": \"2\", \"posicion\": \"DEFENSA\", \"carrera_id\": 2, \"created_at\": \"2026-09-26T13:34:50.000000Z\", \"jugador_id\": 4, \"updated_at\": \"2026-09-26T13:34:50.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 2}', NULL, 'CARRERA JUGADOR', '2026-09-26', '09:34:50', '2026-09-26 13:34:50', '2026-09-26 13:34:50'),
+(44, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN JUGADOR EN UNA CARRERA', '{\"id\": 1, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:45:55.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T12:45:55.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', '{\"id\": 1, \"nro\": \"100\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:45:55.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T13:45:58.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', 'CARRERA JUGADOR', '2026-09-26', '09:45:58', '2026-09-26 13:45:58', '2026-09-26 13:45:58'),
+(45, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN JUGADOR EN UNA CARRERA', '{\"id\": 1, \"nro\": \"100\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:45:55.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T13:45:58.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', '{\"id\": 1, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:45:55.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T13:46:06.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', 'CARRERA JUGADOR', '2026-09-26', '09:46:06', '2026-09-26 13:46:06', '2026-09-26 13:46:06'),
+(46, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN JUGADOR EN UNA CARRERA', '{\"id\": 1, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:45:55.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T13:46:06.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', '{\"id\": 1, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:45:55.000000Z\", \"jugador_id\": 3, \"updated_at\": \"2026-09-26T13:50:19.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', 'CARRERA JUGADOR', '2026-09-26', '09:50:19', '2026-09-26 13:50:19', '2026-09-26 13:50:19'),
+(47, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN JUGADOR EN UNA CARRERA', '{\"id\": 1, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:45:55.000000Z\", \"jugador_id\": 3, \"updated_at\": \"2026-09-26T13:50:19.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', '{\"id\": 1, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T12:45:55.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T13:51:44.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', 'CARRERA JUGADOR', '2026-09-26', '09:51:44', '2026-09-26 13:51:44', '2026-09-26 13:51:44'),
+(48, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN JUGADOR EN UNA CARRERA', '{\"id\": 6, \"nro\": \"2\", \"posicion\": \"DEFENSA\", \"carrera_id\": 2, \"created_at\": \"2026-09-26T13:34:50.000000Z\", \"jugador_id\": 4, \"updated_at\": \"2026-09-26T13:34:50.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 2}', '{\"id\": 6, \"nro\": \"5\", \"posicion\": \"DEFENSA\", \"carrera_id\": 2, \"created_at\": \"2026-09-26T13:34:50.000000Z\", \"jugador_id\": 4, \"updated_at\": \"2026-09-26T14:12:16.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 2}', 'CARRERA JUGADOR', '2026-09-26', '10:12:16', '2026-09-26 14:12:16', '2026-09-26 14:12:16'),
+(49, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR EN UNA CARRERA', '{\"id\": 7, \"nro\": \"10\", \"posicion\": \"MEDIOCAMPO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T14:12:40.000000Z\", \"jugador_id\": 8, \"updated_at\": \"2026-09-26T14:12:40.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 1}', NULL, 'CARRERA JUGADOR', '2026-09-26', '10:12:40', '2026-09-26 14:12:40', '2026-09-26 14:12:40'),
+(50, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA CARRERA EN UN CAMPEONATO', '{\"dg\": 0, \"gc\": 0, \"gf\": 0, \"id\": 1, \"pe\": 0, \"pg\": 0, \"pj\": 0, \"pp\": 0, \"pts\": 0, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"estado\": \"PARTICIPANTE\", \"carrera_id\": 1, \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-25T15:19:27.000000Z\", \"campeonato_id\": 1}', '{\"dg\": 0, \"gc\": 0, \"gf\": 0, \"id\": 1, \"pe\": 0, \"pg\": 0, \"pj\": 0, \"pp\": 0, \"pts\": 0, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"estado\": \"PARTICIPANTE\", \"carrera_id\": \"5\", \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-26T14:22:02.000000Z\", \"campeonato_id\": \"1\"}', 'CAMPEONATO INSCRIPCION', '2026-09-26', '10:22:02', '2026-09-26 14:22:02', '2026-09-26 14:22:02'),
+(51, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA CARRERA EN UN CAMPEONATO', '{\"dg\": 0, \"gc\": 0, \"gf\": 0, \"id\": 1, \"pe\": 0, \"pg\": 0, \"pj\": 0, \"pp\": 0, \"pts\": 0, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"estado\": \"PARTICIPANTE\", \"carrera_id\": 5, \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-26T14:22:02.000000Z\", \"campeonato_id\": 1}', '{\"dg\": 0, \"gc\": 0, \"gf\": 0, \"id\": 1, \"pe\": 0, \"pg\": 0, \"pj\": 0, \"pp\": 0, \"pts\": 0, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"estado\": \"PARTICIPANTE\", \"carrera_id\": \"1\", \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-26T14:22:46.000000Z\", \"campeonato_id\": \"1\"}', 'CAMPEONATO INSCRIPCION', '2026-09-26', '10:22:46', '2026-09-26 14:22:46', '2026-09-26 14:22:46'),
+(52, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA CARRERA EN UN CAMPEONATO', '{\"dg\": 0, \"gc\": 0, \"gf\": 0, \"id\": 1, \"pe\": 0, \"pg\": 0, \"pj\": 0, \"pp\": 0, \"pts\": 0, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"estado\": \"PARTICIPANTE\", \"carrera_id\": 1, \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-26T14:22:46.000000Z\", \"campeonato_id\": 1}', '{\"dg\": 0, \"gc\": 0, \"gf\": 0, \"id\": 1, \"pe\": 0, \"pg\": 0, \"pj\": 0, \"pp\": 0, \"pts\": 0, \"hora\": \"11:19:19\", \"fecha\": \"2026-09-25\", \"estado\": \"PARTICIPANTE\", \"carrera_id\": \"6\", \"created_at\": \"2026-09-25T15:19:27.000000Z\", \"updated_at\": \"2026-09-26T14:22:57.000000Z\", \"campeonato_id\": \"1\"}', 'CAMPEONATO INSCRIPCION', '2026-09-26', '10:22:57', '2026-09-26 14:22:57', '2026-09-26 14:22:57'),
+(53, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CARRERA EN UN CAMPEONATO', '{\"id\": 5, \"hora\": \"10:21:21\", \"fecha\": \"2026-09-26\", \"carrera_id\": \"1\", \"created_at\": \"2026-09-26T14:23:42.000000Z\", \"updated_at\": \"2026-09-26T14:23:42.000000Z\", \"campeonato_id\": \"1\"}', NULL, 'CAMPEONATO INSCRIPCION', '2026-09-26', '10:23:42', '2026-09-26 14:23:42', '2026-09-26 14:23:42'),
+(54, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN JUGADOR EN UNA CARRERA', '{\"id\": 8, \"nro\": \"1\", \"posicion\": \"PORTERO\", \"carrera_id\": 1, \"created_at\": \"2026-09-26T14:24:01.000000Z\", \"jugador_id\": 1, \"updated_at\": \"2026-09-26T14:24:01.000000Z\", \"campeonato_id\": 1, \"fecha_registro\": \"2026-09-26\", \"campeonato_inscripcion_id\": 5}', NULL, 'CARRERA JUGADOR', '2026-09-26', '10:24:01', '2026-09-26 14:24:01', '2026-09-26 14:24:01');
 
 -- --------------------------------------------------------
 
@@ -291,7 +321,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 CREATE TABLE `partidos` (
   `id` bigint UNSIGNED NOT NULL,
   `campeonato_id` bigint UNSIGNED NOT NULL,
+  `ci_local_id` bigint UNSIGNED NOT NULL,
   `local_id` bigint UNSIGNED NOT NULL,
+  `ci_visitante_id` bigint UNSIGNED NOT NULL,
   `visitante_id` bigint UNSIGNED NOT NULL,
   `goles_local` int NOT NULL DEFAULT '0',
   `goles_visitante` int NOT NULL DEFAULT '0',
@@ -316,6 +348,7 @@ CREATE TABLE `partidos` (
 CREATE TABLE `partido_detalles` (
   `id` bigint UNSIGNED NOT NULL,
   `campeonato_id` bigint UNSIGNED NOT NULL,
+  `campeonato_inscripcion_id` bigint UNSIGNED NOT NULL,
   `partido_id` bigint UNSIGNED NOT NULL,
   `carrera_id` bigint UNSIGNED NOT NULL,
   `tarjeta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -458,7 +491,9 @@ ALTER TABLE `partidos`
   ADD KEY `partidos_campeonato_id_foreign` (`campeonato_id`),
   ADD KEY `partidos_local_id_foreign` (`local_id`),
   ADD KEY `partidos_visitante_id_foreign` (`visitante_id`),
-  ADD KEY `partidos_ganador_id_foreign` (`ganador_id`);
+  ADD KEY `partidos_ganador_id_foreign` (`ganador_id`),
+  ADD KEY `partidos_ci_local_id` (`ci_local_id`),
+  ADD KEY `partidos_ci_visitante_id` (`ci_visitante_id`);
 
 --
 -- Indices de la tabla `partido_detalles`
@@ -468,7 +503,8 @@ ALTER TABLE `partido_detalles`
   ADD KEY `partido_detalles_campeonato_id_foreign` (`campeonato_id`),
   ADD KEY `partido_detalles_partido_id_foreign` (`partido_id`),
   ADD KEY `partido_detalles_carrera_id_foreign` (`carrera_id`),
-  ADD KEY `partido_detalles_carrera_jugador_id_foreign` (`carrera_jugador_id`);
+  ADD KEY `partido_detalles_carrera_jugador_id_foreign` (`carrera_jugador_id`),
+  ADD KEY `partido_detalles_campeonato_inscripcion_id_foreign` (`campeonato_inscripcion_id`);
 
 --
 -- Indices de la tabla `partido_gols`
@@ -508,7 +544,7 @@ ALTER TABLE `campeonatos`
 -- AUTO_INCREMENT de la tabla `campeonato_inscripcions`
 --
 ALTER TABLE `campeonato_inscripcions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `carreras`
@@ -520,7 +556,7 @@ ALTER TABLE `carreras`
 -- AUTO_INCREMENT de la tabla `carrera_jugadors`
 --
 ALTER TABLE `carrera_jugadors`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `configuracions`
@@ -532,7 +568,7 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT de la tabla `jugadors`
@@ -607,6 +643,8 @@ ALTER TABLE `historial_accions`
 --
 ALTER TABLE `partidos`
   ADD CONSTRAINT `partidos_campeonato_id_foreign` FOREIGN KEY (`campeonato_id`) REFERENCES `campeonatos` (`id`),
+  ADD CONSTRAINT `partidos_ci_local_id` FOREIGN KEY (`ci_local_id`) REFERENCES `campeonato_inscripcions` (`id`),
+  ADD CONSTRAINT `partidos_ci_visitante_id` FOREIGN KEY (`ci_visitante_id`) REFERENCES `campeonato_inscripcions` (`id`),
   ADD CONSTRAINT `partidos_ganador_id_foreign` FOREIGN KEY (`ganador_id`) REFERENCES `carreras` (`id`),
   ADD CONSTRAINT `partidos_local_id_foreign` FOREIGN KEY (`local_id`) REFERENCES `carreras` (`id`),
   ADD CONSTRAINT `partidos_visitante_id_foreign` FOREIGN KEY (`visitante_id`) REFERENCES `carreras` (`id`);
@@ -616,6 +654,7 @@ ALTER TABLE `partidos`
 --
 ALTER TABLE `partido_detalles`
   ADD CONSTRAINT `partido_detalles_campeonato_id_foreign` FOREIGN KEY (`campeonato_id`) REFERENCES `campeonatos` (`id`),
+  ADD CONSTRAINT `partido_detalles_campeonato_inscripcion_id_foreign` FOREIGN KEY (`campeonato_inscripcion_id`) REFERENCES `campeonato_inscripcions` (`id`),
   ADD CONSTRAINT `partido_detalles_carrera_id_foreign` FOREIGN KEY (`carrera_id`) REFERENCES `carreras` (`id`),
   ADD CONSTRAINT `partido_detalles_carrera_jugador_id_foreign` FOREIGN KEY (`carrera_jugador_id`) REFERENCES `carrera_jugadors` (`id`),
   ADD CONSTRAINT `partido_detalles_partido_id_foreign` FOREIGN KEY (`partido_id`) REFERENCES `partidos` (`id`);

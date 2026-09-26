@@ -31,4 +31,9 @@ class Jugador extends Model
         }
         return asset("imgs/jugadors/default.png");
     }
+
+    public function carrera_jugadors()
+    {
+        return $this->hasMany(CarreraJugador::class, "jugador_id");
+    }
 }

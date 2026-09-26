@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('partidos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("campeonato_id");
+            $table->unsignedBigInteger("ci_local_id");
             $table->unsignedBigInteger("local_id");
+            $table->unsignedBigInteger("ci_visitante_id");
             $table->unsignedBigInteger("visitante_id");
             $table->integer("goles_local")->default(0);
             $table->integer("goles_visitante")->default(0);
@@ -29,8 +31,10 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign("campeonato_id")->on("campeonatos")->references("id");
+            $table->foreign("ci_local_id")->on("campeonato_inscripcions")->references("id");
             $table->foreign("local_id")->on("carreras")->references("id");
             $table->foreign("visitante_id")->on("carreras")->references("id");
+            $table->foreign("ci_visitante_id")->on("campeonato_inscripcions")->references("id");
             $table->foreign("ganador_id")->on("carreras")->references("id");
         });
     }

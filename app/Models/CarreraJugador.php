@@ -16,6 +16,13 @@ class CarreraJugador extends Model
         "fecha_registro"
     ];
 
+    protected $appends = ["fecha_registro_t"];
+
+    public function getFechaRegistroTAttribute()
+    {
+        return date("d/m/Y", strtotime($this->fecha_registro));
+    }
+
     public function campeonato()
     {
         return $this->belongsTo(Campeonato::class, 'campeonato_id');
@@ -26,13 +33,13 @@ class CarreraJugador extends Model
         return $this->belongsTo(Carrera::class, 'carrera_id');
     }
 
-    public function campeonato_inscripcion_id()
+    public function campeonato_inscripcion()
     {
-        return $this->belongsTo(CampeonatoInscripcion::class, 'campeonato_inscripcion_id_id');
+        return $this->belongsTo(CampeonatoInscripcion::class, 'campeonato_inscripcion_id');
     }
 
     public function jugador()
     {
-        return $this->belongsTo(Carrera::class, 'carrera_id');
+        return $this->belongsTo(Jugador::class, 'jugador_id');
     }
 }

@@ -21,16 +21,26 @@ class CarreraService
 
     public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
 
-    public function listado($campeonato_id = null, $sin_inscripcion = false): Collection
-    {
+    public function listado(
+        $campeonato_id = null,
+        $sin_inscripcion = false,
+        $carrera_id = null
+    ): Collection {
         $carreras = Carrera::select("carreras.*");
 
         if ($campeonato_id) {
             // Log::debug($sin_inscripcion);
             if ($sin_inscripcion) {
                 // Carreras que NO están inscritas en este campeonato
-                $carreras->whereDoesntHave("campeonato_inscripcions", function ($query) use ($campeonato_id) {
-                    $query->where("campeonato_id", $campeonato_id);
+                $carreras->where(function ($query) use ($campeonato_id, $carrera_id) {
+                    $query->whereDoesntHave("campeonato_inscripcions", function ($q) use ($campeonato_id) {
+                        $q->where("campeonato_id", $campeonato_id);
+                    });
+
+                    // Si estamos editando, incluir el id
+                    if ($carrera_id) {
+                        $query->orWhere("carreras.id", $carrera_id);
+                    }
                 });
             } else {
                 // Carreras que SÍ están inscritas en este campeonato

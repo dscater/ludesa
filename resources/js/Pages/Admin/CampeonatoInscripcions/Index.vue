@@ -7,6 +7,7 @@ import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
 import Formulario from "./Formulario.vue";
+import CarreraJugador from "./CarreraJugador.vue";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
 import { buttonProps } from "element-plus";
 // const { mobile, identificaDispositivo } = useMenu();
@@ -91,6 +92,7 @@ const cargarCampeonatos = async () => {
 };
 
 const muestra_formulario = ref(false);
+const muestra_formulario_carrera_jugador = ref(false);
 
 const agregarRegistro = () => {
     limpiarCampeonatoInscripcion();
@@ -103,9 +105,22 @@ const agregarRegistro = () => {
     muestra_formulario.value = true;
 };
 
+const editarRegistro = (item) => {
+    limpiarCampeonatoInscripcion();
+    muestra_formulario.value = true;
+    setCampeonatoInscripcion(item);
+};
+
 const updateDatatable = async () => {
     limpiarCampeonatoInscripcion();
     muestra_formulario.value = false;
+    muestra_formulario_carrera_jugador.value = false;
+    if (multiSearch.value.campeonato_id) {
+        cargarCampeonatoInscripcions();
+    }
+};
+
+const updateDatos = () => {
     if (multiSearch.value.campeonato_id) {
         cargarCampeonatoInscripcions();
     }
@@ -114,7 +129,7 @@ const updateDatatable = async () => {
 const eliminarCampeonatoInscripcion = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
-        html: `<strong>${item.nombre}</strong>`,
+        html: `<strong>${item.carrera.nombre}</strong>`,
         showCancelButton: true,
         confirmButtonText: "Si, eliminar",
         cancelButtonText: "No, cancelar",
@@ -133,6 +148,12 @@ const eliminarCampeonatoInscripcion = (item) => {
             }
         }
     });
+};
+
+const mostrarJugadores = (item) => {
+    limpiarCampeonatoInscripcion();
+    setCampeonatoInscripcion(item);
+    muestra_formulario_carrera_jugador.value = true;
 };
 </script>
 <template>
@@ -235,38 +256,67 @@ const eliminarCampeonatoInscripcion = (item) => {
                 :key="item.id"
             >
                 <div class="card mt-2">
-                    <div class="card-body py-2">
+                    <div class="card-header bg-principal">
                         <div class="row">
                             <div class="col-12">
-                                <h4 class="fw-bold h6 text-primary">
+                                <button
+                                    type="button"
+                                    class="btn btn-danger btn-sm fs-8 float-end"
+                                    @click.prevent="
+                                        eliminarCampeonatoInscripcion(item)
+                                    "
+                                >
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-warning btn-sm fs-8 float-end me-1"
+                                    @click.prevent="editarRegistro(item)"
+                                >
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <h4 class="fw-bold fs-6 text-primary">
                                     {{ item.carrera.nombre }}
                                 </h4>
                             </div>
-                            <div class="col-12 border-top">
+                        </div>
+                    </div>
+                    <div class="card-body py-2">
+                        <div class="row">
+                            <div class="col-12">
                                 <div class="row">
-                                    <div class="col-8 text-center py-2">
-                                        <div class="fw-bold fs-4">0</div>
-                                        <div class="fs-5 fw-bold">
-                                            <i class="fa fa-user-friends"></i>
+                                    <div
+                                        class="col-8 text-center py-2 fs-5"
+                                        title="Jugadores Inscritos"
+                                    >
+                                        <div class="fw-bold">
+                                            {{ item?.carrera_jugadors.length }}
                                         </div>
-                                        <div class="w-100">
-                                            <button
-                                                class="btn btn-primary btn-sm text-xs"
-                                            >
-                                                <i
-                                                    class="fa fa-clipboard-list"
-                                                ></i>
-                                                Jugadores
-                                            </button>
+                                        <div class="fw-bold">
+                                            <i class="fa fa-user-friends"></i>
                                         </div>
                                     </div>
                                     <div
                                         class="col-4 border-start py-3 text-md text-center"
                                     >
-                                        <div>0</div>
+                                        <div>{{ item.pts }}</div>
                                         <div>Pts.</div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-12">
+                                <button
+                                    type="button"
+                                    class="btn btn-primary btn-sm text-xs float-end"
+                                    @click.prevent="mostrarJugadores(item)"
+                                >
+                                    <i class="fa fa-clipboard-list"></i>
+                                    Jugadores
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -290,5 +340,12 @@ const eliminarCampeonatoInscripcion = (item) => {
             @envio-formulario="updateDatatable"
             @cerrar-formulario="muestra_formulario = false"
         ></Formulario>
+        <CarreraJugador
+            v-if="muestra_formulario_carrera_jugador"
+            :muestra_formulario="muestra_formulario_carrera_jugador"
+            :form="form"
+            @envio-formulario="updateDatos"
+            @cerrar-formulario="muestra_formulario_carrera_jugador = false"
+        ></CarreraJugador>
     </Content>
 </template>

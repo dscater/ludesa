@@ -18,8 +18,8 @@ const form = props.form;
 
 const tituloDialog = computed(() => {
     return form.id == 0
-        ? `<i class="fa fa-plus"></i> Nuevo CampeonatoInscripcion`
-        : `<i class="fa fa-edit"></i> Editar CampeonatoInscripcion`;
+        ? `<i class="fa fa-plus"></i> Nueva Inscripción - Campeonato`
+        : `<i class="fa fa-edit"></i> Editar Inscripción - Campeonato`;
 });
 
 const textBtn = computed(() => {
@@ -117,6 +117,7 @@ const cargarCarreras = () => {
             params: {
                 campeonato_id: form.campeonato_id,
                 sin_inscripcion: true,
+                carrera_id: form.carrera_id,
             },
         })
         .then((response) => {

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("campeonato_id");
             $table->unsignedBigInteger("partido_id");
+            $table->unsignedBigInteger("campeonato_inscripcion_id");
             $table->unsignedBigInteger("carrera_id");
             $table->string("tarjeta"); //ROJA, AMARILLA 
             $table->unsignedBigInteger("carrera_jugador_id");
@@ -25,6 +26,7 @@ return new class extends Migration
 
             $table->foreign("campeonato_id")->on("campeonatos")->references("id");
             $table->foreign("partido_id")->on("partidos")->references("id");
+            $table->foreign("campeonato_inscripcion_id")->on("campeonato_inscripcions")->references("id");
             $table->foreign("carrera_id")->on("carreras")->references("id");
             $table->foreign("carrera_jugador_id")->on("carrera_jugadors")->references("id");
         });
