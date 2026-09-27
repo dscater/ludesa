@@ -151,6 +151,10 @@ onUnmounted(() => {});
                             permisos.includes('partidos.index')
                         "
                         :label="'Partidos'"
+                        :array-ruta-class-active="[
+                            'partidos.index',
+                            'partidos.ver',
+                        ]"
                         :ruta="'partidos.index'"
                         :icon="'fa fa-table'"
                     ></ItemMenu>

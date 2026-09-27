@@ -7,6 +7,8 @@ use App\Http\Requests\PartidoUpdateRequest;
 use App\Models\Partido;
 use App\Models\PartidoDetalle;
 use App\Models\User;
+use App\Services\CostoDerechoService;
+use App\Services\CostoTarjetaService;
 use App\Services\PartidoService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -22,7 +24,11 @@ use Inertia\Response as ResponseInertia;
 
 class PartidoController extends Controller
 {
-    public function __construct(private PartidoService $partidoService) {}
+    public function __construct(
+        private PartidoService $partidoService,
+        private CostoTarjetaService $costo_tarjeta_service,
+        private CostoDerechoService $costo_derecho_service
+    ) {}
 
     /**
      * Página index
@@ -124,7 +130,17 @@ class PartidoController extends Controller
             ->where("campeonato_inscripcion_id", $partido->ci_visitante_id)
             ->get();
 
-        return Inertia::render("Admin/Partidos/Show", compact("campeonato", "partido", "local_detalles", "visitante_detalles"));
+        $costo_tarjetas = $this->costo_tarjeta_service->getCostosTipo($campeonato->tipo);
+        $costo_derechos = $this->costo_derecho_service->getCostosTipo($campeonato->tipo);
+
+        return Inertia::render("Admin/Partidos/Show", compact(
+            "campeonato",
+            "partido",
+            "local_detalles",
+            "visitante_detalles",
+            "costo_tarjetas",
+            "costo_derechos",
+        ));
     }
 
     public function iniciarPartido(Partido $partido, Request $request)
@@ -141,6 +157,78 @@ class PartidoController extends Controller
                 ]);
             }
             return redirect()->route("partidos.ver", $partido->id)->with("bien", "Registro iniciado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log::debug($e->getMessage());
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function finalizarPartido(Partido $partido, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            // actualizar partido
+            $partido = $this->partidoService->finalizarPartido($partido);
+            DB::commit();
+            if ($request->ajax()) {
+                return response()->JSON([
+                    "sw" => true,
+                    "message" => "Partido finalizado"
+                ]);
+            }
+            return redirect()->route("partidos.index", $partido->id)->with("bien", "Registro iniciado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log::debug($e->getMessage());
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function actualizarJugadores(Partido $partido)
+    {
+        DB::beginTransaction();
+        try {
+            // actualizar partido
+            $partido = $this->partidoService->actualizarJugadoresPartido($partido);
+            $local_detalles = PartidoDetalle::with(["carrera_jugador.jugador"])
+                ->where("campeonato_inscripcion_id", $partido->ci_local_id)
+                ->get();
+
+            $visitante_detalles = PartidoDetalle::with(["carrera_jugador.jugador"])
+                ->where("campeonato_inscripcion_id", $partido->ci_visitante_id)
+                ->get();
+            DB::commit();
+            return response()->JSON([
+                "sw" => true,
+                "message" => "Registros actualizados",
+                "local_detalles" => $local_detalles,
+                "visitante_detalles" => $visitante_detalles,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log::debug($e->getMessage());
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function actualizaDatosPartido(Partido $partido, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            // actualizar partido
+            $partido = $this->partidoService->actualizaDatosPartido($partido, $request->col, $request->data);
+            DB::commit();
+            return response()->JSON([
+                "sw" => true,
+                "message" => "Registros actualizados",
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());

@@ -89,6 +89,10 @@ class PermisoService
             "partidos.destroy",
             "partidos.iniciarPartido",
             "partidos.ver",
+            "partidos.actualizarJugadores",
+            "partidos.actualizaDatosPartido",
+
+            "partido_detalles.actualizaDatosDetalle",
 
             "reportes.usuarios",
             "reportes.r_usuarios",

@@ -8,6 +8,8 @@ import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
 import { buttonProps } from "element-plus";
 import MiTable from "@/Components/MiTable.vue";
+import axios from "axios";
+import { toast } from "vue3-toastify";
 // const { mobile, identificaDispositivo } = useMenu();
 const props = defineProps({
     campeonato: {
@@ -24,6 +26,14 @@ const props = defineProps({
     },
     visitante_detalles: {
         type: Array,
+        required: true,
+    },
+    costo_tarjetas: {
+        type: Object,
+        required: true,
+    },
+    costo_derechos: {
+        type: Object,
         required: true,
     },
 });
@@ -92,6 +102,13 @@ onMounted(async () => {
     if (miTableVisitante.value) {
         await miTableVisitante.value.cargarDatos();
     }
+
+    props.partido.total_local = props.costo_derechos.derecho;
+    props.partido.total_visitante = props.costo_derechos.derecho;
+    if (props.partido.estado != "FINALIZADO") {
+        actualizarDatosPartido("total_local", props.costo_derechos.derecho);
+        actualizarDatosPartido("total_visitante", props.costo_derechos.derecho);
+    }
 });
 
 const totalGolesLocal = computed(() => {
@@ -109,7 +126,86 @@ const totalGolesVisitante = computed(() => {
 watch([totalGolesLocal, totalGolesVisitante], () => {
     props.partido.goles_local = totalGolesLocal.value;
     props.partido.goles_visitante = totalGolesVisitante.value;
+    actualizarDatosPartido("goles_local", totalGolesLocal.value);
+    actualizarDatosPartido("goles_visitante", totalGolesVisitante.value);
 });
+
+const recargarJugadores = () => {
+    axios
+        .get(route("partidos.actualizarJugadores", props.partido.id))
+        .then((response) => {
+            // recargar los datos
+            router.reload({
+                only: ["local_detalles", "visitante_detalles"],
+            });
+        });
+};
+
+const actualizarDatosPartido = (col) => {
+    if (!props.partido[col] && col != "pago_local" && col != "pago_visitante") {
+        toast.info("No se enviaron datos");
+        return;
+    }
+
+    if (!col == "pago_local" || col == "pago_visitante") {
+        if (!props.partido[col] || parseFloat(props.partido[col]) < 0) {
+            toast.info("El pago no puede estar vacío o menor a 0");
+            return;
+        }
+    }
+
+    const data = props.partido[col];
+    axios
+        .post(route("partidos.actualizaDatosPartido", props.partido.id), {
+            _method: "PATCH",
+            col: col,
+            data: data,
+        })
+        .then((response) => {
+            router.reload({
+                only: ["partido"],
+            });
+        });
+};
+
+const actualizarDatosDetalle = (id, col, lv) => {
+    let lista = lv == "local" ? props.local_detalles : props.visitante_detalles;
+    console.log(lista);
+    const index = lista.findIndex((item) => item.id == id);
+    // console.log(id);
+    // console.log(index);
+
+    if (
+        !lista[index][col] &&
+        col != "pagado_amarillas" &&
+        col != "pagado_rojas"
+    ) {
+        toast.info("No se enviaron datos");
+        return;
+    }
+
+    if (!col == "pagado_amarillas" || col == "pagado_rojas") {
+        if (!lista[index][col] || parseFloat(lista[index][col]) < 0) {
+            toast.info("El pago no puede estar vacío o menor a 0");
+            return;
+        }
+    }
+
+    const data = lista[index][col];
+    axios
+        .post(route("partido_detalles.actualizaDatosDetalle", id), {
+            _method: "PATCH",
+            col: col,
+            data: data,
+        })
+        .then((response) => {
+            const nom_listado =
+                lv == "local" ? local_detalles : visitante_detalles;
+            router.reload({
+                only: [nom_listado],
+            });
+        });
+};
 
 const { setPartido, limpiarPartido, form } = usePartidos();
 const { axiosDelete } = useAxios();
@@ -149,6 +245,19 @@ const { axiosDelete } = useAxios();
                 <h4 class="text-primary text-center fs-6">
                     {{ partido.fecha_hora_t }}
                 </h4>
+            </div>
+            <div class="col-12">
+                <button
+                    type="button"
+                    class="btn btn-light border float-end px-3 ms-1"
+                    title="Recargar Jugadores"
+                    @click.prevent="recargarJugadores"
+                >
+                    <i class="fa fa-user-friends"></i>
+                </button>
+                <button class="btn btn-primary float-end px-3">
+                    <i class="fa fa-flag-checkered"></i> Finalizar Partido
+                </button>
             </div>
             <!-- LOCAL -->
             <div class="col-12">
@@ -194,13 +303,25 @@ const { axiosDelete } = useAxios();
                                         <input
                                             type="number"
                                             class="form-control text-center"
+                                            :class="{
+                                                'bgInactivo text-white':
+                                                    !partido.pago_local,
+                                                bgActivo: partido.pago_local,
+                                            }"
                                             v-model="partido.total_local"
                                         />
                                         <div class="input-group-text">
                                             <input
                                                 type="checkbox"
                                                 class="form-conrtol"
+                                                :true-value="1"
+                                                :false-value="0"
                                                 v-model="partido.pago_local"
+                                                @change="
+                                                    actualizarDatosPartido(
+                                                        'pago_local',
+                                                    )
+                                                "
                                             />
                                         </div>
                                     </div>
@@ -242,6 +363,9 @@ const { axiosDelete } = useAxios();
                                     {{ item.carrera_jugador.jugador.nombres }}
                                     {{ item.carrera_jugador.jugador.apes }}
                                 </div>
+                                <div class="text-muted fw-bold d-block w-100">
+                                    {{ item.carrera_jugador.posicion }}
+                                </div>
                                 <div class="text-muted d-block">
                                     {{ item.carrera_jugador.jugador.ci }}
                                 </div>
@@ -252,6 +376,15 @@ const { axiosDelete } = useAxios();
                                         type="checkbox"
                                         v-model="item.titular"
                                         style="height: 19px; width: 19px"
+                                        :true-value="1"
+                                        :false-value="0"
+                                        @change="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'titular',
+                                                'local',
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>
@@ -262,6 +395,20 @@ const { axiosDelete } = useAxios();
                                         v-model="item.goles"
                                         min="0"
                                         class="form-control text-center"
+                                        @keyup="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'goles',
+                                                'visitante',
+                                            )
+                                        "
+                                        @change="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'goles',
+                                                'local',
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>
@@ -271,6 +418,20 @@ const { axiosDelete } = useAxios();
                                         type="number"
                                         v-model="item.amarillas"
                                         class="form-control text-center"
+                                        @keyup="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'amarillas',
+                                                'local',
+                                            )
+                                        "
+                                        @change="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'amarillas',
+                                                'local',
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>
@@ -280,6 +441,20 @@ const { axiosDelete } = useAxios();
                                         type="number"
                                         v-model="item.rojas"
                                         class="form-control text-center"
+                                        @keyup="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'rojas',
+                                                'local',
+                                            )
+                                        "
+                                        @change="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'rojas',
+                                                'local',
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>
@@ -333,13 +508,26 @@ const { axiosDelete } = useAxios();
                                         <input
                                             type="number"
                                             class="form-control text-center"
+                                            :class="{
+                                                'bgInactivo text-white':
+                                                    !partido.pago_visitante,
+                                                bgActivo:
+                                                    partido.pago_visitante,
+                                            }"
                                             v-model="partido.total_visitante"
                                         />
                                         <div class="input-group-text">
                                             <input
                                                 type="checkbox"
                                                 class="form-conrtol"
+                                                :true-value="1"
+                                                :false-value="0"
                                                 v-model="partido.pago_visitante"
+                                                @change="
+                                                    actualizarDatosPartido(
+                                                        'pago_visitante',
+                                                    )
+                                                "
                                             />
                                         </div>
                                     </div>
@@ -381,6 +569,9 @@ const { axiosDelete } = useAxios();
                                     {{ item.carrera_jugador.jugador.nombres }}
                                     {{ item.carrera_jugador.jugador.apes }}
                                 </div>
+                                <div class="text-muted fw-bold d-block w-100">
+                                    {{ item.carrera_jugador.posicion }}
+                                </div>
                                 <div class="text-muted d-block">
                                     {{ item.carrera_jugador.jugador.ci }}
                                 </div>
@@ -391,6 +582,15 @@ const { axiosDelete } = useAxios();
                                         type="checkbox"
                                         v-model="item.titular"
                                         style="height: 19px; width: 19px"
+                                        :true-value="1"
+                                        :false-value="0"
+                                        @change="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'titular',
+                                                'visitante',
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>
@@ -401,6 +601,20 @@ const { axiosDelete } = useAxios();
                                         v-model="item.goles"
                                         min="0"
                                         class="form-control text-center"
+                                        @keyup="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'goles',
+                                                'visitante',
+                                            )
+                                        "
+                                        @change="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'goles',
+                                                'visitante',
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>
@@ -410,6 +624,20 @@ const { axiosDelete } = useAxios();
                                         type="number"
                                         v-model="item.amarillas"
                                         class="form-control text-center"
+                                        @keyup="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'amarillas',
+                                                'visitante',
+                                            )
+                                        "
+                                        @change="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'amarillas',
+                                                'visitante',
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>
@@ -419,6 +647,20 @@ const { axiosDelete } = useAxios();
                                         type="number"
                                         v-model="item.rojas"
                                         class="form-control text-center"
+                                        @keyup="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'rojas',
+                                                'visitante',
+                                            )
+                                        "
+                                        @change="
+                                            actualizarDatosDetalle(
+                                                item.id,
+                                                'rojas',
+                                                'visitante',
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>

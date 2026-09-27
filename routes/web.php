@@ -8,6 +8,7 @@ use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\PartidoController;
+use App\Http\Controllers\PartidoDetalleController;
 use App\Http\Controllers\PosicionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
@@ -124,9 +125,15 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("partidos/listado", [PartidoController::class, 'listado'])->name("partidos.listado");
     Route::put("partidos/iniciarPartido/{partido}", [PartidoController::class, 'iniciarPartido'])->name("partidos.iniciarPartido");
     Route::get("partidos/ver/{partido}", [PartidoController::class, 'ver'])->name("partidos.ver");
+    Route::get("partidos/actualizarJugadores/{partido}", [PartidoController::class, 'actualizarJugadores'])->name("partidos.actualizarJugadores");
+    Route::patch("partidos/actualizaDatosPartido/{partido}", [PartidoController::class, 'actualizaDatosPartido'])->name("partidos.actualizaDatosPartido");
     Route::resource("partidos", PartidoController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );
+
+    // PARTIDO DETALLES
+    Route::patch("partido_detalles/actualizaDatosDetalle/{partido_detalle}", [PartidoDetalleController::class, 'actualizaDatosDetalle'])->name("partido_detalles.actualizaDatosDetalle");
+
 
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");

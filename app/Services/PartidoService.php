@@ -15,13 +15,18 @@ use Exception;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class PartidoService
 {
     private $modulo = "CARRERA JUGADOR";
 
-    public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
+    public function __construct(
+        private  CargarArchivoService $cargarArchivoService,
+        private HistorialAccionService $historialAccionService,
+        private CostoTarjetaService $costo_tarjeta_service
+    ) {}
 
     public function listado(
         $campeonato_id = ""
@@ -159,42 +164,93 @@ class PartidoService
         $ci_visitante = CampeonatoInscripcion::findOrFail($partido->ci_visitante_id);
 
         // LOCAL
-        foreach ($ci_local->carrera_jugadors as $item) {
-            $existe = PartidoDetalle::where("campeonato_id", $partido->campeonato_id)
-                ->where("campeonato_inscripcion_id", $ci_local->id)
-                ->where("carrera_id", $ci_local->carrera_id)
-                ->where("carrera_jugador_id", $item->id)
-                ->get()->first();
-            if (!$existe)
-                $partido->partido_detalles()->create([
-                    "campeonato_id" => $partido->campeonato_id,
-                    "campeonato_inscripcion_id" => $ci_local->id,
-                    "carrera_id" => $ci_local->carrera_id,
-                    "carrera_jugador_id" => $item->id,
-                ]);
-        }
+        $this->registrarJugadoresPartido($ci_local, $partido);
 
         // VISITANTE
-        foreach ($ci_visitante->carrera_jugadors as $item) {
-            $existe = PartidoDetalle::where("campeonato_id", $partido->campeonato_id)
-                ->where("campeonato_inscripcion_id", $ci_visitante->id)
-                ->where("carrera_id", $ci_visitante->carrera_id)
-                ->where("carrera_jugador_id", $item->id)
-                ->get()->first();
-            if (!$existe)
-                $partido->partido_detalles()->create([
-                    "campeonato_id" => $partido->campeonato_id,
-                    "campeonato_inscripcion_id" => $ci_visitante->id,
-                    "carrera_id" => $ci_visitante->carrera_id,
-                    "carrera_jugador_id" => $item->id,
-                ]);
-        }
+        $this->registrarJugadoresPartido($ci_visitante, $partido);
 
         $partido->estado = 'INICIADO';
         $partido->save();
 
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "INICIO UN PARTIDO", $old_partido, $partido->withoutRelations(), ["partido_detalles"]);
+
+        return $partido;
+    }
+
+    public function actualizarJugadoresPartido(Partido $partido): Partido
+    {
+        // $old_partido = clone $partido;
+
+        $ci_local = CampeonatoInscripcion::findOrFail($partido->ci_local_id);
+        $ci_visitante = CampeonatoInscripcion::findOrFail($partido->ci_visitante_id);
+
+        // LOCAL
+        $this->registrarJugadoresPartido($ci_local, $partido);
+
+        // VISITANTE
+        $this->registrarJugadoresPartido($ci_visitante, $partido);
+
+        return $partido;
+    }
+
+    public function registrarJugadoresPartido(CampeonatoInscripcion $campeonatoInscripcion, Partido $partido)
+    {
+        foreach ($campeonatoInscripcion->carrera_jugadors as $item) {
+            $existe = PartidoDetalle::where("campeonato_id", $partido->campeonato_id)
+                ->where("campeonato_inscripcion_id", $campeonatoInscripcion->id)
+                ->where("carrera_id", $campeonatoInscripcion->carrera_id)
+                ->where("carrera_jugador_id", $item->id)
+                ->get()->first();
+            if (!$existe)
+                $partido->partido_detalles()->create([
+                    "campeonato_id" => $partido->campeonato_id,
+                    "campeonato_inscripcion_id" => $campeonatoInscripcion->id,
+                    "carrera_id" => $campeonatoInscripcion->carrera_id,
+                    "carrera_jugador_id" => $item->id,
+                ]);
+        }
+    }
+
+    public function actualizaDatosPartido(Partido $partido, $col, $data)
+    {
+        // Log::debug($partido);
+        // Log::debug($col);
+        // Log::debug($data);
+        $partido[$col] = $data;
+        $partido->save();
+
+        return $partido;
+    }
+
+    public function actualizaDatosDetalle(PartidoDetalle $partido_detalle, $col, $data)
+    {
+        // Log::debug($partido_detalle);
+        // Log::debug($col);
+        // Log::debug($data);
+        $partido_detalle[$col] = $data;
+
+        if ($col == 'amarillas' || 'rojas') {
+            $campeonato = $partido_detalle->campeonato;
+            $tipo_tarjeta = $col == 'amarillas' ? 'amarilla' : 'roja';
+            $costo = $this->costo_tarjeta_service->getCostoTarjetaPorTipo($campeonato->tipo, $tipo_tarjeta);
+
+            $col_total = $col == 'amarillas' ? 'total_amarillas' : 'total_rojas';
+            $partido_detalle[$col_total] = (float)$data * (float)$costo;
+        }
+
+        $partido_detalle->save();
+        return $partido_detalle;
+    }
+
+    public function finalizarPartido(Partido $partido): Partido
+    {
+        $old_partido = clone $partido;
+        $partido->estado = 'FINALIZADO';
+        $partido->save();
+
+        // registrar accion
+        $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "FINALIZO UN PARTIDO", $old_partido, $partido->withoutRelations(), ["partido_detalles"]);
 
         return $partido;
     }
