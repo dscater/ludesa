@@ -12,6 +12,7 @@ export const usePartidos = () => {
         goles_local: "",
         goles_visitante: "",
         ganador_id: "",
+        ci_ganador_id: "",
         total_local: "",
         pago_local: "",
         total_visitante: "",

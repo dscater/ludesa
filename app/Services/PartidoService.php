@@ -25,7 +25,8 @@ class PartidoService
     public function __construct(
         private  CargarArchivoService $cargarArchivoService,
         private HistorialAccionService $historialAccionService,
-        private CostoTarjetaService $costo_tarjeta_service
+        private CostoTarjetaService $costo_tarjeta_service,
+        private CampeonatoInscripcionService $campeonato_inscripcion_service
     ) {}
 
     public function listado(
@@ -230,7 +231,7 @@ class PartidoService
         // Log::debug($data);
         $partido_detalle[$col] = $data;
 
-        if ($col == 'amarillas' || 'rojas') {
+        if ($col == 'amarillas' || $col == 'rojas') {
             $campeonato = $partido_detalle->campeonato;
             $tipo_tarjeta = $col == 'amarillas' ? 'amarilla' : 'roja';
             $costo = $this->costo_tarjeta_service->getCostoTarjetaPorTipo($campeonato->tipo, $tipo_tarjeta);
@@ -246,6 +247,34 @@ class PartidoService
     public function finalizarPartido(Partido $partido): Partido
     {
         $old_partido = clone $partido;
+
+        // validar titulares
+        $this->verificarTitulares($partido);
+
+        $ci_ganador_id = $this->getGanador($partido);
+        if ($ci_ganador_id) {
+            $partido->ci_ganador_id = $ci_ganador_id;
+        }
+
+        // local
+        $resultado = "empate";
+        if ($partido->ci_local_id == $partido->ci_ganador_id) {
+            $resultado = "ganador";
+        } elseif ($partido->ci_ganador_id != null) {
+            $resultado = "perdedor";
+        }
+
+        $this->campeonato_inscripcion_service->actualizaPartidoJugado($partido->ci_local, $resultado, $partido->goles_local, $partido->goles_visitante);
+
+        // visitante
+        $resultado = "empate";
+        if ($partido->ci_visitante_id == $partido->ci_ganador_id) {
+            $resultado = "ganador";
+        } elseif ($partido->ci_ganador_id != null) {
+            $resultado = "perdedor";
+        }
+        $this->campeonato_inscripcion_service->actualizaPartidoJugado($partido->ci_visitante, $resultado, $partido->goles_visitante, $partido->goles_local);
+
         $partido->estado = 'FINALIZADO';
         $partido->save();
 
@@ -253,6 +282,51 @@ class PartidoService
         $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "FINALIZO UN PARTIDO", $old_partido, $partido->withoutRelations(), ["partido_detalles"]);
 
         return $partido;
+    }
+
+    public function verificarTitulares($partido)
+    {
+        $titulares_tipo = [
+            "FUTSAL" => 4, // AL MENOS 4 TITULARES
+            "CAMPO" => 7, // AL MENOS 7 TITULARES
+        ];
+
+        $campeonato = $partido->campeonato;
+        $titulares_local = PartidoDetalle::where("partido_id", $partido->id)
+            ->where("campeonato_inscripcion_id", $partido->ci_local_id)
+            ->where("titular", 1)
+            ->count();
+
+        $minimo_titulares = $titulares_tipo[$campeonato->tipo];
+        if ($titulares_local < $minimo_titulares) {
+            throw new Exception("El equipo local debe tener al menos {$minimo_titulares} jugadores titulares");
+        }
+        $titulares_visitante = PartidoDetalle::where("partido_id", $partido->id)
+            ->where("campeonato_inscripcion_id", $partido->ci_visitante_id)
+            ->where("titular", 1)
+            ->count();
+
+        if ($titulares_visitante < $minimo_titulares) {
+            throw new Exception("El equipo visitante debe tener al menos {$minimo_titulares} jugadores titulares");
+        }
+    }
+
+    public function getGanador($partido)
+    {
+        $goles_local = $partido->goles_local;
+        $goles_visitante = $partido->goles_visitante;
+
+        if ($goles_local != $goles_visitante) {
+            if ($goles_local > $goles_visitante) {
+                // ganador local
+                return $partido->ci_local_id;
+            } else {
+                // ganador visitante
+                return $partido->ci_visitante_id;
+            }
+        }
+
+        return null;
     }
 
     /**

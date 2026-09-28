@@ -10,6 +10,7 @@ import { buttonProps } from "element-plus";
 import MiTable from "@/Components/MiTable.vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 // const { mobile, identificaDispositivo } = useMenu();
 const props = defineProps({
     campeonato: {
@@ -37,6 +38,8 @@ const props = defineProps({
         required: true,
     },
 });
+const list_local_detalles = ref(props.local_detalles);
+const list_visitante_detalles = ref(props.visitante_detalles);
 const { props: props_page } = usePage();
 const appStore = useAppStore();
 onBeforeMount(async () => {
@@ -63,6 +66,7 @@ const headers = [
         label: "FOTO",
         key: "foto",
         sortable: true,
+        width: "3%",
         fixed: true,
     },
     {
@@ -112,13 +116,13 @@ onMounted(async () => {
 });
 
 const totalGolesLocal = computed(() => {
-    return props.local_detalles.reduce((acc, item) => {
+    return list_local_detalles.value.reduce((acc, item) => {
         return acc + parseFloat(item.goles);
     }, 0);
 });
 
 const totalGolesVisitante = computed(() => {
-    return props.visitante_detalles.reduce((acc, item) => {
+    return list_visitante_detalles.value.reduce((acc, item) => {
         return acc + parseFloat(item.goles);
     }, 0);
 });
@@ -135,9 +139,12 @@ const recargarJugadores = () => {
         .get(route("partidos.actualizarJugadores", props.partido.id))
         .then((response) => {
             // recargar los datos
-            router.reload({
-                only: ["local_detalles", "visitante_detalles"],
-            });
+            // router.reload({
+            //     only: ["local_detalles", "visitante_detalles"],
+            //     preserveScroll: true,
+            // });
+            list_local_detalles.value = response.data.local_detalles;
+            list_visitante_detalles.value = response.data.visitante_detalles;
         });
 };
 
@@ -147,10 +154,24 @@ const actualizarDatosPartido = (col) => {
         return;
     }
 
-    if (!col == "pago_local" || col == "pago_visitante") {
-        if (!props.partido[col] || parseFloat(props.partido[col]) < 0) {
-            toast.info("El pago no puede estar vacío o menor a 0");
-            return;
+    if (col == "pago_local" || col == "pago_visitante") {
+        if (col == "pago_local") {
+            if (
+                !props.partido["total_local"] ||
+                parseFloat(props.partido["total_local"]) < 0
+            ) {
+                toast.info("El pago no puede estar vacío o menor a 0");
+                return;
+            }
+        }
+        if (col == "pago_visitante") {
+            if (
+                !props.partido["total_visitante"] ||
+                parseFloat(props.partido["total_visitante"]) < 0
+            ) {
+                toast.info("El pago no puede estar vacío o menor a 0");
+                return;
+            }
         }
     }
 
@@ -169,8 +190,11 @@ const actualizarDatosPartido = (col) => {
 };
 
 const actualizarDatosDetalle = (id, col, lv) => {
-    let lista = lv == "local" ? props.local_detalles : props.visitante_detalles;
-    console.log(lista);
+    let lista =
+        lv == "local"
+            ? list_local_detalles.value
+            : list_visitante_detalles.value;
+    // console.log(lista);
     const index = lista.findIndex((item) => item.id == id);
     // console.log(id);
     // console.log(index);
@@ -178,17 +202,32 @@ const actualizarDatosDetalle = (id, col, lv) => {
     if (
         !lista[index][col] &&
         col != "pagado_amarillas" &&
-        col != "pagado_rojas"
+        col != "pagado_rojas" &&
+        col != "amarillas" &&
+        col != "rojas"
     ) {
         toast.info("No se enviaron datos");
         return;
     }
 
-    if (!col == "pagado_amarillas" || col == "pagado_rojas") {
-        if (!lista[index][col] || parseFloat(lista[index][col]) < 0) {
-            toast.info("El pago no puede estar vacío o menor a 0");
-            return;
-        }
+    if (col == "pagado_amarillas" || col == "pagado_rojas") {
+        if (col == "pagado_amarillas")
+            if (
+                !lista[index]["total_amarillas"] ||
+                parseFloat(lista[index]["total_amarillas"]) < 0
+            ) {
+                toast.info("El pago no puede estar vacío o menor a 0");
+                return;
+            }
+
+        if (col == "pagado_rojas")
+            if (
+                !lista[index]["total_rojas"] ||
+                parseFloat(lista[index]["total_rojas"]) < 0
+            ) {
+                toast.info("El pago no puede estar vacío o menor a 0");
+                return;
+            }
     }
 
     const data = lista[index][col];
@@ -199,16 +238,64 @@ const actualizarDatosDetalle = (id, col, lv) => {
             data: data,
         })
         .then((response) => {
-            const nom_listado =
-                lv == "local" ? local_detalles : visitante_detalles;
-            router.reload({
-                only: [nom_listado],
+            if (lv == "local") {
+                list_local_detalles.value[index][col] =
+                    response.data.partido_detalle[col];
+                if (col == "amarillas") {
+                    list_local_detalles.value[index]["total_amarillas"] =
+                        response.data.partido_detalle["total_amarillas"];
+                }
+                if (col == "rojas") {
+                    list_local_detalles.value[index]["total_rojas"] =
+                        response.data.partido_detalle["total_rojas"];
+                }
+            } else {
+                list_visitante_detalles.value[index][col] =
+                    response.data.partido_detalle[col];
+                if (col == "amarillas") {
+                    list_visitante_detalles.value[index]["total_amarillas"] =
+                        response.data.partido_detalle["total_amarillas"];
+                }
+                if (col == "rojas") {
+                    list_visitante_detalles.value[index]["total_rojas"] =
+                        response.data.partido_detalle["total_rojas"];
+                }
+            }
+            toast.success("Proceso realizado con éxito", {
+                autoClose: 500,
             });
         });
 };
 
+const finalizarPartido = () => {
+    Swal.fire({
+        title: "¿Quierés finalizar este partido?",
+        html: `<strong>${props.partido.ci_local.carrera.nombre} (${props.partido.goles_local})</strong> vs <strong>${props.partido.ci_visitante.carrera.nombre} (${props.partido.goles_visitante})</strong>`,
+        showCancelButton: true,
+        confirmButtonText: "Si, finalizar",
+        cancelButtonText: "No, cancelar",
+        denyButtonText: `No, cancelar`,
+        customClass: {
+            confirmButton: "btn-danger",
+        },
+    }).then(async (result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            let respuesta = await axiosPost(
+                route("partidos.finalizarPartido", props.partido.id),
+                {
+                    _method: "PUT",
+                },
+            );
+            if (respuesta && respuesta.sw) {
+                router.get(route("partidos.index"));
+            }
+        }
+    });
+};
+
 const { setPartido, limpiarPartido, form } = usePartidos();
-const { axiosDelete } = useAxios();
+const { axiosDelete, axiosPost } = useAxios();
 </script>
 <template>
     <Head title="Ver Partido"></Head>
@@ -240,7 +327,7 @@ const { axiosDelete } = useAxios();
             <div class="col-12">
                 <h4 class="text-primary text-center fs-5">
                     {{ campeonato.periodo }} - {{ campeonato.gestion }}:
-                    {{ campeonato.nombre }}
+                    {{ campeonato.nombre }} ({{ campeonato.tipo }})
                 </h4>
                 <h4 class="text-primary text-center fs-6">
                     {{ partido.fecha_hora_t }}
@@ -255,7 +342,11 @@ const { axiosDelete } = useAxios();
                 >
                     <i class="fa fa-user-friends"></i>
                 </button>
-                <button class="btn btn-primary float-end px-3">
+                <button
+                    type="button"
+                    class="btn btn-primary float-end px-3"
+                    @click.prevent="finalizarPartido"
+                >
                     <i class="fa fa-flag-checkered"></i> Finalizar Partido
                 </button>
             </div>
@@ -334,7 +425,7 @@ const { axiosDelete } = useAxios();
                             :tableClass="'bg-white mitabla'"
                             ref="miTableLocal"
                             :cols="headers"
-                            :data="local_detalles"
+                            :data="list_local_detalles"
                             :con-paginacion="false"
                             :syncOrderBy="'id'"
                             :syncOrderAsc="'DESC'"
@@ -434,28 +525,134 @@ const { axiosDelete } = useAxios();
                                         "
                                     />
                                 </div>
+                                <div
+                                    class="w-100 text-center"
+                                    v-if="item.total_amarillas > 0"
+                                >
+                                    <div class="input-group">
+                                        <span class="input-group-text px-1">
+                                            <i class="fa fa-money-bill"></i>
+                                        </span>
+                                        <input
+                                            type="number"
+                                            class="form-control text-center"
+                                            :class="{
+                                                'bg-danger text-white':
+                                                    !item.pagado_amarillas &&
+                                                    item.total_amarillas > 0,
+                                                'bgActivo text-dark':
+                                                    item.pagado_amarillas &&
+                                                    item.total_amarillas > 0,
+                                            }"
+                                            v-model="item.total_amarillas"
+                                            @keyup="
+                                                actualizarDatosDetalle(
+                                                    item.id,
+                                                    'total_amarillas',
+                                                    'local',
+                                                )
+                                            "
+                                            @change="
+                                                actualizarDatosDetalle(
+                                                    item.id,
+                                                    'total_amarillas',
+                                                    'local',
+                                                )
+                                            "
+                                        />
+                                        <div class="input-group-text">
+                                            <input
+                                                type="checkbox"
+                                                v-model="item.pagado_amarillas"
+                                                :true-value="1"
+                                                :false-value="0"
+                                                @change="
+                                                    actualizarDatosDetalle(
+                                                        item.id,
+                                                        'pagado_amarillas',
+                                                        'local',
+                                                    )
+                                                "
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </template>
                             <template #rojas="{ item }">
-                                <div class="w-100 text-center">
-                                    <input
-                                        type="number"
-                                        v-model="item.rojas"
-                                        class="form-control text-center"
-                                        @keyup="
-                                            actualizarDatosDetalle(
-                                                item.id,
-                                                'rojas',
-                                                'local',
-                                            )
-                                        "
-                                        @change="
-                                            actualizarDatosDetalle(
-                                                item.id,
-                                                'rojas',
-                                                'local',
-                                            )
-                                        "
-                                    />
+                                <div class="w-100">
+                                    <div class="w-100 text-center">
+                                        <input
+                                            type="number"
+                                            v-model="item.rojas"
+                                            class="form-control text-center"
+                                            @keyup="
+                                                actualizarDatosDetalle(
+                                                    item.id,
+                                                    'rojas',
+                                                    'local',
+                                                )
+                                            "
+                                            @change="
+                                                actualizarDatosDetalle(
+                                                    item.id,
+                                                    'rojas',
+                                                    'local',
+                                                )
+                                            "
+                                        />
+                                    </div>
+                                </div>
+                                <div
+                                    class="w-100 text-center"
+                                    v-if="item.total_rojas > 0"
+                                >
+                                    <div class="input-group">
+                                        <span class="input-group-text px-1">
+                                            <i class="fa fa-money-bill"></i>
+                                        </span>
+                                        <input
+                                            type="number"
+                                            class="form-control text-center"
+                                            :class="{
+                                                'bg-danger text-white':
+                                                    !item.pagado_rojas &&
+                                                    item.total_rojas > 0,
+                                                'bgActivo text-dark':
+                                                    item.pagado_rojas &&
+                                                    item.total_rojas > 0,
+                                            }"
+                                            v-model="item.total_rojas"
+                                            @keyup="
+                                                actualizarDatosDetalle(
+                                                    item.id,
+                                                    'total_rojas',
+                                                    'local',
+                                                )
+                                            "
+                                            @change="
+                                                actualizarDatosDetalle(
+                                                    item.id,
+                                                    'total_rojas',
+                                                    'local',
+                                                )
+                                            "
+                                        />
+                                        <div class="input-group-text">
+                                            <input
+                                                type="checkbox"
+                                                v-model="item.pagado_rojas"
+                                                :true-value="1"
+                                                :false-value="0"
+                                                @change="
+                                                    actualizarDatosDetalle(
+                                                        item.id,
+                                                        'pagado_rojas',
+                                                        'local',
+                                                    )
+                                                "
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </template>
                         </MiTable>
@@ -540,7 +737,7 @@ const { axiosDelete } = useAxios();
                             :tableClass="'bg-white mitabla'"
                             ref="miTableVisitante"
                             :cols="headers"
-                            :data="visitante_detalles"
+                            :data="list_visitante_detalles"
                             :con-paginacion="false"
                             :syncOrderBy="'id'"
                             :syncOrderAsc="'DESC'"
@@ -640,6 +837,58 @@ const { axiosDelete } = useAxios();
                                         "
                                     />
                                 </div>
+                                <div
+                                    class="w-100 text-center"
+                                    v-if="item.total_amarillas > 0"
+                                >
+                                    <div class="input-group">
+                                        <span class="input-group-text px-1">
+                                            <i class="fa fa-money-bill"></i>
+                                        </span>
+                                        <input
+                                            type="number"
+                                            class="form-control text-center"
+                                            :class="{
+                                                'bg-danger text-white':
+                                                    !item.pagado_amarillas &&
+                                                    item.total_amarillas > 0,
+                                                'bgActivo text-dark':
+                                                    item.pagado_amarillas &&
+                                                    item.total_amarillas > 0,
+                                            }"
+                                            v-model="item.total_amarillas"
+                                            @keyup="
+                                                actualizarDatosDetalle(
+                                                    item.id,
+                                                    'total_amarillas',
+                                                    'visitante',
+                                                )
+                                            "
+                                            @change="
+                                                actualizarDatosDetalle(
+                                                    item.id,
+                                                    'total_amarillas',
+                                                    'visitante',
+                                                )
+                                            "
+                                        />
+                                        <div class="input-group-text">
+                                            <input
+                                                type="checkbox"
+                                                v-model="item.pagado_amarillas"
+                                                :true-value="1"
+                                                :false-value="0"
+                                                @change="
+                                                    actualizarDatosDetalle(
+                                                        item.id,
+                                                        'pagado_amarillas',
+                                                        'visitante',
+                                                    )
+                                                "
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </template>
                             <template #rojas="{ item }">
                                 <div class="w-100 text-center">
@@ -662,6 +911,58 @@ const { axiosDelete } = useAxios();
                                             )
                                         "
                                     />
+                                </div>
+                                <div
+                                    class="w-100 text-center"
+                                    v-if="item.total_rojas > 0"
+                                >
+                                    <div class="input-group">
+                                        <span class="input-group-text px-1">
+                                            <i class="fa fa-money-bill"></i>
+                                        </span>
+                                        <input
+                                            type="number"
+                                            class="form-control text-center"
+                                            :class="{
+                                                'bg-danger text-white':
+                                                    !item.pagado_rojas &&
+                                                    item.total_rojas > 0,
+                                                'bgActivo text-dark':
+                                                    item.pagado_rojas &&
+                                                    item.total_rojas > 0,
+                                            }"
+                                            v-model="item.total_rojas"
+                                            @keyup="
+                                                actualizarDatosDetalle(
+                                                    item.id,
+                                                    'total_rojas',
+                                                    'visitante',
+                                                )
+                                            "
+                                            @change="
+                                                actualizarDatosDetalle(
+                                                    item.id,
+                                                    'total_rojas',
+                                                    'visitante',
+                                                )
+                                            "
+                                        />
+                                        <div class="input-group-text">
+                                            <input
+                                                type="checkbox"
+                                                v-model="item.pagado_rojas"
+                                                :true-value="1"
+                                                :false-value="0"
+                                                @change="
+                                                    actualizarDatosDetalle(
+                                                        item.id,
+                                                        'pagado_rojas',
+                                                        'visitante',
+                                                    )
+                                                "
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </template>
                         </MiTable>

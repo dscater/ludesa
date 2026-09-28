@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer("goles_local")->default(0);
             $table->integer("goles_visitante")->default(0);
             $table->unsignedBigInteger("ganador_id")->nullable();
+            $table->unsignedBigInteger("ci_ganador_id")->nullable();
             $table->decimal("total_local", 24, 2);
             $table->boolean("pago_local");
             $table->decimal("total_visitante", 24, 2);
@@ -36,6 +37,7 @@ return new class extends Migration
             $table->foreign("visitante_id")->on("carreras")->references("id");
             $table->foreign("ci_visitante_id")->on("campeonato_inscripcions")->references("id");
             $table->foreign("ganador_id")->on("carreras")->references("id");
+            $table->foreign("ci_ganador_id")->on("campeonato_inscripcions")->references("id");
         });
     }
 

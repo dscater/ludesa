@@ -15,6 +15,7 @@ class Partido extends Model
         "goles_local",
         "goles_visitante",
         "ganador_id",
+        "ci_ganador_id",
         "total_local",
         "pago_local",
         "total_visitante",
@@ -48,6 +49,10 @@ class Partido extends Model
     public function ci_visitante()
     {
         return $this->belongsTo(CampeonatoInscripcion::class, 'ci_visitante_id');
+    }
+    public function ci_ganador()
+    {
+        return $this->belongsTo(CampeonatoInscripcion::class, 'ci_ganador_id');
     }
 
     public function partido_detalles()

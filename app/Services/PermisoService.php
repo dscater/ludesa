@@ -91,6 +91,7 @@ class PermisoService
             "partidos.ver",
             "partidos.actualizarJugadores",
             "partidos.actualizaDatosPartido",
+            "partidos.finalizarPartido",
 
             "partido_detalles.actualizaDatosDetalle",
 

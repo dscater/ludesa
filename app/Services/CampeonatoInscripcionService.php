@@ -187,4 +187,31 @@ class CampeonatoInscripcionService
 
         return true;
     }
+
+    public function actualizaPartidoJugado(
+        CampeonatoInscripcion $campeonato_inscripcion,
+        $resultado = "empate",
+        $goles,
+        $goles_recibidos,
+    ) {
+        $campeonato_inscripcion->pj = $campeonato_inscripcion->pj  + 1;
+        if ($resultado == 'ganador') {
+            $campeonato_inscripcion->pg = $campeonato_inscripcion->pg + 1;
+            $campeonato_inscripcion->pts = $campeonato_inscripcion->pts + 3;
+        }
+
+        if ($resultado == 'empate') {
+            $campeonato_inscripcion->pe = $campeonato_inscripcion->pe + 1;
+            $campeonato_inscripcion->pts = $campeonato_inscripcion->pts + 1;
+        }
+
+        if ($resultado == 'perdedor') {
+            $campeonato_inscripcion->pp = $campeonato_inscripcion->pp + 1;
+        }
+        $campeonato_inscripcion->gf = $campeonato_inscripcion->gf + $goles;
+        $campeonato_inscripcion->gc = $campeonato_inscripcion->gc + $goles_recibidos;
+        $campeonato_inscripcion->dg = $campeonato_inscripcion->gf - $campeonato_inscripcion->gc;
+
+        $campeonato_inscripcion->save();
+    }
 }

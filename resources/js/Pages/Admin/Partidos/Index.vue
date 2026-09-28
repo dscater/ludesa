@@ -347,13 +347,13 @@ const iniciarPartido = (item) => {
                                     type="button"
                                     class="btn btn-primary btn-sm text-xs float-end ms-1"
                                     v-if="
-                                        ((item.estado == 'PENDIENTE' ||
+                                        (item.estado == 'PENDIENTE' ||
                                             item.estado == 'INICIADO') &&
-                                            props_page.auth?.user.permisos ==
-                                                '*') ||
-                                        props_page.auth?.user.permisos.includes(
-                                            'partidos.iniciarPartido',
-                                        )
+                                        (props_page.auth?.user.permisos ==
+                                            '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'partidos.iniciarPartido',
+                                            ))
                                     "
                                     @click.prevent="iniciarPartido(item)"
                                 >

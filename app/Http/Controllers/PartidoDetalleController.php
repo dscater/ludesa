@@ -25,6 +25,7 @@ class PartidoDetalleController extends Controller
             return response()->JSON([
                 "sw" => true,
                 "message" => "Registros actualizados",
+                "partido_detalle" => $partido_detalle
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

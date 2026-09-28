@@ -124,6 +124,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("partidos/paginado", [PartidoController::class, 'paginado'])->name("partidos.paginado");
     Route::get("partidos/listado", [PartidoController::class, 'listado'])->name("partidos.listado");
     Route::put("partidos/iniciarPartido/{partido}", [PartidoController::class, 'iniciarPartido'])->name("partidos.iniciarPartido");
+    Route::put("partidos/finalizarPartido/{partido}", [PartidoController::class, 'finalizarPartido'])->name("partidos.finalizarPartido");
     Route::get("partidos/ver/{partido}", [PartidoController::class, 'ver'])->name("partidos.ver");
     Route::get("partidos/actualizarJugadores/{partido}", [PartidoController::class, 'actualizarJugadores'])->name("partidos.actualizarJugadores");
     Route::patch("partidos/actualizaDatosPartido/{partido}", [PartidoController::class, 'actualizaDatosPartido'])->name("partidos.actualizaDatosPartido");
