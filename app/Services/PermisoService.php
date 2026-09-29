@@ -58,6 +58,10 @@ class PermisoService
             "campeonato_inscripcions.update",
             "campeonato_inscripcions.destroy",
 
+            "campeonato_inscripcions.pagos",
+            "campeonato_inscripcions.paginadoPagos",
+            "campeonato_inscripcions.deudas",
+
             "jugadors.paginado",
             "jugadors.index",
             "jugadors.listado",

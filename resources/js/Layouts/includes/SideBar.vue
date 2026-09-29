@@ -24,7 +24,8 @@ const sincronizarMenus = () => {
 
     if (
         route_current.value == "campeonatos.index" ||
-        route_current.value == "campeonato_inscripcions.index"
+        route_current.value == "campeonato_inscripcions.index" ||
+        route_current.value == "campeonato_inscripcions.pagos"
     ) {
         openMenus.campeonatos = true;
     }
@@ -220,10 +221,12 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('campeonatos.index')
+                                    permisos.includes(
+                                        'campeonato_inscripcions.pagos',
+                                    )
                                 "
                                 :label="'Pagos Pendientes'"
-                                :ruta="'campeonatos.index'"
+                                :ruta="'campeonato_inscripcions.pagos'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                         </ul>

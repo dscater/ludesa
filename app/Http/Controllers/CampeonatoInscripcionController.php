@@ -77,6 +77,54 @@ class CampeonatoInscripcionController extends Controller
         ]);
     }
 
+    public function pagos(): ResponseInertia
+    {
+        return Inertia::render("Admin/CampeonatoInscripcions/Pagos");
+    }
+
+    public function paginadoPagos(Request $request)
+    {
+        $perPage = $request->perPage;
+        $page = (int)($request->input("page", 1));
+        $search = (string)$request->input("search", "");
+        $campeonato_id = (string)$request->input("campeonato_id", 0);
+        $fecha_ini = (string)$request->input("fecha_ini", "");
+        $fecha_fin = (string)$request->input("fecha_fin", "");
+        $porCampeonato = (string)$request->input("porCampeonato", true);
+        $orderBy = $request->orderBy;
+        $orderAsc = $request->orderAsc;
+
+        $arrayOrderBy = [];
+        if ($orderBy && $orderAsc) {
+            $arrayOrderBy = [
+                [$orderBy, $orderAsc]
+            ];
+        }
+
+        $campeonato_inscripcions = $this->campeonato_inscripcionService->listadoPaginadoPagos(
+            $perPage,
+            $page,
+            $search,
+            $campeonato_id,
+            $fecha_ini,
+            $fecha_fin,
+            $porCampeonato,
+            $arrayOrderBy
+        );
+        return response()->JSON([
+            "data" => $campeonato_inscripcions->items(),
+            "total" => $campeonato_inscripcions->total(),
+            "lastPage" => $campeonato_inscripcions->lastPage()
+        ]);
+    }
+
+    public function deudas(CampeonatoInscripcion $campeonato_inscripcion): JsonResponse
+    {
+        return response()->JSON([
+            "deudas" => $this->campeonato_inscripcionService->deudas($campeonato_inscripcion)
+        ]);
+    }
+
     /**
      * Registrar un nuevo campeonato_inscripcion
      *

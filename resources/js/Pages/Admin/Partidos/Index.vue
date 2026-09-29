@@ -122,7 +122,7 @@ const updateDatos = () => {
 const eliminarPartido = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
-        html: `<strong>${item.carrera.nombre}</strong>`,
+        html: `<strong>${item.ci_local.carrera.nombre}</strong> vs <strong>${item.ci_visitante.carrera.nombre}</strong>`,
         showCancelButton: true,
         confirmButtonText: "Si, eliminar",
         cancelButtonText: "No, cancelar",
@@ -277,6 +277,7 @@ const iniciarPartido = (item) => {
                                     type="button"
                                     class="btn btn-danger btn-sm fs-8 float-end"
                                     @click.prevent="eliminarPartido(item)"
+                                    v-if="item.estado == 'PENDIENTE'"
                                 >
                                     <i class="fa fa-trash"></i>
                                 </button>
@@ -284,6 +285,7 @@ const iniciarPartido = (item) => {
                                     type="button"
                                     class="btn btn-warning btn-sm fs-8 float-end me-1"
                                     @click.prevent="editarRegistro(item)"
+                                    v-if="item.estado == 'PENDIENTE'"
                                 >
                                     <i class="fa fa-edit"></i>
                                 </button>

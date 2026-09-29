@@ -48,4 +48,19 @@ class CampeonatoInscripcion extends Model
     {
         return $this->hasMany(CarreraJugador::class, 'campeonato_inscripcion_id');
     }
+
+    public function partidos_local()
+    {
+        return $this->hasMany(Partido::class, 'ci_local_id');
+    }
+
+    public function partidos_visitante()
+    {
+        return $this->hasMany(Partido::class, 'ci_visitante_id');
+    }
+
+    public function partido_detalles()
+    {
+        return $this->hasMany(PartidoDetalle::class, 'campeonato_inscripcion_id');
+    }
 }

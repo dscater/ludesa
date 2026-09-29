@@ -101,6 +101,9 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     // CAMPEONATO INSCRIPCIONS
     Route::get("campeonato_inscripcions/paginado", [CampeonatoInscripcionController::class, 'paginado'])->name("campeonato_inscripcions.paginado");
+    Route::get("campeonato_inscripcions/pagos", [CampeonatoInscripcionController::class, 'pagos'])->name("campeonato_inscripcions.pagos");
+    Route::get("campeonato_inscripcions/paginadoPagos", [CampeonatoInscripcionController::class, 'paginadoPagos'])->name("campeonato_inscripcions.paginadoPagos");
+    Route::get("campeonato_inscripcions/deudas/{campeonato_inscripcion}", [CampeonatoInscripcionController::class, 'deudas'])->name("campeonato_inscripcions.deudas");
     Route::get("campeonato_inscripcions/listado", [CampeonatoInscripcionController::class, 'listado'])->name("campeonato_inscripcions.listado");
     Route::resource("campeonato_inscripcions", CampeonatoInscripcionController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]

@@ -6,6 +6,7 @@ use App\Models\CampeonatoInscripcionInscripcion;
 use App\Services\HistorialAccionService;
 use App\Models\CampeonatoInscripcion;
 use App\Models\CarreraJugador;
+use App\Models\Partido;
 use App\Models\Producto;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -46,6 +47,49 @@ class CampeonatoInscripcionService
 
         $campeonato_inscripcions = $campeonato_inscripcions->get();
         return $campeonato_inscripcions;
+    }
+
+    public function deudas($campeonato_inscripcion)
+    {
+        $partidos_local = Partido::with(["partido_detalles.carrera_jugador.jugador"])
+            ->where("ci_local_id", $campeonato_inscripcion->id)
+            ->where(function ($query) {
+                $query->where("pago_local", 0)
+                    ->orWhereHas("partido_detalles", function ($query) {
+                        $query->where(function ($q) {
+                            $q->where("amarillas", ">", 0)
+                                ->where("pagado_amarillas", 0);
+                        });
+                        $query->orWhere(function ($q) {
+                            $q->where("rojas", ">", 0)
+                                ->where("pagado_rojas", 0);
+                        });
+                    });
+            })
+            ->get();
+
+        $partidos_visitante = Partido::with([
+            "partido_detalles.carrera_jugador.jugador"
+        ])
+            ->where("ci_visitante_id", $campeonato_inscripcion->id)
+            ->where(function ($query) {
+                $query->where("pago_visitante", 0)
+                    ->orWhereHas("partido_detalles", function ($query) {
+                        $query->where(function ($q) {
+                            $q->where("amarillas", ">", 0)
+                                ->where("pagado_amarillas", 0);
+                        });
+                        $query->orWhere(function ($q) {
+                            $q->where("rojas", ">", 0)
+                                ->where("pagado_rojas", 0);
+                        });
+                    });
+            })
+            ->get();
+
+        $deudas = ["local" => $partidos_local, "visitante" => $partidos_visitante];
+
+        return $deudas;
     }
     /**
      * Lista de campeonato_inscripcions paginado con filtros
@@ -93,6 +137,123 @@ class CampeonatoInscripcionService
 
 
         $campeonato_inscripcions = $campeonato_inscripcions->paginate($length, ['*'], 'page', $page);
+        return $campeonato_inscripcions;
+    }
+
+    public function listadoPaginadoPagos(
+        int $length,
+        int $page,
+        string $search,
+        $campeonato_id,
+        $fecha_ini,
+        $fecha_fin,
+        $porCampeonato = true,
+        array $orderBy = []
+    ): LengthAwarePaginator {
+        $campeonato_inscripcions = CampeonatoInscripcion::select("campeonato_inscripcions.*")
+            ->with([
+                "campeonato:id,periodo,gestion,nombre,tipo",
+                "carrera:id,nombre",
+                "carrera_jugadors",
+            ])->where(function ($query) use ($fecha_ini, $fecha_fin) {
+
+                // PARTIDOS COMO LOCAL
+                $query->whereHas('partidos_local', function ($q) use ($fecha_ini, $fecha_fin) {
+
+                    $q->where('pago_local', 0);
+
+                    if ($fecha_ini) {
+                        $q->whereDate('fecha', '>=', $fecha_ini);
+                    }
+
+                    if ($fecha_fin) {
+                        $q->whereDate('fecha', '<=', $fecha_fin);
+                    }
+                })
+
+                    // PARTIDOS COMO VISITANTE
+                    ->orWhereHas('partidos_visitante', function ($q) use ($fecha_ini, $fecha_fin) {
+
+                        $q->where('pago_visitante', 0);
+
+                        if ($fecha_ini) {
+                            $q->whereDate('fecha', '>=', $fecha_ini);
+                        }
+
+                        if ($fecha_fin) {
+                            $q->whereDate('fecha', '<=', $fecha_fin);
+                        }
+                    })
+
+                    // TARJETAS
+                    ->orWhereHas('partido_detalles', function ($q) use ($fecha_ini, $fecha_fin) {
+
+                        $q->where(function ($q) {
+                            $q->where(function ($q) {
+                                $q->where('amarillas', '>', 0)
+                                    ->where('pagado_amarillas', 0);
+                            })
+                                ->orWhere(function ($q) {
+                                    $q->where('rojas', '>', 0)
+                                        ->where('pagado_rojas', 0);
+                                });
+                        });
+
+                        if ($fecha_ini) {
+                            $q->whereHas('partido', function ($q) use ($fecha_ini) {
+                                $q->whereDate('fecha', '>=', $fecha_ini);
+                            });
+                        }
+
+                        if ($fecha_fin) {
+                            $q->whereHas('partido', function ($q) use ($fecha_fin) {
+                                $q->whereDate('fecha', '<=', $fecha_fin);
+                            });
+                        }
+                    });
+            });
+
+        // Búsqueda en múltiples columnas con LIKE
+        if (!empty($search) && !empty($columnsSerachLike)) {
+            $campeonato_inscripcions->where(function ($query) use ($search, $columnsSerachLike) {
+                foreach ($columnsSerachLike as $col) {
+                    $query->orWhere("$col", "LIKE", "%$search%");
+                }
+            });
+        }
+
+        if ($campeonato_id || $porCampeonato) {
+            $campeonato_inscripcions->where("campeonato_id", $campeonato_id);
+        }
+
+        // Ordenamiento
+        foreach ($orderBy as $value) {
+            if (isset($value[0], $value[1])) {
+                $campeonato_inscripcions->orderBy($value[0], $value[1]);
+            }
+        }
+
+
+        $campeonato_inscripcions = $campeonato_inscripcions->paginate($length, ['*'], 'page', $page);
+
+        $campeonato_inscripcions->setCollection(
+            $campeonato_inscripcions->getCollection()->map(function ($inscripcion) {
+                $deuda_local = $inscripcion->partidos_local->where("pago_local")->where("pago_local", 0)
+                    ->sum("total_local");
+                $deuda_visitante = $inscripcion->partidos_visitante->where("pago_visitante")->where("pago_visitante", 0)
+                    ->sum("total_visitante");
+
+                $deuda_partidos = $deuda_local + $deuda_visitante;
+                $deuda_amarillas = $inscripcion->partido_detalles->sum("total_amarillas");
+                $deuda_rojas = $inscripcion->partido_detalles->sum("total_rojas");
+
+                $inscripcion->deuda_partidos = $deuda_partidos;
+                $inscripcion->deuda_amarillas = $deuda_amarillas;
+                $inscripcion->deuda_rojas = $deuda_rojas;
+
+                return $inscripcion;
+            })
+        );
         return $campeonato_inscripcions;
     }
 
