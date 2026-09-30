@@ -320,7 +320,7 @@ const mostrarDeudas = (item) => {
             v-if="muestra_formulario_pagos"
             :muestra_formulario="muestra_formulario_pagos"
             :form="form"
-            @envio-formulario="updateDatos()"
+            @envio-formulario="cargarPagos()"
             @cerrar-formulario="muestra_formulario_pagos = false"
         ></FormularioPagos>
     </Content>

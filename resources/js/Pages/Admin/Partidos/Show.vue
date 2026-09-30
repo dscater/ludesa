@@ -4,6 +4,7 @@ import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { usePartidos } from "@/composables/partidos/usePartidos";
 import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount, computed, watch } from "vue";
+import { useCampeonatoInscripcions } from "@/composables/campeonato_inscripcions/useCampeonatoInscripcions";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
 import { buttonProps } from "element-plus";
@@ -11,6 +12,7 @@ import MiTable from "@/Components/MiTable.vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import FormularioPagos from "../CampeonatoInscripcions/FormularioPagos.vue";
 // const { mobile, identificaDispositivo } = useMenu();
 const props = defineProps({
     campeonato: {
@@ -18,6 +20,14 @@ const props = defineProps({
         required: true,
     },
     partido: {
+        type: Object,
+        required: true,
+    },
+    deudas_local: {
+        type: Object,
+        required: true,
+    },
+    deudas_visitante: {
         type: Object,
         required: true,
     },
@@ -40,7 +50,15 @@ const props = defineProps({
 });
 const list_local_detalles = ref(props.local_detalles);
 const list_visitante_detalles = ref(props.visitante_detalles);
+
+const {
+    setCampeonatoInscripcion,
+    limpiarCampeonatoInscripcion,
+    form: formCI,
+} = useCampeonatoInscripcions();
+
 const { props: props_page } = usePage();
+const muestra_formulario_pagos = ref(false);
 const appStore = useAppStore();
 onBeforeMount(async () => {
     appStore.startLoading();
@@ -149,8 +167,20 @@ const recargarJugadores = () => {
 };
 
 const actualizarDatosPartido = (col) => {
-    if (!props.partido[col] && col != "pago_local" && col != "pago_visitante") {
+    if (
+        !props.partido[col] &&
+        col != "pago_local" &&
+        col != "pago_visitante" &&
+        col != "goles_local" &&
+        col != "goles_visitante"
+    ) {
         toast.info("No se enviaron datos");
+        return;
+    }
+
+    if (col == "goles_local" || col == "goles_visitante") {
+        if (props.partido[col] < 0)
+            toast.info("Los goles no pueden ser menores a 0");
         return;
     }
 
@@ -194,19 +224,37 @@ const actualizarDatosDetalle = (id, col, lv) => {
         lv == "local"
             ? list_local_detalles.value
             : list_visitante_detalles.value;
-    // console.log(lista);
+    console.log(lista);
     const index = lista.findIndex((item) => item.id == id);
-    // console.log(id);
-    // console.log(index);
+    if (index < 0) {
+        return;
+    }
 
     if (
-        !lista[index][col] &&
         col != "pagado_amarillas" &&
         col != "pagado_rojas" &&
         col != "amarillas" &&
-        col != "rojas"
+        col != "rojas" &&
+        col != "goles" &&
+        (lista[index][col] == "" || lista[index][col] < 0)
     ) {
+        // console.log(col);
+        // console.log(lista[index][col]);
         toast.info("No se enviaron datos");
+        return;
+    }
+
+    if (col == "goles" && parseFloat(lista[index][col] < 0)) {
+        // console.log(col);
+        // console.log(lista[index][col]);
+        toast.info(
+            "No puedes dejar vacio el campo o ingresar un valor menor a 0",
+        );
+        if (lv == "local") {
+            list_local_detalles.value[index][col] = 0;
+        } else {
+            list_visitante_detalles.value[index][col] = 0;
+        }
         return;
     }
 
@@ -296,6 +344,172 @@ const finalizarPartido = () => {
 
 const { setPartido, limpiarPartido, form } = usePartidos();
 const { axiosDelete, axiosPost } = useAxios();
+
+const deudasDerechosLocal = computed(() => {
+    const local = props.deudas_local.local.reduce((acc, item) => {
+        if (item.pago_local == 0 && item.total_local > 0) {
+            return acc + parseFloat(item.total_local);
+        }
+    }, 0);
+
+    const visitante = props.deudas_local.visitante.reduce((acc, item) => {
+        if (item.pago_visitante == 0 && item.total_visitante > 0) {
+            return acc + parseFloat(item.total_visitante);
+        }
+    }, 0);
+
+    return local + visitante;
+});
+const deudasAmarillasLocal = computed(() => {
+    const local = props.deudas_local.local.reduce((total, partido) => {
+        return (
+            total +
+            partido.partido_detalles.reduce((acc, item) => {
+                if (item.amarillas > 0 && item.pagado_amarillas == 0) {
+                    return acc + parseFloat(item.total_amarillas);
+                }
+
+                return acc;
+            }, 0)
+        );
+    }, 0);
+
+    const visitante = props.deudas_local.visitante.reduce((total, partido) => {
+        return (
+            total +
+            partido.partido_detalles.reduce((acc, item) => {
+                if (item.amarillas > 0 && item.pagado_amarillas == 0) {
+                    return acc + parseFloat(item.total_amarillas);
+                }
+
+                return acc;
+            }, 0)
+        );
+    }, 0);
+
+    return local + visitante;
+});
+const deudasRojasLocal = computed(() => {
+    const local = props.deudas_local.local.reduce((total, partido) => {
+        return (
+            total +
+            partido.partido_detalles.reduce((acc, item) => {
+                if (item.rojas > 0 && item.pagado_rojas == 0) {
+                    return acc + parseFloat(item.total_rojas);
+                }
+
+                return acc;
+            }, 0)
+        );
+    }, 0);
+
+    const visitante = props.deudas_local.visitante.reduce((total, partido) => {
+        return (
+            total +
+            partido.partido_detalles.reduce((acc, item) => {
+                if (item.rojas > 0 && item.pagado_rojas == 0) {
+                    return acc + parseFloat(item.total_rojas);
+                }
+
+                return acc;
+            }, 0)
+        );
+    }, 0);
+
+    return local + visitante;
+});
+
+const deudasDerechosVisitante = computed(() => {
+    const local = props.deudas_visitante.local.reduce((acc, item) => {
+        if (item.pago_local == 0 && item.total_local > 0) {
+            return acc + parseFloat(item.total_local);
+        }
+    }, 0);
+
+    const visitante = props.deudas_visitante.visitante.reduce((acc, item) => {
+        if (item.pago_visitante == 0 && item.total_visitante > 0) {
+            return acc + parseFloat(item.total_visitante);
+        }
+    }, 0);
+
+    return local + visitante;
+});
+const deudasAmarillasVisitante = computed(() => {
+    const local = props.deudas_visitante.local.reduce((total, partido) => {
+        return (
+            total +
+            partido.partido_detalles.reduce((acc, item) => {
+                if (item.amarillas > 0 && item.pagado_amarillas == 0) {
+                    return acc + parseFloat(item.total_amarillas);
+                }
+
+                return acc;
+            }, 0)
+        );
+    }, 0);
+
+    const visitante = props.deudas_visitante.visitante.reduce(
+        (total, partido) => {
+            return (
+                total +
+                partido.partido_detalles.reduce((acc, item) => {
+                    if (item.amarillas > 0 && item.pagado_amarillas == 0) {
+                        return acc + parseFloat(item.total_amarillas);
+                    }
+
+                    return acc;
+                }, 0)
+            );
+        },
+        0,
+    );
+
+    return local + visitante;
+});
+const deudasRojasVisitante = computed(() => {
+    const local = props.deudas_visitante.local.reduce((total, partido) => {
+        return (
+            total +
+            partido.partido_detalles.reduce((acc, item) => {
+                if (item.rojas > 0 && item.pagado_rojas == 0) {
+                    return acc + parseFloat(item.total_rojas);
+                }
+
+                return acc;
+            }, 0)
+        );
+    }, 0);
+
+    const visitante = props.deudas_visitante.visitante.reduce(
+        (total, partido) => {
+            return (
+                total +
+                partido.partido_detalles.reduce((acc, item) => {
+                    if (item.rojas > 0 && item.pagado_rojas == 0) {
+                        return acc + parseFloat(item.total_rojas);
+                    }
+
+                    return acc;
+                }, 0)
+            );
+        },
+        0,
+    );
+
+    return local + visitante;
+});
+
+const recargarDeudas = () => {
+    router.reload({
+        only: ["deudas_local", "deudas_visitante"],
+    });
+};
+
+const mostrarDeudas = (item) => {
+    limpiarCampeonatoInscripcion();
+    setCampeonatoInscripcion(item);
+    muestra_formulario_pagos.value = true;
+};
 </script>
 <template>
     <Head title="Ver Partido"></Head>
@@ -324,6 +538,14 @@ const { axiosDelete, axiosPost } = useAxios();
             <!-- /.row -->
         </template>
         <div class="row">
+            <FormularioPagos
+                v-if="muestra_formulario_pagos"
+                :muestra_formulario="muestra_formulario_pagos"
+                :form="formCI"
+                :partido_id="partido.id"
+                @envio-formulario="recargarDeudas"
+                @cerrar-formulario="muestra_formulario_pagos = false"
+            ></FormularioPagos>
             <div class="col-12">
                 <h4 class="text-primary text-center fs-5">
                     {{ campeonato.periodo }} - {{ campeonato.gestion }}:
@@ -355,7 +577,57 @@ const { axiosDelete, axiosPost } = useAxios();
                 <div class="card">
                     <div class="card-header bg-principal text-white">
                         <div class="row">
-                            <div class="col-8 align-items-end">
+                            <div
+                                class="col-12"
+                                v-if="
+                                    deudasDerechosLocal > 0 ||
+                                    deudasAmarillasLocal > 0 ||
+                                    deudasRojasLocal > 0
+                                "
+                            >
+                                <div class="alert alert-danger text-white">
+                                    <div class="row">
+                                        <div class="col-12 fs-5">
+                                            <i class="fa fa-info-circle"></i>
+                                            El equipo tiene deudas acumuladas
+                                        </div>
+                                        <div class="col-4 text-end fw-bold">
+                                            Por derecho de cancha:
+                                        </div>
+                                        <div class="col-8">
+                                            Bs. {{ deudasDerechosLocal }}
+                                        </div>
+                                        <div class="col-4 text-end fw-bold">
+                                            Por amarillas:
+                                        </div>
+                                        <div class="col-8">
+                                            Bs. {{ deudasAmarillasLocal }}
+                                        </div>
+                                        <div class="col-4 text-end fw-bold">
+                                            Por rojas:
+                                        </div>
+                                        <div class="col-8">
+                                            Bs. {{ deudasRojasLocal }}
+                                        </div>
+                                        <div class="col-12">
+                                            <button
+                                                class="btn btn-primary"
+                                                @click.prevent="
+                                                    mostrarDeudas(
+                                                        partido.ci_local,
+                                                    )
+                                                "
+                                            >
+                                                <i
+                                                    class="fa fa-clipboard-list"
+                                                ></i>
+                                                Ver Registros
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 align-items-end">
                                 <h4 class="fs-6 text-white fw-bold">
                                     Local: {{ partido.ci_local.carrera.nombre }}
                                 </h4>
@@ -429,7 +701,6 @@ const { axiosDelete, axiosPost } = useAxios();
                             :con-paginacion="false"
                             :syncOrderBy="'id'"
                             :syncOrderAsc="'DESC'"
-                            table-responsive
                             :header-class="'bg__primary'"
                             fixed-header
                             table-height="23vh"
@@ -486,13 +757,6 @@ const { axiosDelete, axiosPost } = useAxios();
                                         v-model="item.goles"
                                         min="0"
                                         class="form-control text-center"
-                                        @keyup="
-                                            actualizarDatosDetalle(
-                                                item.id,
-                                                'goles',
-                                                'visitante',
-                                            )
-                                        "
                                         @change="
                                             actualizarDatosDetalle(
                                                 item.id,
@@ -509,13 +773,6 @@ const { axiosDelete, axiosPost } = useAxios();
                                         type="number"
                                         v-model="item.amarillas"
                                         class="form-control text-center"
-                                        @keyup="
-                                            actualizarDatosDetalle(
-                                                item.id,
-                                                'amarillas',
-                                                'local',
-                                            )
-                                        "
                                         @change="
                                             actualizarDatosDetalle(
                                                 item.id,
@@ -545,13 +802,6 @@ const { axiosDelete, axiosPost } = useAxios();
                                                     item.total_amarillas > 0,
                                             }"
                                             v-model="item.total_amarillas"
-                                            @keyup="
-                                                actualizarDatosDetalle(
-                                                    item.id,
-                                                    'total_amarillas',
-                                                    'local',
-                                                )
-                                            "
                                             @change="
                                                 actualizarDatosDetalle(
                                                     item.id,
@@ -585,13 +835,6 @@ const { axiosDelete, axiosPost } = useAxios();
                                             type="number"
                                             v-model="item.rojas"
                                             class="form-control text-center"
-                                            @keyup="
-                                                actualizarDatosDetalle(
-                                                    item.id,
-                                                    'rojas',
-                                                    'local',
-                                                )
-                                            "
                                             @change="
                                                 actualizarDatosDetalle(
                                                     item.id,
@@ -665,7 +908,57 @@ const { axiosDelete, axiosPost } = useAxios();
                 <div class="card">
                     <div class="card-header bg-principal text-white">
                         <div class="row">
-                            <div class="col-8 align-items-end">
+                            <div
+                                class="col-12"
+                                v-if="
+                                    deudasDerechosVisitante > 0 ||
+                                    deudasAmarillasVisitante > 0 ||
+                                    deudasRojasVisitante > 0
+                                "
+                            >
+                                <div class="alert alert-danger text-white">
+                                    <div class="row">
+                                        <div class="col-12 fs-5">
+                                            <i class="fa fa-info-circle"></i>
+                                            El equipo tiene deudas acumuladas
+                                        </div>
+                                        <div class="col-4 text-end fw-bold">
+                                            Por derecho de cancha:
+                                        </div>
+                                        <div class="col-8">
+                                            Bs. {{ deudasDerechosVisitante }}
+                                        </div>
+                                        <div class="col-4 text-end fw-bold">
+                                            Por amarillas:
+                                        </div>
+                                        <div class="col-8">
+                                            Bs. {{ deudasAmarillasVisitante }}
+                                        </div>
+                                        <div class="col-4 text-end fw-bold">
+                                            Por rojas:
+                                        </div>
+                                        <div class="col-8">
+                                            Bs. {{ deudasRojasVisitante }}
+                                        </div>
+                                        <div class="col-12">
+                                            <button
+                                                class="btn btn-primary"
+                                                @click.prevent="
+                                                    mostrarDeudas(
+                                                        partido.ci_visitante,
+                                                    )
+                                                "
+                                            >
+                                                <i
+                                                    class="fa fa-clipboard-list"
+                                                ></i>
+                                                Ver Registros
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 align-items-end">
                                 <h4 class="fs-6 text-white fw-bold">
                                     Visitante:
                                     {{ partido.ci_visitante.carrera.nombre }}
@@ -741,7 +1034,6 @@ const { axiosDelete, axiosPost } = useAxios();
                             :con-paginacion="false"
                             :syncOrderBy="'id'"
                             :syncOrderAsc="'DESC'"
-                            table-responsive
                             :header-class="'bg__primary'"
                             fixed-header
                             table-height="23vh"
@@ -821,13 +1113,6 @@ const { axiosDelete, axiosPost } = useAxios();
                                         type="number"
                                         v-model="item.amarillas"
                                         class="form-control text-center"
-                                        @keyup="
-                                            actualizarDatosDetalle(
-                                                item.id,
-                                                'amarillas',
-                                                'visitante',
-                                            )
-                                        "
                                         @change="
                                             actualizarDatosDetalle(
                                                 item.id,
@@ -857,13 +1142,6 @@ const { axiosDelete, axiosPost } = useAxios();
                                                     item.total_amarillas > 0,
                                             }"
                                             v-model="item.total_amarillas"
-                                            @keyup="
-                                                actualizarDatosDetalle(
-                                                    item.id,
-                                                    'total_amarillas',
-                                                    'visitante',
-                                                )
-                                            "
                                             @change="
                                                 actualizarDatosDetalle(
                                                     item.id,
@@ -896,13 +1174,6 @@ const { axiosDelete, axiosPost } = useAxios();
                                         type="number"
                                         v-model="item.rojas"
                                         class="form-control text-center"
-                                        @keyup="
-                                            actualizarDatosDetalle(
-                                                item.id,
-                                                'rojas',
-                                                'visitante',
-                                            )
-                                        "
                                         @change="
                                             actualizarDatosDetalle(
                                                 item.id,
@@ -932,13 +1203,6 @@ const { axiosDelete, axiosPost } = useAxios();
                                                     item.total_rojas > 0,
                                             }"
                                             v-model="item.total_rojas"
-                                            @keyup="
-                                                actualizarDatosDetalle(
-                                                    item.id,
-                                                    'total_rojas',
-                                                    'visitante',
-                                                )
-                                            "
                                             @change="
                                                 actualizarDatosDetalle(
                                                     item.id,

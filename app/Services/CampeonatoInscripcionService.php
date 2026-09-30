@@ -49,10 +49,13 @@ class CampeonatoInscripcionService
         return $campeonato_inscripcions;
     }
 
-    public function deudas($campeonato_inscripcion)
+    public function deudas($campeonato_inscripcion, $partido_id = null)
     {
         $partidos_local = Partido::with(["partido_detalles.carrera_jugador.jugador"])
             ->where("ci_local_id", $campeonato_inscripcion->id)
+            ->when($partido_id, function ($query) use ($partido_id) {
+                $query->where("id", "!=", $partido_id);
+            })
             ->where(function ($query) {
                 $query->where("pago_local", 0)
                     ->orWhereHas("partido_detalles", function ($query) {
@@ -72,6 +75,9 @@ class CampeonatoInscripcionService
             "partido_detalles.carrera_jugador.jugador"
         ])
             ->where("ci_visitante_id", $campeonato_inscripcion->id)
+            ->when($partido_id, function ($query) use ($partido_id) {
+                $query->where("id", "!=", $partido_id);
+            })
             ->where(function ($query) {
                 $query->where("pago_visitante", 0)
                     ->orWhereHas("partido_detalles", function ($query) {
@@ -238,14 +244,14 @@ class CampeonatoInscripcionService
 
         $campeonato_inscripcions->setCollection(
             $campeonato_inscripcions->getCollection()->map(function ($inscripcion) {
-                $deuda_local = $inscripcion->partidos_local->where("pago_local")->where("pago_local", 0)
+                $deuda_local = $inscripcion->partidos_local->where("pago_local", 0)
                     ->sum("total_local");
-                $deuda_visitante = $inscripcion->partidos_visitante->where("pago_visitante")->where("pago_visitante", 0)
+                $deuda_visitante = $inscripcion->partidos_visitante->where("pago_visitante", 0)
                     ->sum("total_visitante");
 
                 $deuda_partidos = $deuda_local + $deuda_visitante;
-                $deuda_amarillas = $inscripcion->partido_detalles->sum("total_amarillas");
-                $deuda_rojas = $inscripcion->partido_detalles->sum("total_rojas");
+                $deuda_amarillas = $inscripcion->partido_detalles->where("pagado_amarillas", 0)->sum("total_amarillas");
+                $deuda_rojas = $inscripcion->partido_detalles->where("pagado_rojas", 0)->sum("total_rojas");
 
                 $inscripcion->deuda_partidos = $deuda_partidos;
                 $inscripcion->deuda_amarillas = $deuda_amarillas;

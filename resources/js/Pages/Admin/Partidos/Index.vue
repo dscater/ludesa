@@ -9,6 +9,7 @@ import { useAppStore } from "@/stores/aplicacion/appStore";
 import Formulario from "./Formulario.vue";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
 import { buttonProps } from "element-plus";
+import { useDate } from "@/composables/useDate.js";
 // const { mobile, identificaDispositivo } = useMenu();
 const { props: props_page } = usePage();
 const appStore = useAppStore();
@@ -31,6 +32,9 @@ const listCampeonatos = ref([]);
 const multiSearch = ref({
     search: "",
     campeonato_id: "",
+    fecha_ini: useDate().getFechaActual(),
+    fecha_fin: useDate().getFechaActual(),
+    estado: "",
     filtro: [],
 });
 const listPartidos = ref([]);
@@ -52,6 +56,9 @@ const cargarPartidos = async () => {
                 perPage: perPage.value,
                 page: currentPage.value,
                 campeonato_id: multiSearch.value.campeonato_id,
+                fecha_ini: multiSearch.value.fecha_ini,
+                fecha_fin: multiSearch.value.fecha_fin,
+                estado: multiSearch.value.estado,
                 porCampeonato: true,
             },
         });
@@ -64,7 +71,7 @@ const cargarPartidos = async () => {
     }
 };
 
-const detectarCambioSelect = () => {
+const detectarCambiosFiltros = () => {
     currentPage.value = 1;
     cargarPartidos();
     if (multiSearch.value.campeonato_id) {
@@ -197,33 +204,82 @@ const iniciarPartido = (item) => {
         </template>
         <div class="row">
             <div class="col-8">
-                <div class="input-group">
-                    <button
-                        class="btn btn-light border"
-                        type="button"
-                        @click="cargarPartidos"
-                        title="Actualizar"
-                    >
-                        <i class="fa fa-sync"></i>
-                    </button>
-                    <div class="form-control border-0 p-0">
-                        <el-select
-                            v-model="multiSearch.campeonato_id"
-                            size="large"
-                            class="el-select-input-group-right"
-                            placeholder="Campeonato"
-                            no-data-text="Sin Datos"
-                            no-match-text="Sin Resultados"
-                            filterable
-                            @change="detectarCambioSelect"
-                        >
-                            <el-option
-                                v-for="item in listCampeonatos"
-                                :key="item.id"
-                                :value="item.id"
-                                :label="`${item.periodo} - ${item.gestion}: ${item.nombre} (${item.tipo})`"
-                            ></el-option>
-                        </el-select>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="input-group">
+                            <button
+                                class="btn btn-light border"
+                                type="button"
+                                @click="cargarPartidos"
+                                title="Actualizar"
+                            >
+                                <i class="fa fa-sync"></i>
+                            </button>
+                            <div class="form-control border-0 p-0">
+                                <el-select
+                                    v-model="multiSearch.campeonato_id"
+                                    size="large"
+                                    class="el-select-input-group-right"
+                                    placeholder="Campeonato"
+                                    no-data-text="Sin Datos"
+                                    no-match-text="Sin Resultados"
+                                    filterable
+                                    @change="detectarCambiosFiltros"
+                                >
+                                    <el-option
+                                        v-for="item in listCampeonatos"
+                                        :key="item.id"
+                                        :value="item.id"
+                                        :label="`${item.periodo} - ${item.gestion}: ${item.nombre} (${item.tipo})`"
+                                    ></el-option>
+                                </el-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <span class="text-xs text-muted">Desde</span>
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    v-model="multiSearch.fecha_ini"
+                                    @change="detectarCambiosFiltros"
+                                    @keyup="detectarCambiosFiltros"
+                                />
+                            </div>
+                            <div class="col-md-4">
+                                <span class="text-xs text-muted">Hasta</span>
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    v-model="multiSearch.fecha_fin"
+                                    @change="detectarCambiosFiltros"
+                                    @keyup="detectarCambiosFiltros"
+                                />
+                            </div>
+                            <div class="col-md-4">
+                                <span class="text-xs text-muted">Estado</span>
+                                <el-select
+                                    v-model="multiSearch.estado"
+                                    placeholder="Estado del Partido"
+                                    filterable
+                                    clearable
+                                    @change="detectarCambiosFiltros"
+                                >
+                                    <el-option
+                                        v-for="item in [
+                                            'PENDIENTE',
+                                            'INICIADO',
+                                            'FINALIZADO',
+                                        ]"
+                                        :key="item"
+                                        :value="item"
+                                        :label="item"
+                                    ></el-option>
+                                </el-select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -291,6 +347,20 @@ const iniciarPartido = (item) => {
                                 </button>
                                 <h4 class="fw-bold fs-6 text-primary">
                                     {{ item.fecha_hora_t }}
+                                </h4>
+                                <h4
+                                    class="fs-8 fw-bold mb-0"
+                                    :class="{
+                                        'text-success':
+                                            item.estado == 'INICIADO',
+                                        'text-danger':
+                                            item.estado == 'FINALIZADO',
+                                        'text-warning':
+                                            item.estado == 'PENDIENTE',
+                                    }"
+                                >
+                                    <i class="fa fa-circle"></i>
+                                    {{ item.estado }}
                                 </h4>
                             </div>
                         </div>

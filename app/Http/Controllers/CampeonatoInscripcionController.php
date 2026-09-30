@@ -118,10 +118,10 @@ class CampeonatoInscripcionController extends Controller
         ]);
     }
 
-    public function deudas(CampeonatoInscripcion $campeonato_inscripcion): JsonResponse
+    public function deudas(CampeonatoInscripcion $campeonato_inscripcion, Request $request): JsonResponse
     {
         return response()->JSON([
-            "deudas" => $this->campeonato_inscripcionService->deudas($campeonato_inscripcion)
+            "deudas" => $this->campeonato_inscripcionService->deudas($campeonato_inscripcion, $request->input("partido_id", null))
         ]);
     }
 

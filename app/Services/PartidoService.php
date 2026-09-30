@@ -56,6 +56,9 @@ class PartidoService
         int $page,
         string $search,
         $campeonato_id,
+        $fecha_ini,
+        $fecha_fin,
+        $estado,
         $porCampeonato = true,
         array $orderBy = []
     ): LengthAwarePaginator {
@@ -74,6 +77,15 @@ class PartidoService
 
         if ($campeonato_id || $porCampeonato) {
             $partidos->where("campeonato_id", $campeonato_id);
+        }
+
+
+        if ($estado) {
+            $partidos->where("estado", $estado);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $partidos->whereBetween("fecha", [$fecha_ini, $fecha_fin]);
         }
 
         // Ordenamiento
@@ -202,6 +214,7 @@ class PartidoService
                 ->where("campeonato_inscripcion_id", $campeonatoInscripcion->id)
                 ->where("carrera_id", $campeonatoInscripcion->carrera_id)
                 ->where("carrera_jugador_id", $item->id)
+                ->where("partido_id", $partido->id)
                 ->get()->first();
             if (!$existe)
                 $partido->partido_detalles()->create([

@@ -1,3 +1,4 @@
+@import url("variables.css");
 #app form label {
     font-size: 0.78em;
     font-weight: 400;
@@ -381,4 +382,8 @@ input.checkboxTable:checked:disabled {
     padding: 10px;
     background-color: white;
     border-bottom: solid 1px var(--bgGray);
+}
+
+input.bgInactivo:focus {
+    color: var(--bg1) !important;
 }

@@ -7,6 +7,7 @@ use App\Http\Requests\PartidoUpdateRequest;
 use App\Models\Partido;
 use App\Models\PartidoDetalle;
 use App\Models\User;
+use App\Services\CampeonatoInscripcionService;
 use App\Services\CostoDerechoService;
 use App\Services\CostoTarjetaService;
 use App\Services\PartidoService;
@@ -27,7 +28,8 @@ class PartidoController extends Controller
     public function __construct(
         private PartidoService $partidoService,
         private CostoTarjetaService $costo_tarjeta_service,
-        private CostoDerechoService $costo_derecho_service
+        private CostoDerechoService $costo_derecho_service,
+        private CampeonatoInscripcionService $campeonato_inscripcion_service
     ) {}
 
     /**
@@ -58,22 +60,31 @@ class PartidoController extends Controller
         $page = (int)($request->input("page", 1));
         $search = (string)$request->input("search", "");
         $campeonato_id = (string)$request->input("campeonato_id", 0);
+        $fecha_ini = (string)$request->input("fecha_ini", "");
+        $fecha_fin = (string)$request->input("fecha_fin", "");
+        $estado = (string)$request->input("estado", "");
         $porCampeonato = (string)$request->input("porCampeonato", true);
         $orderBy = $request->orderBy;
         $orderAsc = $request->orderAsc;
 
-        $arrayOrderBy = [];
-        if ($orderBy && $orderAsc) {
-            $arrayOrderBy = [
-                [$orderBy, $orderAsc]
-            ];
-        }
+        $arrayOrderBy = [
+            ["fecha", "desc"],
+            ["hora", "desc"],
+        ];
+        // if ($orderBy && $orderAsc) {
+        //     $arrayOrderBy = [
+        //         [$orderBy, $orderAsc]
+        //     ];
+        // }
 
         $partidos = $this->partidoService->listadoPaginado(
             $perPage,
             $page,
             $search,
             $campeonato_id,
+            $fecha_ini,
+            $fecha_fin,
+            $estado,
             $porCampeonato,
             $arrayOrderBy
         );
@@ -120,18 +131,23 @@ class PartidoController extends Controller
     public function ver(Partido $partido)
     {
         $campeonato = $partido->campeonato;
-        $partido = $partido->load(["ci_local.carrera", "ci_visitante.carrera", "partido_detalles"]);
+        $partido = $partido->load(["ci_local.carrera", "ci_local.campeonato", "ci_visitante.carrera", "ci_visitante.campeonato", "partido_detalles"]);
 
         $local_detalles = PartidoDetalle::with(["carrera_jugador.jugador"])
+            ->where("partido_id", $partido->id)
             ->where("campeonato_inscripcion_id", $partido->ci_local_id)
             ->get();
 
         $visitante_detalles = PartidoDetalle::with(["carrera_jugador.jugador"])
+            ->where("partido_id", $partido->id)
             ->where("campeonato_inscripcion_id", $partido->ci_visitante_id)
             ->get();
 
         $costo_tarjetas = $this->costo_tarjeta_service->getCostosTipo($campeonato->tipo);
         $costo_derechos = $this->costo_derecho_service->getCostosTipo($campeonato->tipo);
+
+        $deudas_local = $this->campeonato_inscripcion_service->deudas($partido->ci_local, $partido->id);
+        $deudas_visitante = $this->campeonato_inscripcion_service->deudas($partido->ci_visitante, $partido->id);
 
         return Inertia::render("Admin/Partidos/Show", compact(
             "campeonato",
@@ -140,6 +156,8 @@ class PartidoController extends Controller
             "visitante_detalles",
             "costo_tarjetas",
             "costo_derechos",
+            "deudas_local",
+            "deudas_visitante"
         ));
     }
 
@@ -196,10 +214,12 @@ class PartidoController extends Controller
             // actualizar partido
             $partido = $this->partidoService->actualizarJugadoresPartido($partido);
             $local_detalles = PartidoDetalle::with(["carrera_jugador.jugador"])
+                ->where("partido_id", $partido->id)
                 ->where("campeonato_inscripcion_id", $partido->ci_local_id)
                 ->get();
 
             $visitante_detalles = PartidoDetalle::with(["carrera_jugador.jugador"])
+                ->where("partido_id", $partido->id)
                 ->where("campeonato_inscripcion_id", $partido->ci_visitante_id)
                 ->get();
             DB::commit();

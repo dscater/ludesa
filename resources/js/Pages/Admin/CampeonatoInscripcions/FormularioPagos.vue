@@ -1,6 +1,6 @@
 <script setup>
 import MiModal from "@/Components/MiModal.vue";
-import { useForm, usePage } from "@inertiajs/vue3";
+import { router, useForm, usePage } from "@inertiajs/vue3";
 import { watch, ref, computed, onMounted, nextTick } from "vue";
 import { useAxios } from "@/composables/axios/useAxios";
 import MiTable from "@/Components/MiTable.vue";
@@ -15,6 +15,10 @@ const props = defineProps({
     },
     form: {
         type: Object,
+    },
+    partido_id: {
+        type: Number,
+        default: null,
     },
 });
 
@@ -42,18 +46,17 @@ const cerrarFormulario = () => {
 const listDeudas = ref([]);
 const cargarDeudas = () => {
     axios
-        .get(route("campeonato_inscripcions.deudas", form.id))
+        .get(route("campeonato_inscripcions.deudas", form.id), {
+            params: {
+                partido_id: props.partido_id,
+            },
+        })
         .then((response) => {
             listDeudas.value = response.data.deudas;
         });
 };
 
 const actualizarDatosPartido = (partido, col) => {
-    if (!partido[col] && col != "pago_local" && col != "pago_visitante") {
-        toast.info("No se enviaron datos");
-        return;
-    }
-
     if (col == "pago_local" || col == "pago_visitante") {
         if (col == "pago_local") {
             if (
@@ -83,6 +86,11 @@ const actualizarDatosPartido = (partido, col) => {
             data: data,
         })
         .then((response) => {
+            toast.success("Registro actualizado correctamente", {
+                autoClose: 300,
+            });
+            emits("envio-formulario");
+
             router.reload({
                 only: ["partido"],
             });
@@ -171,11 +179,102 @@ const actualizarDatosDetalle = (id, col, lv, index_partido) => {
                         response.data.partido_detalle["total_rojas"];
                 }
             }
-            toast.success("Proceso realizado con éxito", {
-                autoClose: 500,
+
+            toast.success("Registro actualizado correctamente", {
+                autoClose: 300,
             });
+            emits("envio-formulario");
         });
 };
+
+const deudasDerechos = computed(() => {
+    const local = listDeudas.value?.local ?? [];
+    const visitante = listDeudas.value?.visitante ?? [];
+
+    const totalLocal = local.reduce((acc, item) => {
+        if (item.pago_local == 0 && item.total_local > 0) {
+            return acc + parseFloat(item.total_local || 0);
+        }
+
+        return acc;
+    }, 0);
+
+    const totalVisitante = visitante.reduce((acc, item) => {
+        if (item.pago_visitante == 0 && item.total_visitante > 0) {
+            return acc + parseFloat(item.total_visitante || 0);
+        }
+
+        return acc;
+    }, 0);
+
+    return totalLocal + totalVisitante;
+});
+
+const deudasAmarillas = computed(() => {
+    const local = listDeudas.value?.local ?? [];
+    const visitante = listDeudas.value?.visitante ?? [];
+
+    const totalLocal = local.reduce((total, partido) => {
+        return (
+            total +
+            (partido.partido_detalles ?? []).reduce((acc, item) => {
+                if (item.amarillas > 0 && item.pagado_amarillas == 0) {
+                    return acc + parseFloat(item.total_amarillas || 0);
+                }
+
+                return acc;
+            }, 0)
+        );
+    }, 0);
+
+    const totalVisitante = visitante.reduce((total, partido) => {
+        return (
+            total +
+            (partido.partido_detalles ?? []).reduce((acc, item) => {
+                if (item.amarillas > 0 && item.pagado_amarillas == 0) {
+                    return acc + parseFloat(item.total_amarillas || 0);
+                }
+
+                return acc;
+            }, 0)
+        );
+    }, 0);
+
+    return totalLocal + totalVisitante;
+});
+
+const deudasRojas = computed(() => {
+    const local = listDeudas.value?.local ?? [];
+    const visitante = listDeudas.value?.visitante ?? [];
+
+    const totalLocal = local.reduce((total, partido) => {
+        return (
+            total +
+            (partido.partido_detalles ?? []).reduce((acc, item) => {
+                if (item.rojas > 0 && item.pagado_rojas == 0) {
+                    return acc + parseFloat(item.total_rojas || 0);
+                }
+
+                return acc;
+            }, 0)
+        );
+    }, 0);
+
+    const totalVisitante = visitante.reduce((total, partido) => {
+        return (
+            total +
+            (partido.partido_detalles ?? []).reduce((acc, item) => {
+                if (item.rojas > 0 && item.pagado_rojas == 0) {
+                    return acc + parseFloat(item.total_rojas || 0);
+                }
+
+                return acc;
+            }, 0)
+        );
+    }, 0);
+
+    return totalLocal + totalVisitante;
+});
 
 onMounted(() => {
     cargarDeudas();
@@ -215,6 +314,24 @@ onMounted(() => {
                 </div>
             </div>
             <div class="row">
+                <div class="col-12 border-top mt-1 pt-2">
+                    <div class="row">
+                        <div class="col-md-4 fw-bold text-center">
+                            Total por derecho de cancha<br />
+                            Bs. {{ deudasDerechos }}
+                        </div>
+                        <div
+                            class="col-md-4 fw-bold text-center border-start border-end"
+                        >
+                            Total por Amarillas<br />
+                            Bs. {{ deudasAmarillas }}
+                        </div>
+                        <div class="col-md-4 fw-bold text-center">
+                            Total por Rojas<br />
+                            Bs. {{ deudasRojas }}
+                        </div>
+                    </div>
+                </div>
                 <div
                     class="col-12 mt-2 border-top"
                     style="max-height: 40vh; overflow: auto"
@@ -248,9 +365,9 @@ onMounted(() => {
                                             :true-value="1"
                                             :false-value="0"
                                             v-model="item.pago_local"
-                                            :disabled="item.pago_local"
                                             @change="
                                                 actualizarDatosPartido(
+                                                    item,
                                                     'pago_local',
                                                 )
                                             "
@@ -523,9 +640,9 @@ onMounted(() => {
                                             :true-value="1"
                                             :false-value="0"
                                             v-model="item.pago_visitante"
-                                            :disabled="item.pago_visitante"
                                             @change="
                                                 actualizarDatosPartido(
+                                                    item,
                                                     'pago_visitante',
                                                 )
                                             "
