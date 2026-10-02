@@ -51,6 +51,7 @@ class CampeonatoInscripcionController extends Controller
         $page = (int)($request->input("page", 1));
         $search = (string)$request->input("search", "");
         $campeonato_id = (string)$request->input("campeonato_id", 0);
+        $carrera_id = (string)$request->input("carrera_id", 0);
         $porCampeonato = (string)$request->input("porCampeonato", true);
         $orderBy = $request->orderBy;
         $orderAsc = $request->orderAsc;
@@ -67,6 +68,7 @@ class CampeonatoInscripcionController extends Controller
             $page,
             $search,
             $campeonato_id,
+            $carrera_id,
             $porCampeonato,
             $arrayOrderBy
         );
@@ -88,6 +90,7 @@ class CampeonatoInscripcionController extends Controller
         $page = (int)($request->input("page", 1));
         $search = (string)$request->input("search", "");
         $campeonato_id = (string)$request->input("campeonato_id", 0);
+        $carrera_id = (string)$request->input("carrera_id", 0);
         $fecha_ini = (string)$request->input("fecha_ini", "");
         $fecha_fin = (string)$request->input("fecha_fin", "");
         $porCampeonato = (string)$request->input("porCampeonato", true);
@@ -106,6 +109,7 @@ class CampeonatoInscripcionController extends Controller
             $page,
             $search,
             $campeonato_id,
+            $carrera_id,
             $fecha_ini,
             $fecha_fin,
             $porCampeonato,
@@ -125,6 +129,24 @@ class CampeonatoInscripcionController extends Controller
         ]);
     }
 
+
+    public function actualizaPago(CampeonatoInscripcion $campeonato_inscripcion, Request $request): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $this->campeonato_inscripcionService->actualizaPago($campeonato_inscripcion, $request->input("pago_inscripcion", 0));
+            DB::commit();
+            return response()->JSON([
+                'sw' => true,
+                'message' => 'El pago se actualizó correctamente'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
     /**
      * Registrar un nuevo campeonato_inscripcion
      *

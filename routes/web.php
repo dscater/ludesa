@@ -5,6 +5,7 @@ use App\Http\Controllers\CampeonatoInscripcionController;
 use App\Http\Controllers\CarreraController;
 use App\Http\Controllers\CarreraJugadorController;
 use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\CostoInscripcionController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\PartidoController;
@@ -85,6 +86,9 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // POSICIONS
     Route::get("posicions/listado", [PosicionController::class, 'listado'])->name("posicions.listado");
 
+    // COSTO INSCRIPCIONS
+    Route::get("costo_inscripcions/getCostoByTipo", [CostoInscripcionController::class, 'getCostoByTipo'])->name("costo_inscripcions.getCostoByTipo");
+
     // CAMPEONATOS
     Route::get("campeonatos/paginado", [CampeonatoController::class, 'paginado'])->name("campeonatos.paginado");
     Route::get("campeonatos/listado", [CampeonatoController::class, 'listado'])->name("campeonatos.listado");
@@ -105,6 +109,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("campeonato_inscripcions/paginadoPagos", [CampeonatoInscripcionController::class, 'paginadoPagos'])->name("campeonato_inscripcions.paginadoPagos");
     Route::get("campeonato_inscripcions/deudas/{campeonato_inscripcion}", [CampeonatoInscripcionController::class, 'deudas'])->name("campeonato_inscripcions.deudas");
     Route::get("campeonato_inscripcions/listado", [CampeonatoInscripcionController::class, 'listado'])->name("campeonato_inscripcions.listado");
+    Route::patch("campeonato_inscripcions/actualizaPago/{campeonato_inscripcion}", [CampeonatoInscripcionController::class, 'actualizaPago'])->name("campeonato_inscripcions.actualizaPago");
     Route::resource("campeonato_inscripcions", CampeonatoInscripcionController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );
@@ -142,5 +147,29 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");
     Route::get('reportes/r_usuarios', [ReporteController::class, 'r_usuarios'])->name("reportes.r_usuarios");
+
+    Route::get('reportes/carreras', [ReporteController::class, 'carreras'])->name("reportes.carreras");
+    Route::get('reportes/r_carreras', [ReporteController::class, 'r_carreras'])->name("reportes.r_carreras");
+
+    Route::get('reportes/carrera_jugadors', [ReporteController::class, 'carrera_jugadors'])->name("reportes.carrera_jugadors");
+    Route::get('reportes/r_carrera_jugadors', [ReporteController::class, 'r_carrera_jugadors'])->name("reportes.r_carrera_jugadors");
+
+    Route::get('reportes/campeonatos', [ReporteController::class, 'campeonatos'])->name("reportes.campeonatos");
+    Route::get('reportes/r_campeonatos', [ReporteController::class, 'r_campeonatos'])->name("reportes.r_campeonatos");
+
+    Route::get('reportes/posicions', [ReporteController::class, 'posicions'])->name("reportes.posicions");
+    Route::get('reportes/r_posicions', [ReporteController::class, 'r_posicions'])->name("reportes.r_posicions");
+
+    Route::get('reportes/resultado_partidos', [ReporteController::class, 'resultado_partidos'])->name("reportes.resultado_partidos");
+    Route::get('reportes/r_resultado_partidos', [ReporteController::class, 'r_resultado_partidos'])->name("reportes.r_resultado_partidos");
+
+    Route::get('reportes/goleadores', [ReporteController::class, 'goleadores'])->name("reportes.goleadores");
+    Route::get('reportes/r_goleadores', [ReporteController::class, 'r_goleadores'])->name("reportes.r_goleadores");
+
+    Route::get('reportes/porteros', [ReporteController::class, 'porteros'])->name("reportes.porteros");
+    Route::get('reportes/r_porteros', [ReporteController::class, 'r_porteros'])->name("reportes.r_porteros");
+
+    Route::get('reportes/pagos_pendientes', [ReporteController::class, 'pagos_pendientes'])->name("reportes.pagos_pendientes");
+    Route::get('reportes/r_pagos_pendientes', [ReporteController::class, 'r_pagos_pendientes'])->name("reportes.r_pagos_pendientes");
 });
 require __DIR__ . '/auth.php';

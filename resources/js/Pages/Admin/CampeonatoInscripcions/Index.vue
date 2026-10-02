@@ -290,15 +290,33 @@ const mostrarJugadores = (item) => {
                                         <div class="fw-bold">
                                             {{ item?.carrera_jugadors.length }}
                                         </div>
-                                        <div class="fw-bold">
+                                        <div class="fw-bold fs-7">
                                             <i class="fa fa-user-friends"></i>
+                                            Jugadores
                                         </div>
                                     </div>
                                     <div
                                         class="col-4 border-start py-3 text-md text-center"
                                     >
-                                        <div>{{ item.pts }}</div>
-                                        <div>Pts.</div>
+                                        <div>
+                                            Bs. {{ item.total_inscripcion }}
+                                        </div>
+                                        <div>
+                                            <span
+                                                class="badge"
+                                                :class="{
+                                                    'bg-danger':
+                                                        !item.pago_inscripcion,
+                                                    'bg-success':
+                                                        item.pago_inscripcion,
+                                                }"
+                                                v-text="
+                                                    item.pago_inscripcion
+                                                        ? 'CANCELADO'
+                                                        : 'PENDIENTE'
+                                                "
+                                            ></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

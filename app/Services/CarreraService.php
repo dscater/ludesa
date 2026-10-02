@@ -115,6 +115,11 @@ class CarreraService
             "descripcion" => mb_strtoupper($datos["descripcion"]) ?? NULL,
         ]);
 
+        // cargar logo
+        if (isset($datos["logo"]) && !is_string($datos["logo"])) {
+            $this->cargarLogo($carrera, $datos["logo"]);
+        }
+
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA CARRERA", $carrera);
 
@@ -136,6 +141,11 @@ class CarreraService
             "nombre" => mb_strtoupper($datos["nombre"]),
             "descripcion" => mb_strtoupper($datos["descripcion"]) ?? NULL,
         ]);
+
+        // cargar logo
+        if (isset($datos["logo"]) && !is_string($datos["logo"])) {
+            $this->cargarLogo($carrera, $datos["logo"]);
+        }
 
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UNA CARRERA", $old_carrera, $carrera->withoutRelations());
@@ -163,5 +173,16 @@ class CarreraService
         $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UNA CARRERA", $old_carrera, $carrera);
 
         return true;
+    }
+
+    public function cargarLogo(Carrera $carrera, UploadedFile $logo): void
+    {
+        if ($carrera->logo) {
+            \File::delete(public_path("imgs/carreras/" . $carrera->logo));
+        }
+
+        $nombre = $carrera->id . time();
+        $carrera->logo = $this->cargarArchivoService->cargarArchivo($logo, public_path("imgs/carreras"), $nombre);
+        $carrera->save();
     }
 }

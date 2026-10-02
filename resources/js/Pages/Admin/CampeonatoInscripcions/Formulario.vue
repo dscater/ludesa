@@ -125,8 +125,26 @@ const cargarCarreras = () => {
         });
 };
 
+const cargarCostoInscripcion = () => {
+    axios
+        .get(route("costo_inscripcions.getCostoByTipo"), {
+            params: {
+                tipo: form.campeonato.tipo,
+            },
+        })
+        .then((response) => {
+            if (form.id == 0) {
+                form.total_inscripcion = response.data.costo;
+            }
+        })
+        .catch((error) => {
+            console.error("Error al obtener el costo de inscripción:", error);
+        });
+};
+
 onMounted(() => {
     cargarCarreras();
+    cargarCostoInscripcion();
 });
 </script>
 
@@ -183,6 +201,33 @@ onMounted(() => {
                         >
                             <li class="parsley-required">
                                 {{ form.errors?.carrera_id }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="required">Total Inscripción</label>
+                        <div class="input-group">
+                            <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                class="form-control"
+                                v-model="form.total_inscripcion"
+                            />
+                            <div class="input-group-text">
+                                <input
+                                    type="checkbox"
+                                    style="width: 17px; height: 17px"
+                                    v-model="form.pago_inscripcion"
+                                />
+                            </div>
+                        </div>
+                        <ul
+                            v-if="form.errors?.total_inscripcion"
+                            class="d-block text-danger list-unstyled"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.total_inscripcion }}
                             </li>
                         </ul>
                     </div>

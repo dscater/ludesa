@@ -24,6 +24,7 @@ class CarreraUpdateRequest extends FormRequest
     {
         return [
             "nombre" => "required|string|unique:carreras,nombre," . $this->carrera->id,
+            "logo" => "nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096",
             "descripcion" => "nullable|string",
         ];
     }

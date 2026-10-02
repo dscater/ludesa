@@ -24,6 +24,7 @@ class CarreraStoreRequest extends FormRequest
     {
         return [
             "nombre" => "required|string|unique:carreras,nombre",
+            "logo" => "nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096",
             "descripcion" => "nullable|string",
         ];
     }

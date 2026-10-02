@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("campeonato_id");
             $table->unsignedBigInteger("carrera_id");
+            $table->decimal("total_inscripcion", 24, 2)->default(0); //total de inscripcion
+            $table->boolean("pago_inscripcion")->default(0); //pago de inscripcion
             $table->int("pj")->default(0); //partidos jugados
             $table->int("pts")->default(0); //puntos
             $table->int("gf")->default(0); //goles a favor

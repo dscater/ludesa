@@ -25,6 +25,8 @@ class CampeonatoInscripcionUpdateRequest extends FormRequest
         return [
             "campeonato_id" => "required",
             "carrera_id" => "required",
+            "total_inscripcion" => "required|numeric|min:0",
+            "pago_inscripcion" => "required|boolean",
             "fecha" => "required|date",
             "hora" => "required",
         ];

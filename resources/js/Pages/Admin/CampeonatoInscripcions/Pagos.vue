@@ -17,7 +17,11 @@ onBeforeMount(async () => {
     appStore.startLoading();
 
     try {
-        await Promise.all([cargarCampeonatos(), cargarPagos()]);
+        await Promise.all([
+            cargarCampeonatos(),
+            cargarCarreras(),
+            cargarPagos(),
+        ]);
     } finally {
         appStore.stopLoading();
     }
@@ -30,9 +34,11 @@ const { setCampeonatoInscripcion, limpiarCampeonatoInscripcion, form } =
 const { axiosDelete } = useAxios();
 
 const listCampeonatos = ref([]);
+const listCarreras = ref([]);
 const multiSearch = ref({
     search: "",
     campeonato_id: "",
+    carrera_id: "",
     fecha_ini: "",
     fecha_fin: "",
     filtro: [],
@@ -58,6 +64,7 @@ const cargarPagos = async () => {
                     perPage: perPage.value,
                     page: currentPage.value,
                     campeonato_id: multiSearch.value.campeonato_id,
+                    carrera_id: multiSearch.value.carrera_id,
                     fecha_ini: multiSearch.value.fecha_ini,
                     fecha_fin: multiSearch.value.fecha_fin,
                     porCampeonato: true,
@@ -89,6 +96,16 @@ const cargarCampeonatos = async () => {
     try {
         const res = await axios.get(route("campeonatos.listado"));
         listCampeonatos.value = res.data.campeonatos;
+    } catch (e) {
+        console.log(e);
+    } finally {
+    }
+};
+
+const cargarCarreras = async () => {
+    try {
+        const res = await axios.get(route("carreras.listado"));
+        listCarreras.value = res.data.carreras;
     } catch (e) {
         console.log(e);
     } finally {
@@ -144,7 +161,7 @@ const mostrarDeudas = (item) => {
             <!-- /.row -->
         </template>
         <div class="row">
-            <div class="col-6">
+            <div class="col-4">
                 <span class="text-muted text-xs">Seleccionar Campeonato</span>
                 <div class="input-group">
                     <button
@@ -176,7 +193,32 @@ const mostrarDeudas = (item) => {
                     </div>
                 </div>
             </div>
-            <div class="col-6">
+            <div class="col-4">
+                <span class="text-muted text-xs">Seleccionar Carrera</span>
+                <div class="input-group">
+                    <div class="form-control border-0 p-0">
+                        <el-select
+                            v-model="multiSearch.carrera_id"
+                            size="large"
+                            class="el-select-input-group-right"
+                            placeholder="Carrera"
+                            no-data-text="Sin Datos"
+                            no-match-text="Sin Resultados"
+                            filterable
+                            clearable
+                            @change="detectarCambioSelect"
+                        >
+                            <el-option
+                                v-for="item in listCarreras"
+                                :key="item.id"
+                                :value="item.id"
+                                :label="`${item.nombre}`"
+                            ></el-option>
+                        </el-select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
                 <div class="row">
                     <div class="col-6">
                         <span class="text-muted text-xs">Desde:</span>
@@ -236,6 +278,26 @@ const mostrarDeudas = (item) => {
                         <div class="row">
                             <div class="col-12">
                                 <div class="row">
+                                    <div class="col-12 border-bottom py-2">
+                                        Inscripción: Bs.
+                                        <span class="fw-bold fs-5">{{
+                                            item.total_inscripcion
+                                        }}</span>
+                                        <span
+                                            class="badge"
+                                            :class="{
+                                                'bg-danger':
+                                                    !item.pago_inscripcion,
+                                                'bg-success':
+                                                    item.pago_inscripcion,
+                                            }"
+                                            v-text="
+                                                item.pago_inscripcion
+                                                    ? 'CANCELADO'
+                                                    : 'PENDIENTE'
+                                            "
+                                        ></span>
+                                    </div>
                                     <div
                                         class="col-4 text-center py-2"
                                         title="Deuda Derecho Cancha"
@@ -244,9 +306,7 @@ const mostrarDeudas = (item) => {
                                             Bs. {{ item.deuda_partidos }}
                                         </div>
                                         <div class="fw-bold text-sm">
-                                            <i
-                                                class="fa fa-user-money-bill"
-                                            ></i>
+                                            <i class="fa fa-table"></i>
                                             Derecho de Cancha
                                         </div>
                                     </div>

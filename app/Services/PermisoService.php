@@ -61,6 +61,9 @@ class PermisoService
             "campeonato_inscripcions.pagos",
             "campeonato_inscripcions.paginadoPagos",
             "campeonato_inscripcions.deudas",
+            "campeonato_inscripcions.actualizaPago",
+
+            "costo_inscripcions.getCostoByTipo",
 
             "jugadors.paginado",
             "jugadors.index",
@@ -101,7 +104,22 @@ class PermisoService
 
             "reportes.usuarios",
             "reportes.r_usuarios",
-
+            "reportes.carreras",
+            "reportes.r_carreras",
+            "reportes.carrera_jugadors",
+            "reportes.r_carrera_jugadors",
+            "reportes.campeonatos",
+            "reportes.r_campeonatos",
+            "reportes.posicions",
+            "reportes.r_posicions",
+            "reportes.resultado_partidos",
+            "reportes.r_resultado_partidos",
+            "reportes.goleadores",
+            "reportes.r_goleadores",
+            "reportes.porteros",
+            "reportes.r_porteros",
+            "reportes.pagos_pendientes",
+            "reportes.r_pagos_pendientes",
         ],
         "AUXILIAR" => [],
         "MESA" => [],

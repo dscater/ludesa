@@ -7,6 +7,8 @@ export const useCampeonatoInscripcions = () => {
         campeonato_id: "",
         campeonato: null,
         carrera_id: "",
+        total_inscripcion: "",
+        pago_inscripcion: 0,
         pj: "",
         pts: "",
         gf: "",

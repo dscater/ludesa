@@ -4,6 +4,7 @@ export const useCarreras = () => {
     const initialState = {
         id: 0,
         nombre: "",
+        logo: "",
         descripcion: "",
         _method: "POST",
     };

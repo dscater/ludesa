@@ -37,6 +37,11 @@ const headers = [
         sortable: true,
     },
     {
+        label: "LOGO",
+        key: "logo",
+        sortable: true,
+    },
+    {
         label: "DESCRIPCIÓN",
         key: "descripcion",
         sortable: true,
@@ -171,31 +176,12 @@ const eliminarCarrera = (item) => {
                             :header-class="'bg__primary'"
                             fixed-header
                         >
-                            <template #ventas="{ item }">
-                                <span
-                                    class="badge text-xs"
-                                    :class="[
-                                        item.ventas == 1
-                                            ? 'bgActivo'
-                                            : 'bgPrecargado',
-                                    ]"
-                                    >{{
-                                        item.ventas == 1 ? "VENTAS" : "ALMACÉN"
-                                    }}</span
-                                >
-                            </template>
-                            <template #activo="{ item }">
-                                <span
-                                    class="badge text-xs"
-                                    :class="[
-                                        item.activo == 1
-                                            ? 'bgActivo'
-                                            : 'bgInactivo',
-                                    ]"
-                                    >{{
-                                        item.activo == 1 ? "ACTIVO" : "INACTIVO"
-                                    }}</span
-                                >
+                            <template #logo="{ item }">
+                                <img
+                                    :src="item.url_logo"
+                                    class="img-fluid rounded"
+                                    style="width: 50px; height: 50px"
+                                />
                             </template>
                             <template #accion="{ item }">
                                 <template

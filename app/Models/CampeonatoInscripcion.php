@@ -9,6 +9,8 @@ class CampeonatoInscripcion extends Model
     protected $fillable = [
         "campeonato_id",
         "carrera_id",
+        "total_inscripcion",
+        "pago_inscripcion",
         "pj", // partidos jugados
         "pts", //puntos
         "gf", // goles a favor

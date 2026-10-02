@@ -370,12 +370,31 @@ const iniciarPartido = (item) => {
                             <div class="col-12 border-bottom">
                                 <div class="row">
                                     <div class="col-5 text-center">
+                                        <img
+                                            :src="
+                                                item.ci_local.carrera.url_logo
+                                            "
+                                            height="50"
+                                            width="50"
+                                            class="img-fluid mb-1"
+                                            alt="Logo"
+                                        />
                                         <h4 class="fw-bold fs-6 text-primary">
                                             {{ item.ci_local.carrera.nombre }}
                                         </h4>
                                     </div>
                                     <div class="col-2 text-center">VS</div>
                                     <div class="col-5 text-center">
+                                        <img
+                                            :src="
+                                                item.ci_visitante.carrera
+                                                    .url_logo
+                                            "
+                                            height="50"
+                                            width="50"
+                                            class="img-fluid mb-1"
+                                            alt="Logo"
+                                        />
                                         <h4 class="fw-bold fs-6 text-primary">
                                             {{
                                                 item.ci_visitante.carrera.nombre

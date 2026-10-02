@@ -16,6 +16,13 @@ const muestra_form = ref(props.muestra_formulario);
 const enviando = ref(false);
 const form = props.form;
 
+const logo = ref(null);
+
+function cargaArchivo(e, key) {
+    form[key] = null;
+    form[key] = e.target.files[0];
+}
+
 const tituloDialog = computed(() => {
     return form.id == 0
         ? `<i class="fa fa-plus"></i> Nueva Carrera`
@@ -110,7 +117,9 @@ const cerrarFormulario = () => {
     document.getElementsByTagName("body")[0].classList.remove("modal-open");
 };
 
-onMounted(() => {});
+onMounted(() => {
+    logo.value.value = null;
+});
 </script>
 
 <template>
@@ -137,7 +146,7 @@ onMounted(() => {});
                     <span class="text-danger">(*)</span> son obligatorios.
                 </p>
                 <div class="row">
-                    <div class="col-md-6 mt-2">
+                    <div class="col-md-4 mt-2">
                         <label class="required">Nombre de Carrera</label>
                         <el-input
                             type="text"
@@ -156,7 +165,27 @@ onMounted(() => {});
                             </li>
                         </ul>
                     </div>
-                    <div class="col-md-6 mt-2">
+                    <div class="col-md-4 mt-2">
+                        <label class="">Logo</label>
+                        <input
+                            type="file"
+                            class="form-control"
+                            :class="{
+                                'parsley-error': form.errors?.logo,
+                            }"
+                            @change="cargaArchivo($event, 'logo')"
+                            ref="logo"
+                        />
+                        <ul
+                            v-if="form.errors?.logo"
+                            class="list-unstyled text-danger"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.logo }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mt-2">
                         <label class="">Descripción</label>
                         <el-input
                             type="textarea"

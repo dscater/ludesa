@@ -14,6 +14,7 @@ use Exception;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class CampeonatoInscripcionService
@@ -111,6 +112,7 @@ class CampeonatoInscripcionService
         int $page,
         string $search,
         $campeonato_id,
+        $carrera_id,
         $porCampeonato = true,
         array $orderBy = []
     ): LengthAwarePaginator {
@@ -134,6 +136,10 @@ class CampeonatoInscripcionService
             $campeonato_inscripcions->where("campeonato_id", $campeonato_id);
         }
 
+        if ($carrera_id) {
+            $campeonato_inscripcions->where("carrera_id", $carrera_id);
+        }
+
         // Ordenamiento
         foreach ($orderBy as $value) {
             if (isset($value[0], $value[1])) {
@@ -151,6 +157,7 @@ class CampeonatoInscripcionService
         int $page,
         string $search,
         $campeonato_id,
+        $carrera_id,
         $fecha_ini,
         $fecha_fin,
         $porCampeonato = true,
@@ -161,7 +168,8 @@ class CampeonatoInscripcionService
                 "campeonato:id,periodo,gestion,nombre,tipo",
                 "carrera:id,nombre",
                 "carrera_jugadors",
-            ])->where(function ($query) use ($fecha_ini, $fecha_fin) {
+            ])
+            ->where(function ($query) use ($fecha_ini, $fecha_fin) {
 
                 // PARTIDOS COMO LOCAL
                 $query->whereHas('partidos_local', function ($q) use ($fecha_ini, $fecha_fin) {
@@ -216,7 +224,12 @@ class CampeonatoInscripcionService
                                 $q->whereDate('fecha', '<=', $fecha_fin);
                             });
                         }
-                    });
+                    })
+                    // INSCRIPCION
+                    ->orWhere("pago_inscripcion", 0);
+            })
+            ->when($carrera_id, function ($query) use ($carrera_id) {
+                $query->where("carrera_id", $carrera_id);
             });
 
         // Búsqueda en múltiples columnas con LIKE
@@ -281,6 +294,8 @@ class CampeonatoInscripcionService
         $campeonato_inscripcion = CampeonatoInscripcion::create([
             "campeonato_id" => $datos["campeonato_id"],
             "carrera_id" => $datos["carrera_id"],
+            "total_inscripcion" => $datos["total_inscripcion"],
+            "pago_inscripcion" => $datos["pago_inscripcion"],
             "fecha" => $datos["fecha"],
             "hora" => $datos["hora"],
         ]);
@@ -323,6 +338,8 @@ class CampeonatoInscripcionService
         $campeonato_inscripcion->update([
             "campeonato_id" => $datos["campeonato_id"],
             "carrera_id" => $datos["carrera_id"],
+            "total_inscripcion" => $datos["total_inscripcion"],
+            "pago_inscripcion" => $datos["pago_inscripcion"],
             "fecha" => $datos["fecha"],
             "hora" => $datos["hora"],
         ]);
@@ -353,6 +370,16 @@ class CampeonatoInscripcionService
         $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UNA CARRERA EN UN CAMPEONATO", $old_campeonato_inscripcion, $campeonato_inscripcion);
 
         return true;
+    }
+
+    public function actualizaPago(CampeonatoInscripcion $campeonato_inscripcion, $pago_inscripcion)
+    {
+        $old_campeonato_inscripcion = clone $campeonato_inscripcion;
+        $campeonato_inscripcion->pago_inscripcion = $pago_inscripcion;
+        $campeonato_inscripcion->save();
+
+        // registrar accion
+        $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ EL PAGO DE INSCRIPCIÓN DE UNA CARRERA EN UN CAMPEONATO", $old_campeonato_inscripcion, $campeonato_inscripcion->withoutRelations());
     }
 
     public function actualizaPartidoJugado(

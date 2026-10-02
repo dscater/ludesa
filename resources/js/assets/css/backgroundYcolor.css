@@ -18,6 +18,18 @@ table .bg-principal,
     background-color: var(--bg6);
 }
 
+.bgDanger3 {
+    background-color: var(--bgDanger3);
+}
+
+.bgSuccess2 {
+    background-color: var(--bgSuccess2);
+}
+
+.bgSuccessH {
+    background-color: var(--bgSuccessH);
+}
+
 .bg-item {
     background-color: var(--bg1) !important;
 }

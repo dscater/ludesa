@@ -276,6 +276,20 @@ const deudasRojas = computed(() => {
     return totalLocal + totalVisitante;
 });
 
+const actualizaCampeonatoInscripcionPago = () => {
+    axios
+        .patch(route("campeonato_inscripcions.actualizaPago", form.id), {
+            pago_inscripcion: form.pago_inscripcion,
+            _method: "patch",
+        })
+        .then((response) => {
+            toast.success("Registro actualizado correctamente", {
+                autoClose: 300,
+            });
+            emits("envio-formulario");
+        });
+};
+
 onMounted(() => {
     cargarDeudas();
 });
@@ -314,8 +328,23 @@ onMounted(() => {
                 </div>
             </div>
             <div class="row">
-                <div class="col-12 border-top mt-1 pt-2">
+                <div class="col-12 border-top mt-1">
                     <div class="row">
+                        <div
+                            class="col-12 fw-bold text-center border-bottom pb-2"
+                            :class="{
+                                bgDanger3: !form.pago_inscripcion,
+                                bgSuccess2: form.pago_inscripcion,
+                            }"
+                        >
+                            Por inscripción<br />
+                            Bs. {{ form.total_inscripcion }}
+                            <input
+                                type="checkbox"
+                                v-model="form.pago_inscripcion"
+                                @change="actualizaCampeonatoInscripcionPago"
+                            />
+                        </div>
                         <div class="col-md-4 fw-bold text-center">
                             Total por derecho de cancha<br />
                             Bs. {{ deudasDerechos }}
@@ -339,7 +368,8 @@ onMounted(() => {
                     :key="item.id"
                 >
                     <div class="row">
-                        <div class="col-12 text-primary fw-bold">
+                        <div class="col-12 text-primary fw-bold py-2">
+                            <i class="fa fa-calendar-alt"></i> Fecha:
                             {{ item.fecha_hora_t }}
                         </div>
                         <div class="col-12">
@@ -347,7 +377,7 @@ onMounted(() => {
                                 <div class="input-group">
                                     <span class="input-group-text px-1"
                                         ><i class="fa fa-money-bill me-1"></i
-                                        >Cancelado</span
+                                        >Derecho de Cancha</span
                                     >
                                     <span
                                         class="form-control text-center"
@@ -614,7 +644,8 @@ onMounted(() => {
                     :key="item.id"
                 >
                     <div class="row">
-                        <div class="col-12 text-primary fw-bold">
+                        <div class="col-12 text-primary fw-bold py-2">
+                            <i class="fa fa-calendar-alt"></i> Fecha:
                             {{ item.fecha_hora_t }}
                         </div>
                         <div class="col-12">
@@ -622,7 +653,7 @@ onMounted(() => {
                                 <div class="input-group">
                                     <span class="input-group-text px-1"
                                         ><i class="fa fa-money-bill me-1"></i
-                                        >Cancelado</span
+                                        >Derecho de Cancha</span
                                     >
                                     <span
                                         class="form-control text-center"
