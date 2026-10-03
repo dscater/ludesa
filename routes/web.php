@@ -80,6 +80,10 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
         ["index", "store"]
     );
 
+
+    // TIPO USUARIOS
+    Route::get("tipo_usuarios/listado", [TipoUsuarioController::class, 'listado'])->name("tipo_usuarios.listado");
+
     // TIPO CAMPEONATOS
     Route::get("tipo_campeonatos/listado", [TipoCampeonatoController::class, 'listado'])->name("tipo_campeonatos.listado");
 
@@ -109,6 +113,9 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("campeonato_inscripcions/paginadoPagos", [CampeonatoInscripcionController::class, 'paginadoPagos'])->name("campeonato_inscripcions.paginadoPagos");
     Route::get("campeonato_inscripcions/deudas/{campeonato_inscripcion}", [CampeonatoInscripcionController::class, 'deudas'])->name("campeonato_inscripcions.deudas");
     Route::get("campeonato_inscripcions/listado", [CampeonatoInscripcionController::class, 'listado'])->name("campeonato_inscripcions.listado");
+    Route::get("campeonato_inscripcions/posicions", [CampeonatoInscripcionController::class, 'posicions'])->name("campeonato_inscripcions.posicions");
+    Route::get("campeonato_inscripcions/goleadores", [CampeonatoInscripcionController::class, 'goleadores'])->name("campeonato_inscripcions.goleadores");
+    Route::get("campeonato_inscripcions/porteros", [CampeonatoInscripcionController::class, 'porteros'])->name("campeonato_inscripcions.porteros");
     Route::patch("campeonato_inscripcions/actualizaPago/{campeonato_inscripcion}", [CampeonatoInscripcionController::class, 'actualizaPago'])->name("campeonato_inscripcions.actualizaPago");
     Route::resource("campeonato_inscripcions", CampeonatoInscripcionController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
@@ -143,7 +150,6 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // PARTIDO DETALLES
     Route::patch("partido_detalles/actualizaDatosDetalle/{partido_detalle}", [PartidoDetalleController::class, 'actualizaDatosDetalle'])->name("partido_detalles.actualizaDatosDetalle");
 
-
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");
     Route::get('reportes/r_usuarios', [ReporteController::class, 'r_usuarios'])->name("reportes.r_usuarios");
@@ -153,9 +159,6 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     Route::get('reportes/carrera_jugadors', [ReporteController::class, 'carrera_jugadors'])->name("reportes.carrera_jugadors");
     Route::get('reportes/r_carrera_jugadors', [ReporteController::class, 'r_carrera_jugadors'])->name("reportes.r_carrera_jugadors");
-
-    Route::get('reportes/campeonatos', [ReporteController::class, 'campeonatos'])->name("reportes.campeonatos");
-    Route::get('reportes/r_campeonatos', [ReporteController::class, 'r_campeonatos'])->name("reportes.r_campeonatos");
 
     Route::get('reportes/posicions', [ReporteController::class, 'posicions'])->name("reportes.posicions");
     Route::get('reportes/r_posicions', [ReporteController::class, 'r_posicions'])->name("reportes.r_posicions");

@@ -3,17 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Clientes</title>
+    <title>ResultadoPartidos</title>
     <style type="text/css">
         * {
             font-family: sans-serif;
         }
 
         @page {
-            margin-top: 1cm;
-            margin-bottom: 1cm;
-            margin-left: 1.5cm;
-            margin-right: 1cm;
+            margin-top: 1.5cm;
+            margin-bottom: 0.3cm;
+            margin-left: 0.3cm;
+            margin-right: 0.3cm;
         }
 
         table {
@@ -31,11 +31,11 @@
         }
 
         table thead tr th {
-            font-size: 7pt;
+            font-size: 9pt;
         }
 
         table tbody tr td {
-            font-size: 6pt;
+            font-size: 8pt;
         }
 
 
@@ -131,55 +131,81 @@
             color: white;
         }
 
+        .bg-ganador {
+            background: #a8ffae;
+        }
+
         .img_celda img {
             width: 45px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .nueva_pagina {
+            page-break-before: always;
         }
     </style>
 </head>
 
 <body>
     @inject('configuracion', 'App\Models\Configuracion')
-    <div class="encabezado">
-        <div class="logo">
-            <img src="{{ $configuracion->first()->logo_b64 }}">
+    @php
+        $cont = 0;
+    @endphp
+    @foreach ($campeonatos as $campeonato)
+        <div class="encabezado">
+            <div class="logo">
+                <img src="{{ $configuracion->first()->logo_b64 }}">
+            </div>
+            <h2 class="titulo">
+                {{ $configuracion->first()->razon_social }}
+            </h2>
+            <h4 class="texto">RESULTADO DE PARTIDOS</h4>
+            <h4 class="texto">{{ $campeonato->full_name }}</h4>
+            <h4 class="fecha">Expedido: {{ date('d-m-Y') }}</h4>
         </div>
-        <h2 class="titulo">
-            {{ $configuracion->first()->razon_social }}
-        </h2>
-        <h4 class="texto">LISTA DE CLIENTES</h4>
-        <h4 class="fecha">Expedido: {{ date('d-m-Y') }}</h4>
-    </div>
-    <table border="1">
-        <thead class="bg-principal">
-            <tr>
-                <th width="3%">N°</th>
-                <th>PATERNO</th>
-                <th>MATERNO</th>
-                <th>NOMBRE(S)</th>
-                <th>C.I.</th>
-                <th>FECHA NACIMIENTO</th>
-                <th>CELULAR</th>
-                <th width="8%">FECHA REGISTRO</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-                $cont = 1;
-            @endphp
-            @foreach ($clientes as $cliente)
+        <table border="1">
+            <thead class="bg-principal">
                 <tr>
-                    <td class="centreado">{{ $cont++ }}</td>
-                    <td class="">{{ $cliente->paterno }}</td>
-                    <td class="">{{ $cliente->materno }}</td>
-                    <td class="">{{ $cliente->nombre }}</td>
-                    <td class="">{{ $cliente->full_ci }}</td>
-                    <td class="">{{ $cliente->fecha_nac_t }}</td>
-                    <td class="">{{ $cliente->cel }}</td>
-                    <td class="">{{ $cliente->fecha_registro_t }}</td>
+                    <th>FECHA Y HORA</th>
+                    <th></th>
+                    <th>LOCAL</th>
+                    <th>GOLES LOCAL</th>
+                    <th></th>
+                    <th>VISITANTE</th>
+                    <th>GOLES VISITANTE</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($campeonato->partidos as $item)
+                    <tr>
+                        <td>{{ $item->fecha_hora_t }}</td>
+                        <td class="img_celda centreado">
+                            <img src="{{ $item->ci_local->carrera->logo_b64 }}" alt="Logo">
+                        </td>
+                        <td class="{{ $item->ci_ganador_id == $item->ci_local_id ? 'bg-ganador' : '' }}">
+                            {{ $item->ci_local->carrera->nombre }}</td>
+                        <td class="centreado bold">{{ $item->goles_local }}</td>
+                        <td class="img_celda centreado">
+                            <img src="{{ $item->ci_visitante->carrera->logo_b64 }}" alt="Logo">
+                        </td>
+                        <td class="{{ $item->ci_ganador_id == $item->ci_visitante_id ? 'bg-ganador' : '' }}">
+                            {{ $item->ci_visitante->carrera->nombre }}</td>
+                        <td class="centreado bold">{{ $item->goles_visitante }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        @php
+            $cont++;
+        @endphp
+        @if ($cont < count($campeonatos))
+            <div class="nueva_pagina"></div>
+        @endif
+    @endforeach
 </body>
 
 </html>

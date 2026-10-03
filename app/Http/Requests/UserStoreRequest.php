@@ -32,8 +32,7 @@ class UserStoreRequest extends FormRequest
             "fono" => "required|min:2",
             "acceso" => "required",
             "tipo" => "required",
-            "foto" => "nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048",
-            "sucursal_id" => "required",
+            "foto" => "nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096",
         ];
     }
 
@@ -56,7 +55,6 @@ class UserStoreRequest extends FormRequest
             "fono.min" => "Debes ingresar al menos :min caracteres",
             "acceso.required" => "Este campo es obligatorio",
             "tipo.required" => "Este campo es obligatorio",
-            "sucursal_id.required" => "Este campo es obligatorio",
         ];
     }
 }

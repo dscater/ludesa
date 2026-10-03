@@ -9,9 +9,7 @@ onBeforeMount(() => {
     appStore.startLoading();
 });
 
-const cargarListas = () => {
-    cargarTipos();
-};
+const cargarListas = () => {};
 
 const listSucursals = ref([]);
 
@@ -20,22 +18,7 @@ onMounted(() => {
     appStore.stopLoading();
 });
 
-const listFormatos = ref([
-    {
-        icon: "fa fa-file-pdf",
-        value: "pdf",
-        label: "PDF",
-    },
-    {
-        icon: "fa fa-file-excel",
-        value: "excel",
-        label: "EXCEL",
-    },
-]);
-
-const form = ref({
-    tipo: "todos",
-});
+const form = ref({});
 
 const generando = ref(false);
 const txtBtn = computed(() => {
@@ -49,34 +32,20 @@ const listTipos = ref([]);
 
 const generarReporte = () => {
     generando.value = true;
-    const url = route("reportes.r_usuarios", form.value);
+    const url = route("reportes.r_carreras", form.value);
     window.open(url, "_blank");
     setTimeout(() => {
         generando.value = false;
     }, 500);
 };
-
-const cargarTipos = () => {
-    axios.get(route("tipo_usuarios.listado")).then((response) => {
-        listTipos.value = response.data.map((item) => ({
-            id: item,
-            nombre: item,
-        }));
-
-        listTipos.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-        });
-    });
-};
 </script>
 <template>
-    <Head title="Reporte Usuarios"></Head>
+    <Head title="Reporte Carreras"></Head>
     <Content>
         <template #header>
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h4 class="m-0">Usuarios</h4>
+                    <h4 class="m-0">Carreras</h4>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
@@ -85,7 +54,7 @@ const cargarTipos = () => {
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
                         <li class="breadcrumb-item active">
-                            Reportes - Usuarios
+                            Reportes - Carreras
                         </li>
                     </ol>
                 </div>
@@ -99,21 +68,6 @@ const cargarTipos = () => {
                     <div class="card-body">
                         <form @submit.prevent="generarReporte">
                             <div class="row">
-                                <div class="col-md-12">
-                                    <label>Seleccionar tipo de usuario*</label>
-                                    <select
-                                        v-model="form.tipo"
-                                        class="form-control"
-                                    >
-                                        <option
-                                            v-for="item in listTipos"
-                                            :key="item.id"
-                                            :value="item.id"
-                                        >
-                                            {{ item.nombre }}
-                                        </option>
-                                    </select>
-                                </div>
                                 <div class="col-md-12 text-center mt-3">
                                     <button
                                         class="btn btn-primary"

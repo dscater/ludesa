@@ -67,11 +67,6 @@ const headers = [
         sortable: true,
     },
     {
-        label: "ROLE",
-        key: "role.nombre",
-        sortable: true,
-    },
-    {
         label: "TIPO",
         key: "tipo",
         sortable: true,
@@ -222,7 +217,7 @@ onMounted(async () => {
                             fixed-header
                         >
                             <template #tipo="{ item }">
-                                <div class="w-100 text-center">
+                                <div class="w-100">
                                     <span>{{ item.tipo }}</span>
                                     <span
                                         v-if="item.tipo == 'CENTRO MÉDICO'"

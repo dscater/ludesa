@@ -31,7 +31,6 @@ class UserService
     public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
         $users = User::select("users.*")
-            ->with(["sucursal:id,nombre"])
             ->where("users.id", "!=", 1);
 
         $users->buscarNombre($search);
@@ -152,7 +151,6 @@ class UserService
             "acceso" => $datos["acceso"],
             "password" => $datos["ci"],
             "tipo" => mb_strtoupper($datos["tipo"]),
-            "sucursal_id" => $datos["sucursal_id"],
             "fecha_registro" => date("Y-m-d")
         ]);
 
@@ -187,7 +185,6 @@ class UserService
             "fono" => $datos["fono"],
             "acceso" => $datos["acceso"],
             "tipo" => mb_strtoupper($datos["tipo"]),
-            "sucursal_id" => $datos["sucursal_id"],
         ]);
 
 

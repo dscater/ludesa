@@ -34,6 +34,8 @@ class PermisoService
             "carreras.update",
             "carreras.destroy",
 
+            "tipo_usuarios.listado",
+
             "tipo_campeonatos.listado",
 
             "posicions.listado",
@@ -62,6 +64,9 @@ class PermisoService
             "campeonato_inscripcions.paginadoPagos",
             "campeonato_inscripcions.deudas",
             "campeonato_inscripcions.actualizaPago",
+            "campeonato_inscripcions.posicions",
+            "campeonato_inscripcions.goleadores",
+            "campeonato_inscripcions.porteros",
 
             "costo_inscripcions.getCostoByTipo",
 
@@ -108,8 +113,6 @@ class PermisoService
             "reportes.r_carreras",
             "reportes.carrera_jugadors",
             "reportes.r_carrera_jugadors",
-            "reportes.campeonatos",
-            "reportes.r_campeonatos",
             "reportes.posicions",
             "reportes.r_posicions",
             "reportes.resultado_partidos",

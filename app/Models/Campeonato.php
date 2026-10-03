@@ -17,7 +17,12 @@ class Campeonato extends Model
         "fecha_fin",
     ];
 
-    protected $appends = ["fecha_registro_t", "fecha_fin_t"];
+    protected $appends = ["fecha_registro_t", "fecha_fin_t", "full_name"];
+
+    public function getFullNameAttribute()
+    {
+        return $this->periodo . " - " . $this->gestion . ": " . $this->nombre . " (" . $this->tipo . ")";
+    }
 
     public function getFechaFinTAttribute()
     {

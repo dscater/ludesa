@@ -45,6 +45,27 @@ class CampeonatoInscripcionController extends Controller
         ]);
     }
 
+    public function posicions(Request $request): JsonResponse
+    {
+        return response()->JSON([
+            "campeonato_inscripcions" => $this->campeonato_inscripcionService->listadoPosicions($request->input("campeonato_id", 0))
+        ]);
+    }
+
+    public function goleadores(Request $request): JsonResponse
+    {
+        return response()->JSON([
+            "carrera_jugadors" => $this->campeonato_inscripcionService->listadoGoleadores($request->input("campeonato_id", 0))
+        ]);
+    }
+
+    public function porteros(Request $request): JsonResponse
+    {
+        return response()->JSON([
+            "carrera_jugadors" => $this->campeonato_inscripcionService->listadoPorteros($request->input("campeonato_id", 0))
+        ]);
+    }
+
     public function paginado(Request $request)
     {
         $perPage = $request->perPage;

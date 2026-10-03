@@ -32,9 +32,6 @@ const sincronizarMenus = () => {
 
     // if (
     //     route_current.value == "reportes.usuarios" ||
-    //     route_current.value == "reportes.casos_epidemiologicos" ||
-    //     route_current.value == "reportes.alerta_epidemiologicas" ||
-    //     route_current.value == "reportes.seguimientos"
     // ) {
     //     openMenus.reportes = true;
     // }
@@ -263,11 +260,79 @@ onUnmounted(() => {});
                         v-if="
                             permisos == '*' ||
                             permisos.includes('reportes.usuarios') ||
-                            permisos.includes('reportes.usuarios')
+                            permisos.includes('reportes.carreras') ||
+                            permisos.includes('reportes.carrera_jugadors') ||
+                            permisos.includes('reportes.posicion') ||
+                            permisos.includes('reportes.resultado_partidos') ||
+                            permisos.includes('reportes.goleadores') ||
+                            permisos.includes('reportes.porteros')
                         "
                     >
                         REPORTES
                     </li>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.posicions')
+                        "
+                        :label="'Tabla de Posiciones'"
+                        :ruta="'reportes.posicions'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.resultado_partidos')
+                        "
+                        :label="'Resultado de Partidos'"
+                        :ruta="'reportes.resultado_partidos'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.pagos_pendientes')
+                        "
+                        :label="'Pagos Pendientes'"
+                        :ruta="'reportes.pagos_pendientes'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.goleadores')
+                        "
+                        :label="'Tabla de Goleadores'"
+                        :ruta="'reportes.goleadores'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu
+                    ><ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.porteros')
+                        "
+                        :label="'Tabla de Porteros'"
+                        :ruta="'reportes.porteros'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.carrera_jugadors')
+                        "
+                        :label="'Jugadores Inscritos'"
+                        :ruta="'reportes.carrera_jugadors'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.carreras')
+                        "
+                        :label="'Lista de Carreras'"
+                        :ruta="'reportes.carreras'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
                     <ItemMenu
                         v-if="
                             permisos == '*' ||

@@ -50,6 +50,166 @@ class CampeonatoInscripcionService
         return $campeonato_inscripcions;
     }
 
+    public function listadoPosicions($campeonato_id = null, $jugadores = true): Collection
+    {
+        $relaciones = [
+            "campeonato:id,periodo,gestion,nombre,tipo",
+            "carrera",
+            "carrera_jugadors"
+        ];
+
+        if (!$jugadores)
+            $relaciones = [
+                "campeonato:id,periodo,gestion,nombre,tipo",
+                "carrera",
+            ];
+
+
+        $campeonato_inscripcions = CampeonatoInscripcion::select("campeonato_inscripcions.*")
+            ->with($relaciones);
+
+        if ($campeonato_id) {
+            $campeonato_inscripcions->where("campeonato_id", $campeonato_id);
+        }
+
+        $campeonato_inscripcions = $campeonato_inscripcions
+            ->orderBy("pts", "desc")
+            ->orderBy("gf", "desc")
+            ->get();
+
+        // Enumerar posiciones
+        $campeonato_inscripcions->each(function ($item, $index) {
+            $item->posicion = $index + 1;
+        });
+
+        return $campeonato_inscripcions;
+    }
+
+    public function listadoGoleadores($campeonato_id = null): Collection
+    {
+        $relaciones = [
+            "campeonato:id,periodo,gestion,nombre,tipo",
+            "carrera",
+            "jugador"
+        ];
+
+        $carrera_jugadors = CarreraJugador::with($relaciones);
+
+        if ($campeonato_id) {
+            $carrera_jugadors
+                ->where("campeonato_id", $campeonato_id)
+                ->withSum([
+                    "partido_detalles as goles" => function ($query) use ($campeonato_id) {
+                        $query->whereHas("partido", function ($q) use ($campeonato_id) {
+                            $q->where("campeonato_id", $campeonato_id);
+                        });
+                    }
+                ], "goles")
+                ->orderByDesc("goles");
+        }
+
+        $carrera_jugadors = $carrera_jugadors->get();
+
+        $carrera_jugadors->each(function ($item, $index) {
+            $item->posicion = $index + 1;
+        });
+
+        return $carrera_jugadors;
+    }
+
+    public function listadoPorteros($campeonato_id = null): Collection
+    {
+        $relaciones = [
+            "campeonato:id,periodo,gestion,nombre,tipo",
+            "carrera",
+            "jugador",
+            "partido_detalles.partido",
+        ];
+
+        $carrera_jugadors = CarreraJugador::select("carrera_jugadors.*")
+            ->with($relaciones)
+            ->where("posicion", "PORTERO")
+            ->whereHas("partido_detalles", function ($query) use ($campeonato_id) {
+
+                // Debe haber sido titular al menos una vez
+                $query->where("titular", 1);
+
+                // El partido debe pertenecer al campeonato
+                if ($campeonato_id) {
+                    $query->whereHas("partido", function ($q) use ($campeonato_id) {
+                        $q->where("campeonato_id", $campeonato_id);
+                    });
+                }
+            });
+
+        if ($campeonato_id) {
+            $carrera_jugadors->where("campeonato_id", $campeonato_id);
+        }
+
+        $porteros = $carrera_jugadors->get();
+
+        /*
+     * Calcular goles recibidos
+     */
+        $porteros->each(function ($portero) {
+
+            $goles_recibidos = 0;
+            $partidos_titular = 0;
+
+            foreach ($portero->partido_detalles as $detalle) {
+
+                // Solo considerar partidos donde fue titular
+                if ($detalle->titular != 1) {
+                    continue;
+                }
+
+                $partido = $detalle->partido;
+
+                if (!$partido) {
+                    continue;
+                }
+
+                $partidos_titular++;
+
+                /*
+             * El portero pertenece al equipo LOCAL,
+             * por lo tanto recibe los goles del VISITANTE.
+             */
+                if ($partido->ci_local_id == $portero->campeonato_inscripcion_id) {
+
+                    $goles_recibidos += (int) $partido->goles_visitante;
+                }
+
+                /*
+             * El portero pertenece al equipo VISITANTE,
+             * por lo tanto recibe los goles del LOCAL.
+             */ elseif ($partido->ci_visitante_id == $portero->campeonato_inscripcion_id) {
+
+                    $goles_recibidos += (int) $partido->goles_local;
+                }
+            }
+
+            $portero->partidos_titular = $partidos_titular;
+            $portero->goles_recibidos = $goles_recibidos;
+        });
+
+        /*
+     * Ordenar de menor a mayor cantidad de goles recibidos
+     */
+        $porteros = $porteros
+            ->sortBy("goles_recibidos")
+            ->values();
+
+        /*
+     * Enumerar ranking sin tocar la columna "posicion"
+     */
+        $porteros->each(function ($item, $index) {
+            $item->ranking = $index + 1;
+        });
+
+        return $porteros;
+    }
+
     public function deudas($campeonato_inscripcion, $partido_id = null)
     {
         $partidos_local = Partido::with(["partido_detalles.carrera_jugador.jugador"])

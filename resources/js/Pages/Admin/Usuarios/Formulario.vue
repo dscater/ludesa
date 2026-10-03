@@ -30,24 +30,10 @@ const listExpedido = [
     { value: "BN", label: "Beni" },
 ];
 
-const listRoles = ref([]);
-const cargarRoles = () => {
-    axios.get(route("roles.listado")).then((response) => {
-        listRoles.value = response.data.roles;
-    });
-};
-
 const listTipos = ref([]);
 const cargarTipoUsuarios = () => {
     axios.get(route("tipo_usuarios.listado")).then((response) => {
         listTipos.value = response.data;
-    });
-};
-
-const listSucursals = ref([]);
-const cargarSucursals = () => {
-    axios.get(route("sucursals.listado")).then((response) => {
-        listSucursals.value = response.data.sucursals;
     });
 };
 
@@ -152,15 +138,8 @@ const cerrarFormulario = () => {
 };
 
 const cargarListas = () => {
-    cargarRoles();
-    cargarSucursals();
     cargarTipoUsuarios();
 };
-
-const descripcionTipo = computed(() => {
-    const tipo = listTipos.value.find((item) => item.value === form.tipo);
-    return tipo ? tipo.descripcion : null;
-});
 
 onMounted(() => {
     foto.value.value = null;
@@ -364,9 +343,10 @@ onMounted(() => {
                             <option value="">- Seleccione -</option>
                             <option
                                 v-for="item in listTipos"
-                                :value="item.value"
+                                :key="item"
+                                :value="item"
                             >
-                                {{ item.label }}
+                                {{ item }}
                             </option>
                         </select>
 
@@ -376,70 +356,6 @@ onMounted(() => {
                         >
                             <li class="parsley-required">
                                 {{ form.errors?.tipo }}
-                            </li>
-                        </ul>
-                        <small
-                            class="text-muted text-xs"
-                            v-if="descripcionTipo"
-                            >{{ descripcionTipo }}</small
-                        >
-                    </div>
-                    <div class="col-md-4 mt-2">
-                        <label class="required">Seleccionar Role</label>
-                        <el-select
-                            :class="{
-                                'parsley-error': form.errors?.role_id,
-                            }"
-                            no-data-text="Sin datos"
-                            no-data-match="Sin resultados"
-                            size="large"
-                            placeholder="- Seleccione -"
-                            v-model="form.role_id"
-                            filterable
-                        >
-                            <el-option
-                                v-for="item in listRoles"
-                                :key="item.id"
-                                :value="item.id"
-                                :label="item.nombre"
-                            ></el-option>
-                        </el-select>
-
-                        <ul
-                            v-if="form.errors?.role_id"
-                            class="list-unstyled text-danger"
-                        >
-                            <li class="parsley-required">
-                                {{ form.errors?.role_id }}
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4 mt-2" v-if="form.tipo == 'EMPLEADO'">
-                        <label class="required">Seleccionar Sucursal</label>
-                        <el-select
-                            :class="{
-                                'parsley-error': form.errors?.sucursal_id,
-                            }"
-                            no-data-text="Sin datos"
-                            no-data-match="Sin resultados"
-                            size="large"
-                            placeholder="- Seleccione -"
-                            v-model="form.sucursal_id"
-                            filterable
-                        >
-                            <el-option
-                                v-for="item in listSucursals"
-                                :key="item.id"
-                                :value="item.id"
-                                :label="item.nombre"
-                            ></el-option>
-                        </el-select>
-                        <ul
-                            v-if="form.errors?.sucursal_id"
-                            class="list-unstyled text-danger"
-                        >
-                            <li class="parsley-required">
-                                {{ form.errors?.sucursal_id }}
                             </li>
                         </ul>
                     </div>

@@ -342,6 +342,7 @@ onMounted(() => {
                             <input
                                 type="checkbox"
                                 v-model="form.pago_inscripcion"
+                                style="height: 18px; width: 18px"
                                 @change="actualizaCampeonatoInscripcionPago"
                             />
                         </div>

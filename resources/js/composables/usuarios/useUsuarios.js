@@ -17,7 +17,8 @@ export const useUsuarios = () => {
         acceso: "",
         tipo: "",
         foto: "",
-        sucursal_id: "",
+        fecha_registro: "",
+        status: "",
         _method: "POST",
     };
 

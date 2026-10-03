@@ -114,7 +114,7 @@ class PartidoService
 
         $ci_local = CampeonatoInscripcion::findOrFail($datos["ci_local_id"]);
 
-        $ci_visitante = CampeonatoInscripcion::findOrFail($datos["ci_local_id"]);
+        $ci_visitante = CampeonatoInscripcion::findOrFail($datos["ci_visitante_id"]);
         $partido = Partido::create([
             "campeonato_id" => $datos["campeonato_id"],
             "ci_local_id" => $datos["ci_local_id"],
@@ -151,7 +151,7 @@ class PartidoService
 
         $ci_local = CampeonatoInscripcion::findOrFail($datos["ci_local_id"]);
 
-        $ci_visitante = CampeonatoInscripcion::findOrFail($datos["ci_local_id"]);
+        $ci_visitante = CampeonatoInscripcion::findOrFail($datos["ci_visitante_id"]);
 
         $partido->update([
             "campeonato_id" => $datos["campeonato_id"],

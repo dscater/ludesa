@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Carrera;
 use App\Models\Certificado;
 use App\Models\Cliente;
+use App\Models\Jugador;
 use App\Models\LoginUser;
+use App\Models\Partido;
 use App\Models\User;
 use App\Services\LoginUserService;
 use App\Services\PermisoService;
@@ -41,31 +44,39 @@ class UserController extends Controller
         if (Auth::check()) {
             $oUser = new User();
             $permisos = $oUser->permisos;
-            if ($permisos == '*' || (is_array($permisos) && in_array('usuarios.index', $permisos))) {
+            if ($permisos == '*' || (is_array($permisos) && in_array('carreras.index', $permisos))) {
+                $carreras = Carrera::count();
                 $array_infos[] = [
-                    'label' => 'USUARIOS',
-                    'cantidad' => User::where('id', '!=', 1)->count(),
+                    'label' => 'CARRERAS',
+                    'cantidad' => $carreras,
                     'color' => 'bgWhite',
-                    'icon' => "fa-users",
-                    "url" => "usuarios.index"
+                    'icon' => "fa-list-alt",
+                    "url" => "carreras.index"
                 ];
             }
 
-            $array_infos[] = [
-                'label' => 'CARRERAS',
-                'cantidad' => 0,
-                'color' => 'bgWhite',
-                'icon' => "fa-list",
-                "url" => "usuarios.index"
-            ];
+            if ($permisos == '*' || (is_array($permisos) && in_array('partidos.index', $permisos))) {
+                $partidos = Partido::where("estado", "PENDIENTE")->count();
+                $array_infos[] = [
+                    'label' => 'PARTIDOS PENDIENTES',
+                    'cantidad' => $partidos,
+                    'color' => 'bgWhite',
+                    'icon' => "fa-table",
+                    "url" => "partidos.index"
+                ];
+            }
 
-            $array_infos[] = [
-                'label' => 'PARTIDOS PENDIENTES',
-                'cantidad' => 0,
-                'color' => 'bgWhite',
-                'icon' => "fa-table",
-                "url" => "usuarios.index"
-            ];
+
+            if ($permisos == '*' || (is_array($permisos) && in_array('jugadors.index', $permisos))) {
+                $jugadors = Jugador::count();
+                $array_infos[] = [
+                    'label' => 'JUGADORES',
+                    'cantidad' => $jugadors,
+                    'color' => 'bgWhite',
+                    'icon' => "fa-user-friends",
+                    "url" => "jugadors.index"
+                ];
+            }
         }
 
 

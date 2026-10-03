@@ -42,4 +42,9 @@ class CarreraJugador extends Model
     {
         return $this->belongsTo(Jugador::class, 'jugador_id');
     }
+
+    public function partido_detalles()
+    {
+        return $this->hasMany(PartidoDetalle::class, 'carrera_jugador_id');
+    }
 }

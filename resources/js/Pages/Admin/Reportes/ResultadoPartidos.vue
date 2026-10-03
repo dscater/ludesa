@@ -3,6 +3,7 @@ import Content from "@/Components/Content.vue";
 import { computed, onBeforeMount, onMounted, ref } from "vue";
 import { Head, usePage, Link } from "@inertiajs/vue3";
 import { useAppStore } from "@/stores/aplicacion/appStore";
+import { useDate } from "@/composables/useDate";
 const appStore = useAppStore();
 
 onBeforeMount(() => {
@@ -10,23 +11,15 @@ onBeforeMount(() => {
 });
 
 const cargarListas = () => {
-    cargarTipos();
+    cargarCampeonatos();
+    cargarCarreras();
 };
-
-const listSucursals = ref([]);
 
 onMounted(() => {
     cargarListas();
     appStore.stopLoading();
 });
 
-const getFechaAtual = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-};
 const listFormatos = ref([
     {
         icon: "fa fa-file-pdf",
@@ -41,9 +34,11 @@ const listFormatos = ref([
 ]);
 
 const form = ref({
-    fecha_ini: getFechaAtual(),
-    fecha_fin: getFechaAtual(),
-    formato: "pdf",
+    tipo: "todos",
+    fecha_ini: useDate().getFechaActual(),
+    fecha_fin: useDate().getFechaActual(),
+    campeonato_id: "todos",
+    carrera_id: "todos",
 });
 
 const generando = ref(false);
@@ -54,25 +49,32 @@ const txtBtn = computed(() => {
     return "Generar Reporte";
 });
 
-const listTipos = ref([]);
+const listCampeonatos = ref([]);
+const listCarreras = ref([]);
 
 const generarReporte = () => {
     generando.value = true;
-    const url = route("reportes.r_clientes", form.value);
+    const url = route("reportes.r_resultado_partidos", form.value);
     window.open(url, "_blank");
     setTimeout(() => {
         generando.value = false;
     }, 500);
 };
 
-const cargarTipos = () => {
-    axios.get(route("tipo_usuarios.listado")).then((response) => {
-        listTipos.value = response.data.map((item) => ({
-            id: item,
-            nombre: item,
-        }));
+const cargarCarreras = () => {
+    axios.get(route("carreras.listado")).then((response) => {
+        listCarreras.value = response.data.carreras;
+        listCarreras.value.unshift({
+            id: "todos",
+            nombre: "TODOS",
+        });
+    });
+};
 
-        listTipos.value.unshift({
+const cargarCampeonatos = () => {
+    axios.get(route("campeonatos.listado")).then((response) => {
+        listCampeonatos.value = response.data.campeonatos;
+        listCampeonatos.value.unshift({
             id: "todos",
             nombre: "TODOS",
         });
@@ -80,21 +82,21 @@ const cargarTipos = () => {
 };
 </script>
 <template>
-    <Head title="Reporte Clientes"></Head>
+    <Head title="Reporte Resultado de Partidos"></Head>
     <Content>
         <template #header>
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Lista de Clientes</h1>
+                    <h4 class="m-0">Resultado de Partidos</h4>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
+                    <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
                         <li class="breadcrumb-item active">
-                            Reportes - Lista de Clientes
+                            Reportes - Resultado de Partidos
                         </li>
                     </ol>
                 </div>
@@ -109,16 +111,17 @@ const cargarTipos = () => {
                         <form @submit.prevent="generarReporte">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label>Rango de fechas</label>
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-6">
+                                            <label>Desde</label>
                                             <input
                                                 type="date"
                                                 v-model="form.fecha_ini"
                                                 class="form-control"
                                             />
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-6">
+                                            <label>Hasta</label>
                                             <input
                                                 type="date"
                                                 v-model="form.fecha_fin"
@@ -126,24 +129,44 @@ const cargarTipos = () => {
                                             />
                                         </div>
                                     </div>
-                                    <div
-                                        class="text-xs text-muted w-100 text-center"
-                                    >
-                                        Para listar todos los clientes dejar
-                                        vacío
-                                    </div>
                                 </div>
-
-                                <div class="col-md-12 text-center mt-2">
-                                    <el-radio-group v-model="form.formato">
-                                        <el-radio
-                                            v-for="item in listFormatos"
-                                            :value="item.value"
-                                            size="large"
-                                            ><i :class="item.icon"></i>
-                                            {{ item.label }}</el-radio
+                                <div class="col-md-12">
+                                    <label>Seleccionar campeonato*</label>
+                                    <el-select
+                                        v-model="form.campeonato_id"
+                                        no-data-text="Sin datos"
+                                        no-match-text="Sin resultados"
+                                        filterable
+                                    >
+                                        <el-option
+                                            v-for="item in listCampeonatos"
+                                            :key="item.id"
+                                            :value="item.id"
+                                            :label="
+                                                item.id == 'todos'
+                                                    ? item.nombre
+                                                    : `${item.periodo} - ${item.gestion}: ${item.nombre} (${item.tipo})`
+                                            "
                                         >
-                                    </el-radio-group>
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label>Seleccionar carrera*</label>
+                                    <el-select
+                                        v-model="form.carrera_id"
+                                        no-data-text="Sin datos"
+                                        no-match-text="Sin resultados"
+                                        filterable
+                                    >
+                                        <el-option
+                                            v-for="item in listCarreras"
+                                            :key="item.id"
+                                            :value="item.id"
+                                            :label="item.nombre"
+                                        >
+                                        </el-option>
+                                    </el-select>
                                 </div>
                                 <div class="col-md-12 text-center mt-3">
                                     <button
