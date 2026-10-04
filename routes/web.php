@@ -52,8 +52,8 @@ Route::get("sincronizarClientesTramitador", [SincronizacionController::class, 's
 Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function () {
     // INICIO
     Route::get('/inicio', [InicioController::class, 'inicio'])->name('inicio');
-    Route::get('/certificadosEmitidosLinea', [InicioController::class, 'certificadosEmitidosLinea'])->name('certificadosEmitidosLinea');
-    Route::get('/cantidadTramitesNormal', [InicioController::class, 'cantidadTramitesNormal'])->name('cantidadTramitesNormal');
+    Route::get('/pagosCampeonato', [InicioController::class, 'pagosCampeonato'])->name('pagosCampeonato');
+    Route::get('/golesPorCarrera', [InicioController::class, 'golesPorCarrera'])->name('golesPorCarrera');
 
     // CONFIGURACION
     Route::resource("configuracions", ConfiguracionController::class)->only(
@@ -80,7 +80,6 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
         ["index", "store"]
     );
 
-
     // TIPO USUARIOS
     Route::get("tipo_usuarios/listado", [TipoUsuarioController::class, 'listado'])->name("tipo_usuarios.listado");
 
@@ -96,6 +95,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // CAMPEONATOS
     Route::get("campeonatos/paginado", [CampeonatoController::class, 'paginado'])->name("campeonatos.paginado");
     Route::get("campeonatos/listado", [CampeonatoController::class, 'listado'])->name("campeonatos.listado");
+    Route::patch("campeonatos/finalizar/{campeonato}", [CampeonatoController::class, 'finalizar'])->name("campeonatos.finalizar");
     Route::resource("campeonatos", CampeonatoController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );
@@ -141,6 +141,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::put("partidos/iniciarPartido/{partido}", [PartidoController::class, 'iniciarPartido'])->name("partidos.iniciarPartido");
     Route::put("partidos/finalizarPartido/{partido}", [PartidoController::class, 'finalizarPartido'])->name("partidos.finalizarPartido");
     Route::get("partidos/ver/{partido}", [PartidoController::class, 'ver'])->name("partidos.ver");
+    Route::get("partidos/detalles/{partido}", [PartidoController::class, 'detalles'])->name("partidos.detalles");
     Route::get("partidos/actualizarJugadores/{partido}", [PartidoController::class, 'actualizarJugadores'])->name("partidos.actualizarJugadores");
     Route::patch("partidos/actualizaDatosPartido/{partido}", [PartidoController::class, 'actualizaDatosPartido'])->name("partidos.actualizaDatosPartido");
     Route::resource("partidos", PartidoController::class)->only(
@@ -165,6 +166,10 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     Route::get('reportes/resultado_partidos', [ReporteController::class, 'resultado_partidos'])->name("reportes.resultado_partidos");
     Route::get('reportes/r_resultado_partidos', [ReporteController::class, 'r_resultado_partidos'])->name("reportes.r_resultado_partidos");
+
+    Route::get('reportes/r_fixture', [ReporteController::class, 'r_fixture'])->name("reportes.r_fixture");
+
+    Route::get('reportes/r_partido_detalles', [ReporteController::class, 'r_partido_detalles'])->name("reportes.r_partido_detalles");
 
     Route::get('reportes/goleadores', [ReporteController::class, 'goleadores'])->name("reportes.goleadores");
     Route::get('reportes/r_goleadores', [ReporteController::class, 'r_goleadores'])->name("reportes.r_goleadores");

@@ -3,7 +3,7 @@ import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { usePartidos } from "@/composables/partidos/usePartidos";
 import { useAxios } from "@/composables/axios/useAxios";
-import { ref, onMounted, onBeforeMount } from "vue";
+import { ref, onMounted, onBeforeMount, computed } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
 import Formulario from "./Formulario.vue";
@@ -29,6 +29,7 @@ const { setPartido, limpiarPartido, form } = usePartidos();
 const { axiosDelete, axiosPost } = useAxios();
 
 const listCampeonatos = ref([]);
+
 const multiSearch = ref({
     search: "",
     campeonato_id: "",
@@ -37,6 +38,12 @@ const multiSearch = ref({
     estado: "",
     filtro: [],
 });
+const campeonatoSeleccionado = computed(() => {
+    return listCampeonatos.value.filter(
+        (elem) => elem.id == multiSearch.value.campeonato_id,
+    )[0];
+});
+
 const listPartidos = ref([]);
 const loadingLista = ref(false);
 const currentPage = ref(1);
@@ -286,10 +293,12 @@ const iniciarPartido = (item) => {
             <div class="col-4">
                 <button
                     v-if="
-                        props_page.auth?.user.permisos == '*' ||
-                        props_page.auth?.user.permisos.includes(
-                            'partidos.create',
-                        )
+                        campeonatoSeleccionado &&
+                        campeonatoSeleccionado.estado == 'VIGENTE' &&
+                        (props_page.auth?.user.permisos == '*' ||
+                            props_page.auth?.user.permisos.includes(
+                                'partidos.create',
+                            ))
                     "
                     type="button"
                     class="btn btn-primary text-sm w-100"
@@ -298,6 +307,24 @@ const iniciarPartido = (item) => {
                 >
                     <i class="fa fa-plus"></i> Nuevo Partido
                 </button>
+                <a
+                    v-if="
+                        multiSearch.campeonato_id &&
+                        (props_page.auth?.user.permisos == '*' ||
+                            props_page.auth?.user.permisos.includes(
+                                'reportes.r_fixture',
+                            ))
+                    "
+                    :disabled="!multiSearch.campeonato_id"
+                    class="btn btn-success text-sm w-100"
+                    :href="
+                        route('reportes.r_fixture') +
+                        `?fecha_ini=${multiSearch.fecha_ini}&fecha_fin=${multiSearch.fecha_fin}&campeonato_id=${multiSearch.campeonato_id}`
+                    "
+                    target="_blank"
+                >
+                    <i class="fa fa-table"></i> Exportar Fixture
+                </a>
             </div>
         </div>
         <div class="row">
@@ -438,8 +465,7 @@ const iniciarPartido = (item) => {
                                     type="button"
                                     class="btn btn-primary btn-sm text-xs float-end ms-1"
                                     v-if="
-                                        (item.estado == 'PENDIENTE' ||
-                                            item.estado == 'INICIADO') &&
+                                        item.estado == 'PENDIENTE' &&
                                         (props_page.auth?.user.permisos ==
                                             '*' ||
                                             props_page.auth?.user.permisos.includes(
@@ -448,21 +474,47 @@ const iniciarPartido = (item) => {
                                     "
                                     @click.prevent="iniciarPartido(item)"
                                 >
-                                    <i class="fa fa-flag-checkered me-1"></i>
-                                    <span v-if="item.estado == 'PENDIENTE'"
+                                    <span
+                                        ><i
+                                            class="fa fa-flag-checkered me-1"
+                                        ></i
                                         >Iniciar Partido</span
                                     >
-                                    <span v-if="item.estado == 'INICIADO'"
+                                </button>
+
+                                <Link
+                                    class="btn btn-primary btn-sm text-xs float-end ms-1"
+                                    v-if="
+                                        item.estado == 'INICIADO' &&
+                                        (props_page.auth?.user.permisos ==
+                                            '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'partidos.iniciarPartido',
+                                            ))
+                                    "
+                                    :href="route('partidos.ver', item.id)"
+                                >
+                                    <span
+                                        ><i class="fa fa-arrow-right me-1"></i
                                         >Volver al Partido</span
                                     >
-                                </button>
-                                <button
-                                    type="button"
+                                </Link>
+
+                                <Link
+                                    v-if="
+                                        item.estado == 'FINALIZADO' &&
+                                        (props_page.auth?.user.permisos ==
+                                            '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'partidos.detalles',
+                                            ))
+                                    "
                                     class="btn btn-info btn-sm text-xs float-end"
+                                    :href="route('partidos.detalles', item.id)"
                                 >
                                     <i class="fa fa-clipboard-list"></i>
                                     Detalles
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </div>

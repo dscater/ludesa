@@ -292,6 +292,11 @@ input.checkboxTable:checked:disabled {
     background-color: var(--bgSuccess2);
 }
 
+input:disabled {
+    cursor: not-allowed;
+    color: black !important;
+}
+
 /* saldo - cancelado - total */
 .cliente-pago .saldo {
     background-color: var(--bgDanger3);

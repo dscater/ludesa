@@ -5,6 +5,7 @@ import { watch, ref, computed, onMounted, nextTick } from "vue";
 import { useAxios } from "@/composables/axios/useAxios";
 import MiTable from "@/Components/MiTable.vue";
 const { axiosDelete } = useAxios();
+const { props: props_page } = usePage();
 // TOAST
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -331,19 +332,27 @@ onMounted(() => {
                 <div class="col-12 border-top mt-1">
                     <div class="row">
                         <div
-                            class="col-12 fw-bold text-center border-bottom pb-2"
+                            class="col-12 fw-bold text-center border-bottom pb-2 d-flex align-items-center justify-content-center"
                             :class="{
                                 bgDanger3: !form.pago_inscripcion,
                                 bgSuccess2: form.pago_inscripcion,
                             }"
                         >
-                            Por inscripción<br />
-                            Bs. {{ form.total_inscripcion }}
+                            Por inscripción Bs. {{ form.total_inscripcion }}
                             <input
                                 type="checkbox"
+                                class="ms-1"
                                 v-model="form.pago_inscripcion"
+                                :true-value="1"
+                                :false-value="0"
                                 style="height: 18px; width: 18px"
                                 @change="actualizaCampeonatoInscripcionPago"
+                                v-if="
+                                    props_page.auth?.user.permisos == '*' ||
+                                    props_page.auth?.user.permisos.includes(
+                                        'campeonato_inscripcions.actualizaPago',
+                                    )
+                                "
                             />
                         </div>
                         <div class="col-md-4 fw-bold text-center">
@@ -389,7 +398,16 @@ onMounted(() => {
                                         }"
                                         >{{ item.total_local }}</span
                                     >
-                                    <div class="input-group-text">
+                                    <div
+                                        class="input-group-text"
+                                        v-if="
+                                            props_page.auth?.user.permisos ==
+                                                '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'partidos.actualizaDatosPartido',
+                                            )
+                                        "
+                                    >
                                         <input
                                             type="checkbox"
                                             class="form-conrtol"
@@ -512,6 +530,18 @@ onMounted(() => {
                                                             v-model="
                                                                 jugador.total_amarillas
                                                             "
+                                                            :disabled="
+                                                                !(
+                                                                    props_page
+                                                                        .auth
+                                                                        ?.user
+                                                                        .permisos ==
+                                                                        '*' ||
+                                                                    props_page.auth?.user.permisos.includes(
+                                                                        'partido_detalles.actualizaDatosDetalle',
+                                                                    )
+                                                                )
+                                                            "
                                                             @keyup="
                                                                 actualizarDatosDetalle(
                                                                     jugador.id,
@@ -539,6 +569,16 @@ onMounted(() => {
                                                                 "
                                                                 :true-value="1"
                                                                 :false-value="0"
+                                                                v-if="
+                                                                    props_page
+                                                                        .auth
+                                                                        ?.user
+                                                                        .permisos ==
+                                                                        '*' ||
+                                                                    props_page.auth?.user.permisos.includes(
+                                                                        'partido_detalles.actualizaDatosDetalle',
+                                                                    )
+                                                                "
                                                                 @change="
                                                                     actualizarDatosDetalle(
                                                                         jugador.id,
@@ -591,6 +631,18 @@ onMounted(() => {
                                                             v-model="
                                                                 jugador.total_rojas
                                                             "
+                                                            :disabled="
+                                                                !(
+                                                                    props_page
+                                                                        .auth
+                                                                        ?.user
+                                                                        .permisos ==
+                                                                        '*' ||
+                                                                    props_page.auth?.user.permisos.includes(
+                                                                        'partido_detalles.actualizaDatosDetalle',
+                                                                    )
+                                                                )
+                                                            "
                                                             @keyup="
                                                                 actualizarDatosDetalle(
                                                                     jugador.id,
@@ -618,6 +670,16 @@ onMounted(() => {
                                                                 "
                                                                 :true-value="1"
                                                                 :false-value="0"
+                                                                v-if="
+                                                                    props_page
+                                                                        .auth
+                                                                        ?.user
+                                                                        .permisos ==
+                                                                        '*' ||
+                                                                    props_page.auth?.user.permisos.includes(
+                                                                        'partido_detalles.actualizaDatosDetalle',
+                                                                    )
+                                                                "
                                                                 @change="
                                                                     actualizarDatosDetalle(
                                                                         jugador.id,
@@ -665,7 +727,16 @@ onMounted(() => {
                                         }"
                                         >{{ item.total_visitante }}</span
                                     >
-                                    <div class="input-group-text">
+                                    <div
+                                        class="input-group-text"
+                                        v-if="
+                                            props_page.auth?.user.permisos ==
+                                                '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'partidos.actualizaDatosPartido',
+                                            )
+                                        "
+                                    >
                                         <input
                                             type="checkbox"
                                             class="form-conrtol"
@@ -788,6 +859,18 @@ onMounted(() => {
                                                             v-model="
                                                                 jugador.total_amarillas
                                                             "
+                                                            :disabled="
+                                                                !(
+                                                                    props_page
+                                                                        .auth
+                                                                        ?.user
+                                                                        .permisos ==
+                                                                        '*' ||
+                                                                    props_page.auth?.user.permisos.includes(
+                                                                        'partido_detalles.actualizaDatosDetalle',
+                                                                    )
+                                                                )
+                                                            "
                                                             @keyup="
                                                                 actualizarDatosDetalle(
                                                                     jugador.id,
@@ -807,6 +890,15 @@ onMounted(() => {
                                                         />
                                                         <div
                                                             class="input-group-text"
+                                                            v-if="
+                                                                props_page.auth
+                                                                    ?.user
+                                                                    .permisos ==
+                                                                    '*' ||
+                                                                props_page.auth?.user.permisos.includes(
+                                                                    'partido_detalles.actualizaDatosDetalle',
+                                                                )
+                                                            "
                                                         >
                                                             <input
                                                                 type="checkbox"
@@ -864,6 +956,18 @@ onMounted(() => {
                                                                     jugador.total_rojas >
                                                                         0,
                                                             }"
+                                                            :disabled="
+                                                                !(
+                                                                    props_page
+                                                                        .auth
+                                                                        ?.user
+                                                                        .permisos ==
+                                                                        '*' ||
+                                                                    props_page.auth?.user.permisos.includes(
+                                                                        'partido_detalles.actualizaDatosDetalle',
+                                                                    )
+                                                                )
+                                                            "
                                                             v-model="
                                                                 jugador.total_rojas
                                                             "
@@ -886,6 +990,15 @@ onMounted(() => {
                                                         />
                                                         <div
                                                             class="input-group-text"
+                                                            v-if="
+                                                                props_page.auth
+                                                                    ?.user
+                                                                    .permisos ==
+                                                                    '*' ||
+                                                                props_page.auth?.user.permisos.includes(
+                                                                    'partido_detalles.actualizaDatosDetalle',
+                                                                )
+                                                            "
                                                         >
                                                             <input
                                                                 type="checkbox"

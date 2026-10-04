@@ -124,6 +124,25 @@ class CampeonatoController extends Controller
         }
     }
 
+
+    public function finalizar(Campeonato $campeonato): JsonResponse|Response
+    {
+        DB::beginTransaction();
+        try {
+            $this->campeonatoService->finalizar($campeonato);
+            DB::commit();
+            return response()->JSON([
+                'sw' => true,
+                'message' => 'El registro se actualizó correctamente'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
     /**
      * Eliminar campeonato
      *

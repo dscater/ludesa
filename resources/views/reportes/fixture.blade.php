@@ -1,9 +1,10 @@
+td
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <title>TablaPosiciones</title>
+    <title>Fixture</title>
     <style type="text/css">
         * {
             font-family: sans-serif;
@@ -11,9 +12,9 @@
 
         @page {
             margin-top: 1.5cm;
-            margin-bottom: 0.3cm;
-            margin-left: 0.3cm;
-            margin-right: 0.3cm;
+            margin-bottom: 1.5cm;
+            margin-left: 2cm;
+            margin-right: 1.5cm;
         }
 
         table {
@@ -131,12 +132,20 @@
             color: white;
         }
 
+        .bg-ganador {
+            background: #a8ffae;
+        }
+
         .img_celda img {
             width: 45px;
         }
 
         .bold {
             font-weight: bold;
+        }
+
+        .nueva_pagina {
+            page-break-before: always;
         }
     </style>
 </head>
@@ -150,50 +159,50 @@
         <h2 class="titulo">
             {{ $configuracion->first()->razon_social }}
         </h2>
-        <h4 class="texto">TABLA DE POSICIONES</h4>
+        <h4 class="texto">FIXTURE DE PARTIDOS</h4>
         <h4 class="texto">{{ $campeonato->full_name }}</h4>
         <h4 class="fecha">Expedido: {{ date('d-m-Y') }}</h4>
     </div>
     <table border="1">
         <thead class="bg-principal">
             <tr>
-                <th width="3%">N°</th>
-                <th width="10%">LOGO</th>
-                <th>CARRERA</th>
-                <th>PTS.</th>
-                <th>PJ</th>
-                <th>PG</th>
-                <th>PE</th>
-                <th>PP</th>
-                <th>GF</th>
-                <th>GC</th>
-                <th>DF</th>
+                <th width="10%">FECHA Y HORA</th>
+                <th>LOCAL</th>
+                <th>VISITANTE</th>
             </tr>
         </thead>
         <tbody>
-            @php
-                $cont = 1;
-            @endphp
-            @foreach ($campeonato_inscripcions as $item)
+            @foreach ($partidos as $item)
                 <tr>
-                    <td class="centreado">{{ $item->posicion }}
+                    <td>{{ $item->fecha_hora_t }}</td>
+                    <td style="vertical-align: middle; text-align: center; height: 40px;">
+                        <table style="margin: 0 auto; border-collapse: collapse;" border="0">
+                            <tr>
+                                <td style="vertical-align: middle; padding: 0 5px 0 0;" width="25%">
+                                    <img src="{{ $item->ci_local->carrera->logo_b64 }}"
+                                        style="width: 30px; height: 30px;" alt="Logo">
+                                </td>
+                                <td style="vertical-align: middle; padding: 0;">
+                                    {{ $item->ci_local->carrera->nombre }}
+                                </td>
+                            </tr>
+                        </table>
                     </td>
-                    <td class="img_celda centreado">
-                        <img src="{{ $item->carrera->logo_b64 }}" alt="Logo">
+
+                    <td style="vertical-align: middle; text-align: center; height: 40px;">
+                        <table style="margin: 0 auto; border-collapse: collapse;" border="0">
+                            <tr>
+                                <td style="vertical-align: middle; padding: 0 5px 0 0;" width="25%">
+                                    <img src="{{ $item->ci_visitante->carrera->logo_b64 }}"
+                                        style="width: 30px; height: 30px;" alt="Logo">
+                                </td>
+                                <td style="vertical-align: middle; padding: 0;">
+                                    {{ $item->ci_visitante->carrera->nombre }}
+                                </td>
+                            </tr>
+                        </table>
                     </td>
-                    <td>{{ $item->carrera->nombre }}<br />
-                        @if ($item->posicion == 1 && $campeonato->estado == 'FINALIZADO')
-                            <span class="bold">(CAMPEÓN)</span>
-                        @endif
-                    </td>
-                    <td class="centreado">{{ $item->pts }}</td>
-                    <td class="centreado">{{ $item->pj }}</td>
-                    <td class="centreado">{{ $item->pg }}</td>
-                    <td class="centreado">{{ $item->pe }}</td>
-                    <td class="centreado">{{ $item->pp }}</td>
-                    <td class="centreado">{{ $item->gf }}</td>
-                    <td class="centreado">{{ $item->gc }}</td>
-                    <td class="centreado">{{ $item->dg }}</td>
+
                 </tr>
             @endforeach
         </tbody>

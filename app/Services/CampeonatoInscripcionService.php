@@ -221,11 +221,11 @@ class CampeonatoInscripcionService
                 $query->where("pago_local", 0)
                     ->orWhereHas("partido_detalles", function ($query) {
                         $query->where(function ($q) {
-                            $q->where("amarillas", ">", 0)
+                            $q->where("total_amarillas", ">", 0)
                                 ->where("pagado_amarillas", 0);
                         });
                         $query->orWhere(function ($q) {
-                            $q->where("rojas", ">", 0)
+                            $q->where("total_rojas", ">", 0)
                                 ->where("pagado_rojas", 0);
                         });
                     });
@@ -243,11 +243,11 @@ class CampeonatoInscripcionService
                 $query->where("pago_visitante", 0)
                     ->orWhereHas("partido_detalles", function ($query) {
                         $query->where(function ($q) {
-                            $q->where("amarillas", ">", 0)
+                            $q->where("total_amarillas", ">", 0)
                                 ->where("pagado_amarillas", 0);
                         });
                         $query->orWhere(function ($q) {
-                            $q->where("rojas", ">", 0)
+                            $q->where("total_rojas", ">", 0)
                                 ->where("pagado_rojas", 0);
                         });
                     });

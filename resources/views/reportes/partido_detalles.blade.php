@@ -1,9 +1,10 @@
+td
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <title>TablaPosiciones</title>
+    <title>PartidoDetalles</title>
     <style type="text/css">
         * {
             font-family: sans-serif;
@@ -11,9 +12,9 @@
 
         @page {
             margin-top: 1.5cm;
-            margin-bottom: 0.3cm;
-            margin-left: 0.3cm;
-            margin-right: 0.3cm;
+            margin-bottom: 1.5cm;
+            margin-left: 2cm;
+            margin-right: 1.5cm;
         }
 
         table {
@@ -131,12 +132,20 @@
             color: white;
         }
 
+        .bg-ganador {
+            background: #a8ffae;
+        }
+
         .img_celda img {
             width: 45px;
         }
 
         .bold {
             font-weight: bold;
+        }
+
+        .nueva_pagina {
+            page-break-before: always;
         }
     </style>
 </head>
@@ -150,50 +159,84 @@
         <h2 class="titulo">
             {{ $configuracion->first()->razon_social }}
         </h2>
-        <h4 class="texto">TABLA DE POSICIONES</h4>
+        <h4 class="texto">DETALLE DE PARTIDO</h4>
         <h4 class="texto">{{ $campeonato->full_name }}</h4>
         <h4 class="fecha">Expedido: {{ date('d-m-Y') }}</h4>
     </div>
     <table border="1">
         <thead class="bg-principal">
             <tr>
+                <th>Local: {{ $partido->ci_local->carrera->nombre }}</th>
+            </tr>
+            <tr>
+                <th>Goles: {{ $partido->goles_local }}</th>
+            </tr>
+        </thead>
+    </table>
+    <table border="1" style="margin-top: 0;">
+        <thead class="bg-principal">
+            <tr>
                 <th width="3%">N°</th>
-                <th width="10%">LOGO</th>
-                <th>CARRERA</th>
-                <th>PTS.</th>
-                <th>PJ</th>
-                <th>PG</th>
-                <th>PE</th>
-                <th>PP</th>
-                <th>GF</th>
-                <th>GC</th>
-                <th>DF</th>
+                <th width="10%">Foto</th>
+                <th width="47%">Jugador</th>
+                <th width="10%">Titular</th>
+                <th width="10%">Goles</th>
+                <th width="10%">Amarillas</th>
+                <th width="10%">Rojas</th>
             </tr>
         </thead>
         <tbody>
-            @php
-                $cont = 1;
-            @endphp
-            @foreach ($campeonato_inscripcions as $item)
+            @foreach ($local_detalles as $item)
                 <tr>
-                    <td class="centreado">{{ $item->posicion }}
+                    <td>{{ $item->carrera_jugador->nro }}</td>
+                    <td class="centreado">
+                        <img src="{{ $item->carrera_jugador->jugador->foto_b64 }}" width="30px" alt="">
                     </td>
-                    <td class="img_celda centreado">
-                        <img src="{{ $item->carrera->logo_b64 }}" alt="Logo">
+                    <td>{{ $item->carrera_jugador->jugador->nombres }} {{ $item->carrera_jugador->jugador->apes }}</td>
+                    <td class="centreado">{{ $item->titular ? 'SI' : 'NO' }}</td>
+                    <td class="centreado">{{ $item->goles }}</td>
+                    <td class="centreado">{{ $item->amarillas }}</td>
+                    <td class="centreado">{{ $item->rojas }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <table border="1">
+        <thead class="bg-principal">
+            <tr>
+                <th>Visitante: {{ $partido->ci_visitante->carrera->nombre }}</th>
+            </tr>
+            <tr>
+                <th>Goles: {{ $partido->goles_visitante }}</th>
+            </tr>
+        </thead>
+    </table>
+    <table border="1" style="margin-top: 0;">
+        <thead class="bg-principal">
+            <tr>
+                <th width="3%">N°</th>
+                <th width="10%">Foto</th>
+                <th width="47%">Jugador</th>
+                <th width="10%">Titular</th>
+                <th width="10%">Goles</th>
+                <th width="10%">Amarillas</th>
+                <th width="10%">Rojas</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($visitante_detalles as $item)
+                <tr>
+                    <td>{{ $item->carrera_jugador->nro }}</td>
+                    <td class="centreado">
+                        <img src="{{ $item->carrera_jugador->jugador->foto_b64 }}" width="30px" alt="">
                     </td>
-                    <td>{{ $item->carrera->nombre }}<br />
-                        @if ($item->posicion == 1 && $campeonato->estado == 'FINALIZADO')
-                            <span class="bold">(CAMPEÓN)</span>
-                        @endif
+                    <td>{{ $item->carrera_jugador->jugador->nombres }} {{ $item->carrera_jugador->jugador->apes }}
                     </td>
-                    <td class="centreado">{{ $item->pts }}</td>
-                    <td class="centreado">{{ $item->pj }}</td>
-                    <td class="centreado">{{ $item->pg }}</td>
-                    <td class="centreado">{{ $item->pe }}</td>
-                    <td class="centreado">{{ $item->pp }}</td>
-                    <td class="centreado">{{ $item->gf }}</td>
-                    <td class="centreado">{{ $item->gc }}</td>
-                    <td class="centreado">{{ $item->dg }}</td>
+                    <td class="centreado">{{ $item->titular ? 'SI' : 'NO' }}</td>
+                    <td class="centreado">{{ $item->goles }}</td>
+                    <td class="centreado">{{ $item->amarillas }}</td>
+                    <td class="centreado">{{ $item->rojas }}</td>
                 </tr>
             @endforeach
         </tbody>

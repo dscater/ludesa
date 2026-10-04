@@ -21,7 +21,7 @@ onMounted(() => {
 });
 
 const { setCampeonato, limpiarCampeonato, form } = useCampeonatos();
-const { axiosDelete } = useAxios();
+const { axiosDelete, axiosPost } = useAxios();
 
 const miTable = ref(null);
 const headers = [
@@ -92,7 +92,7 @@ const updateDatatable = async () => {
 const eliminarCampeonato = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
-        html: `<strong>${item.nombre}</strong>`,
+        html: `<strong>${item.full_name}</strong>`,
         showCancelButton: true,
         confirmButtonText: "Si, eliminar",
         cancelButtonText: "No, cancelar",
@@ -105,6 +105,33 @@ const eliminarCampeonato = (item) => {
         if (result.isConfirmed) {
             let respuesta = await axiosDelete(
                 route("campeonatos.destroy", item.id),
+            );
+            if (respuesta && respuesta.sw) {
+                updateDatatable();
+            }
+        }
+    });
+};
+
+const finalizarCampeonato = (item) => {
+    Swal.fire({
+        title: "¿Quierés finalizar este Campeonato?",
+        html: `<strong>${item.full_name}</strong>`,
+        showCancelButton: true,
+        confirmButtonText: "Si, finalizar",
+        cancelButtonText: "No, cancelar",
+        denyButtonText: `No, cancelar`,
+        customClass: {
+            confirmButton: "btn-danger",
+        },
+    }).then(async (result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            let respuesta = await axiosPost(
+                route("campeonatos.finalizar", item.id),
+                {
+                    _method: "patch",
+                },
             );
             if (respuesta && respuesta.sw) {
                 updateDatatable();
@@ -220,10 +247,12 @@ const eliminarCampeonato = (item) => {
                             <template #accion="{ item }">
                                 <template
                                     v-if="
-                                        props_page.auth?.user.permisos == '*' ||
-                                        props_page.auth?.user.permisos.includes(
-                                            'campeonatos.edit',
-                                        )
+                                        item.estado != 'FINALIZADO' &&
+                                        (props_page.auth?.user.permisos ==
+                                            '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'campeonatos.edit',
+                                            ))
                                     "
                                 >
                                     <el-tooltip
@@ -242,13 +271,39 @@ const eliminarCampeonato = (item) => {
                                             <i class="fa fa-pen"></i></button
                                     ></el-tooltip>
                                 </template>
-
                                 <template
                                     v-if="
-                                        props_page.auth?.user.permisos == '*' ||
-                                        props_page.auth?.user.permisos.includes(
-                                            'campeonatos.destroy',
-                                        )
+                                        item.estado == 'VIGENTE' &&
+                                        (props_page.auth?.user.permisos ==
+                                            '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'campeonatos.finalizar',
+                                            ))
+                                    "
+                                >
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="Finalizar"
+                                        placement="left-start"
+                                    >
+                                        <button
+                                            class="btn btn-primary"
+                                            @click="finalizarCampeonato(item)"
+                                        >
+                                            <i
+                                                class="fa fa-flag-checkered"
+                                            ></i></button
+                                    ></el-tooltip>
+                                </template>
+                                <template
+                                    v-if="
+                                        item.estado != 'FINALIZADO' &&
+                                        (props_page.auth?.user.permisos ==
+                                            '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'campeonatos.destroy',
+                                            ))
                                     "
                                 >
                                     <el-tooltip

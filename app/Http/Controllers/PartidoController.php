@@ -161,6 +161,40 @@ class PartidoController extends Controller
         ));
     }
 
+
+    public function detalles(Partido $partido)
+    {
+        $campeonato = $partido->campeonato;
+        $partido = $partido->load(["ci_local.carrera", "ci_local.campeonato", "ci_visitante.carrera", "ci_visitante.campeonato", "partido_detalles"]);
+
+        $local_detalles = PartidoDetalle::with(["carrera_jugador.jugador"])
+            ->where("partido_id", $partido->id)
+            ->where("campeonato_inscripcion_id", $partido->ci_local_id)
+            ->get();
+
+        $visitante_detalles = PartidoDetalle::with(["carrera_jugador.jugador"])
+            ->where("partido_id", $partido->id)
+            ->where("campeonato_inscripcion_id", $partido->ci_visitante_id)
+            ->get();
+
+        $costo_tarjetas = $this->costo_tarjeta_service->getCostosTipo($campeonato->tipo);
+        $costo_derechos = $this->costo_derecho_service->getCostosTipo($campeonato->tipo);
+
+        $deudas_local = $this->campeonato_inscripcion_service->deudas($partido->ci_local, $partido->id);
+        $deudas_visitante = $this->campeonato_inscripcion_service->deudas($partido->ci_visitante, $partido->id);
+
+        return Inertia::render("Admin/Partidos/Detalles", compact(
+            "campeonato",
+            "partido",
+            "local_detalles",
+            "visitante_detalles",
+            "costo_tarjetas",
+            "costo_derechos",
+            "deudas_local",
+            "deudas_visitante"
+        ));
+    }
+
     public function iniciarPartido(Partido $partido, Request $request)
     {
         DB::beginTransaction();

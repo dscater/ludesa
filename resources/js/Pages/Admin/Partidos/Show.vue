@@ -216,6 +216,7 @@ const actualizarDatosPartido = (col) => {
             router.reload({
                 only: ["partido"],
             });
+            toast.success("Registro éxitoso", { autoClose: 300 });
         });
 };
 
@@ -316,9 +317,12 @@ const actualizarDatosDetalle = (id, col, lv) => {
 };
 
 const finalizarPartido = () => {
+    router.reload({
+        only: ["partido"],
+    });
     Swal.fire({
         title: "¿Quierés finalizar este partido?",
-        html: `<strong>${props.partido.ci_local.carrera.nombre} (${props.partido.goles_local})</strong> vs <strong>${props.partido.ci_visitante.carrera.nombre} (${props.partido.goles_visitante})</strong>`,
+        html: `<strong>${props.partido.ci_local.carrera.nombre} (${totalGolesLocal.value})</strong> vs <strong>${props.partido.ci_visitante.carrera.nombre} (${totalGolesVisitante.value})</strong>`,
         showCancelButton: true,
         confirmButtonText: "Si, finalizar",
         cancelButtonText: "No, cancelar",
@@ -350,12 +354,14 @@ const deudasDerechosLocal = computed(() => {
         if (item.pago_local == 0 && item.total_local > 0) {
             return acc + parseFloat(item.total_local);
         }
+        return acc;
     }, 0);
 
     const visitante = props.deudas_local.visitante.reduce((acc, item) => {
         if (item.pago_visitante == 0 && item.total_visitante > 0) {
             return acc + parseFloat(item.total_visitante);
         }
+        return acc;
     }, 0);
 
     return local + visitante;
@@ -422,14 +428,16 @@ const deudasRojasLocal = computed(() => {
 const deudasDerechosVisitante = computed(() => {
     const local = props.deudas_visitante.local.reduce((acc, item) => {
         if (item.pago_local == 0 && item.total_local > 0) {
-            return acc + parseFloat(item.total_local);
+            return acc + parseFloat(item.total_local ?? 0);
         }
+        return acc;
     }, 0);
 
     const visitante = props.deudas_visitante.visitante.reduce((acc, item) => {
         if (item.pago_visitante == 0 && item.total_visitante > 0) {
             return acc + parseFloat(item.total_visitante);
         }
+        return acc;
     }, 0);
 
     return local + visitante;
@@ -562,12 +570,23 @@ const mostrarDeudas = (item) => {
                     title="Recargar Jugadores"
                     @click.prevent="recargarJugadores"
                 >
-                    <i class="fa fa-user-friends"></i>
-                </button>
+                    <i class="fa fa-user-friends"></i></button
+                ><Link
+                    class="btn btn-light border float-end px-3 ms-1"
+                    :href="route('partidos.index')"
+                >
+                    <i class="fa fa-arrow-left"></i> Volver
+                </Link>
                 <button
                     type="button"
                     class="btn btn-primary float-end px-3"
                     @click.prevent="finalizarPartido"
+                    v-if="
+                        props_page.auth?.user.permisos == '*' ||
+                        props_page.auth?.user.permisos.includes(
+                            'partidos.finalizarPartido',
+                        )
+                    "
                 >
                     <i class="fa fa-flag-checkered"></i> Finalizar Partido
                 </button>
@@ -672,8 +691,26 @@ const mostrarDeudas = (item) => {
                                                 bgActivo: partido.pago_local,
                                             }"
                                             v-model="partido.total_local"
+                                            :disabled="
+                                                !(
+                                                    props_page.auth?.user
+                                                        .permisos == '*' ||
+                                                    props_page.auth?.user.permisos.includes(
+                                                        'partidos.actualizaDatosPartido',
+                                                    )
+                                                )
+                                            "
                                         />
-                                        <div class="input-group-text">
+                                        <div
+                                            class="input-group-text"
+                                            v-if="
+                                                props_page.auth?.user
+                                                    .permisos == '*' ||
+                                                props_page.auth?.user.permisos.includes(
+                                                    'partidos.actualizaDatosPartido',
+                                                )
+                                            "
+                                        >
                                             <input
                                                 type="checkbox"
                                                 class="form-conrtol"
@@ -747,6 +784,15 @@ const mostrarDeudas = (item) => {
                                                 'local',
                                             )
                                         "
+                                        :disabled="
+                                            !(
+                                                props_page.auth?.user
+                                                    .permisos == '*' ||
+                                                props_page.auth?.user.permisos.includes(
+                                                    'partido_detalles.actualizaDatosDetalle',
+                                                )
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>
@@ -764,6 +810,15 @@ const mostrarDeudas = (item) => {
                                                 'local',
                                             )
                                         "
+                                        :disabled="
+                                            !(
+                                                props_page.auth?.user
+                                                    .permisos == '*' ||
+                                                props_page.auth?.user.permisos.includes(
+                                                    'partido_detalles.actualizaDatosDetalle',
+                                                )
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>
@@ -778,6 +833,15 @@ const mostrarDeudas = (item) => {
                                                 item.id,
                                                 'amarillas',
                                                 'local',
+                                            )
+                                        "
+                                        :disabled="
+                                            !(
+                                                props_page.auth?.user
+                                                    .permisos == '*' ||
+                                                props_page.auth?.user.permisos.includes(
+                                                    'partido_detalles.actualizaDatosDetalle',
+                                                )
                                             )
                                         "
                                     />
@@ -809,6 +873,15 @@ const mostrarDeudas = (item) => {
                                                     'local',
                                                 )
                                             "
+                                            :disabled="
+                                                !(
+                                                    props_page.auth?.user
+                                                        .permisos == '*' ||
+                                                    props_page.auth?.user.permisos.includes(
+                                                        'partido_detalles.actualizaDatosDetalle',
+                                                    )
+                                                )
+                                            "
                                         />
                                         <div class="input-group-text">
                                             <input
@@ -821,6 +894,15 @@ const mostrarDeudas = (item) => {
                                                         item.id,
                                                         'pagado_amarillas',
                                                         'local',
+                                                    )
+                                                "
+                                                :disabled="
+                                                    !(
+                                                        props_page.auth?.user
+                                                            .permisos == '*' ||
+                                                        props_page.auth?.user.permisos.includes(
+                                                            'partido_detalles.actualizaDatosDetalle',
+                                                        )
                                                     )
                                                 "
                                             />
@@ -840,6 +922,15 @@ const mostrarDeudas = (item) => {
                                                     item.id,
                                                     'rojas',
                                                     'local',
+                                                )
+                                            "
+                                            :disabled="
+                                                !(
+                                                    props_page.auth?.user
+                                                        .permisos == '*' ||
+                                                    props_page.auth?.user.permisos.includes(
+                                                        'partido_detalles.actualizaDatosDetalle',
+                                                    )
                                                 )
                                             "
                                         />
@@ -879,6 +970,15 @@ const mostrarDeudas = (item) => {
                                                     'local',
                                                 )
                                             "
+                                            :disabled="
+                                                !(
+                                                    props_page.auth?.user
+                                                        .permisos == '*' ||
+                                                    props_page.auth?.user.permisos.includes(
+                                                        'partido_detalles.actualizaDatosDetalle',
+                                                    )
+                                                )
+                                            "
                                         />
                                         <div class="input-group-text">
                                             <input
@@ -891,6 +991,15 @@ const mostrarDeudas = (item) => {
                                                         item.id,
                                                         'pagado_rojas',
                                                         'local',
+                                                    )
+                                                "
+                                                :disabled="
+                                                    !(
+                                                        props_page.auth?.user
+                                                            .permisos == '*' ||
+                                                        props_page.auth?.user.permisos.includes(
+                                                            'partido_detalles.actualizaDatosDetalle',
+                                                        )
                                                     )
                                                 "
                                             />
@@ -1005,8 +1114,26 @@ const mostrarDeudas = (item) => {
                                                     partido.pago_visitante,
                                             }"
                                             v-model="partido.total_visitante"
+                                            :disabled="
+                                                !(
+                                                    props_page.auth?.user
+                                                        .permisos == '*' ||
+                                                    props_page.auth?.user.permisos.includes(
+                                                        'partidos.actualizaDatosPartido',
+                                                    )
+                                                )
+                                            "
                                         />
-                                        <div class="input-group-text">
+                                        <div
+                                            class="input-group-text"
+                                            v-if="
+                                                props_page.auth?.user
+                                                    .permisos == '*' ||
+                                                props_page.auth?.user.permisos.includes(
+                                                    'partidos.actualizaDatosPartido',
+                                                )
+                                            "
+                                        >
                                             <input
                                                 type="checkbox"
                                                 class="form-conrtol"
@@ -1073,6 +1200,15 @@ const mostrarDeudas = (item) => {
                                         style="height: 19px; width: 19px"
                                         :true-value="1"
                                         :false-value="0"
+                                        :disabled="
+                                            !(
+                                                props_page.auth?.user
+                                                    .permisos == '*' ||
+                                                props_page.auth?.user.permisos.includes(
+                                                    'partido_detalles.actualizaDatosDetalle',
+                                                )
+                                            )
+                                        "
                                         @change="
                                             actualizarDatosDetalle(
                                                 item.id,
@@ -1104,6 +1240,15 @@ const mostrarDeudas = (item) => {
                                                 'visitante',
                                             )
                                         "
+                                        :disabled="
+                                            !(
+                                                props_page.auth?.user
+                                                    .permisos == '*' ||
+                                                props_page.auth?.user.permisos.includes(
+                                                    'partido_detalles.actualizaDatosDetalle',
+                                                )
+                                            )
+                                        "
                                     />
                                 </div>
                             </template>
@@ -1118,6 +1263,15 @@ const mostrarDeudas = (item) => {
                                                 item.id,
                                                 'amarillas',
                                                 'visitante',
+                                            )
+                                        "
+                                        :disabled="
+                                            !(
+                                                props_page.auth?.user
+                                                    .permisos == '*' ||
+                                                props_page.auth?.user.permisos.includes(
+                                                    'partido_detalles.actualizaDatosDetalle',
+                                                )
                                             )
                                         "
                                     />
@@ -1149,6 +1303,15 @@ const mostrarDeudas = (item) => {
                                                     'visitante',
                                                 )
                                             "
+                                            :disabled="
+                                                !(
+                                                    props_page.auth?.user
+                                                        .permisos == '*' ||
+                                                    props_page.auth?.user.permisos.includes(
+                                                        'partido_detalles.actualizaDatosDetalle',
+                                                    )
+                                                )
+                                            "
                                         />
                                         <div class="input-group-text">
                                             <input
@@ -1161,6 +1324,15 @@ const mostrarDeudas = (item) => {
                                                         item.id,
                                                         'pagado_amarillas',
                                                         'visitante',
+                                                    )
+                                                "
+                                                :disabled="
+                                                    !(
+                                                        props_page.auth?.user
+                                                            .permisos == '*' ||
+                                                        props_page.auth?.user.permisos.includes(
+                                                            'partido_detalles.actualizaDatosDetalle',
+                                                        )
                                                     )
                                                 "
                                             />
@@ -1179,6 +1351,15 @@ const mostrarDeudas = (item) => {
                                                 item.id,
                                                 'rojas',
                                                 'visitante',
+                                            )
+                                        "
+                                        :disabled="
+                                            !(
+                                                props_page.auth?.user
+                                                    .permisos == '*' ||
+                                                props_page.auth?.user.permisos.includes(
+                                                    'partido_detalles.actualizaDatosDetalle',
+                                                )
                                             )
                                         "
                                     />
@@ -1210,6 +1391,15 @@ const mostrarDeudas = (item) => {
                                                     'visitante',
                                                 )
                                             "
+                                            :disabled="
+                                                !(
+                                                    props_page.auth?.user
+                                                        .permisos == '*' ||
+                                                    props_page.auth?.user.permisos.includes(
+                                                        'partido_detalles.actualizaDatosDetalle',
+                                                    )
+                                                )
+                                            "
                                         />
                                         <div class="input-group-text">
                                             <input
@@ -1222,6 +1412,15 @@ const mostrarDeudas = (item) => {
                                                         item.id,
                                                         'pagado_rojas',
                                                         'visitante',
+                                                    )
+                                                "
+                                                :disabled="
+                                                    !(
+                                                        props_page.auth?.user
+                                                            .permisos == '*' ||
+                                                        props_page.auth?.user.permisos.includes(
+                                                            'partido_detalles.actualizaDatosDetalle',
+                                                        )
                                                     )
                                                 "
                                             />

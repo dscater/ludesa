@@ -249,7 +249,7 @@ onUnmounted(() => {});
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
-                            permisos.includes('campeonatos.index')
+                            permisos.includes('usuario.index')
                         "
                         :label="'Usuarios'"
                         :ruta="'usuarios.index'"

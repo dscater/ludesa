@@ -92,6 +92,21 @@ const headers = [
         fixed: true,
     },
     {
+        label: "PG",
+        key: "pg",
+        sortable: true,
+    },
+    {
+        label: "PE",
+        key: "pe",
+        sortable: true,
+    },
+    {
+        label: "PP",
+        key: "pp",
+        sortable: true,
+    },
+    {
         label: "GF",
         key: "gf",
         sortable: true,

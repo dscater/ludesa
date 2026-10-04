@@ -231,6 +231,74 @@ class ReporteController extends Controller
         return $pdf->stream('resultado_partidos.pdf');
     }
 
+    public function r_fixture(Request $request)
+    {
+
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+
+        $fecha_ini = $request->fecha_ini;
+        $fecha_fin = $request->fecha_fin;
+        $campeonato_id = $request->campeonato_id;
+
+
+        $partidos = Partido::where("campeonato_id", $campeonato_id)
+            ->where("estado", "PENDIENTE");
+
+        if ($fecha_ini && $fecha_fin) {
+            $partidos->whereBetween("fecha", [$fecha_ini, $fecha_fin]);
+        }
+
+        $partidos = $partidos->get();
+
+        $campeonato = Campeonato::findOrFail($campeonato_id);
+        $pdf = PDF::loadView('reportes.fixture', compact('partidos', 'campeonato'))->setPaper('letter', 'portrait');
+
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+        return $pdf->stream('fixture.pdf');
+    }
+
+    public function r_partido_detalles(Request $request)
+    {
+
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+
+        $partido_id = $request->partido_id;
+
+        $partido = Partido::findOrFail($partido_id);
+
+        $local_detalles = PartidoDetalle::with(["carrera_jugador.jugador"])
+            ->where("partido_id", $partido->id)
+            ->where("campeonato_inscripcion_id", $partido->ci_local_id)
+            ->get();
+
+        $visitante_detalles = PartidoDetalle::with(["carrera_jugador.jugador"])
+            ->where("partido_id", $partido->id)
+            ->where("campeonato_inscripcion_id", $partido->ci_visitante_id)
+            ->get();
+
+        $campeonato = Campeonato::findOrFail($partido->campeonato_id);
+        $pdf = PDF::loadView('reportes.partido_detalles', compact('partido', 'campeonato', 'local_detalles', 'visitante_detalles'))->setPaper('letter', 'portrait');
+
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+        return $pdf->stream('partido_detalles.pdf');
+    }
+
     public function goleadores()
     {
         return Inertia::render("Admin/Reportes/Goleadores");

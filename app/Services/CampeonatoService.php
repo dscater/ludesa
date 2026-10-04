@@ -12,13 +12,18 @@ use Exception;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class CampeonatoService
 {
     private $modulo = "CAMPEONATOS";
 
-    public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
+    public function __construct(
+        private  CargarArchivoService $cargarArchivoService,
+        private HistorialAccionService $historialAccionService,
+        private CampeonatoInscripcionService $campeonato_inscripcion_service
+    ) {}
 
     public function listado(): Collection
     {
@@ -121,6 +126,31 @@ class CampeonatoService
         $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN CAMPEONATO", $old_campeonato, $campeonato->withoutRelations());
 
         return $campeonato;
+    }
+
+    public function finalizar(Campeonato $campeonato): bool|Exception
+    {
+        $old_campeonato = clone $campeonato;
+
+        $posicions = $this->campeonato_inscripcion_service->listadoPosicions($campeonato->id);
+
+        $primero = $posicions[0];
+        // Log::debug($primero->estado);
+        if (!$primero) {
+            throw new   Exception("No se pudo finalizar el campeonato porque no hay equipos inscritos");
+        }
+
+        $ganador = CampeonatoInscripcion::findOrFail($primero->id);
+        $ganador->estado = "GANADOR";
+        $ganador->save();
+
+        $campeonato->estado = "FINALIZADO";
+        $campeonato->save();
+
+        // registrar accion
+        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "FINALIZÓ UN CAMPEONATO", $old_campeonato, $campeonato);
+
+        return true;
     }
 
     /**
