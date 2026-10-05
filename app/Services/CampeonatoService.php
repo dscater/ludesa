@@ -164,7 +164,7 @@ class CampeonatoService
         $old_campeonato = clone $campeonato;
         $usos = CampeonatoInscripcion::where("campeonato_id", $campeonato->id)->count();
         if ($usos > 0) {
-            throw new Exception("No se puede eliminar este tipo de documento porque está siendo utilizado por $usos productos.");
+            throw new Exception("No se puede eliminar este tipo de documento porque está siendo utilizado por $usos inscripciones.");
         }
 
         $campeonato->delete();

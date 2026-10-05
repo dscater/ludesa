@@ -164,7 +164,7 @@ class CarreraService
         $old_carrera = clone $carrera;
         $usos = CampeonatoInscripcion::where("carrera_id", $carrera->id)->count();
         if ($usos > 0) {
-            throw new Exception("No se puede eliminar este tipo de documento porque está siendo utilizado por $usos productos.");
+            throw new Exception("No se puede eliminar este tipo de documento porque está siendo utilizado por $usos inscripciones.");
         }
 
         $carrera->delete();
