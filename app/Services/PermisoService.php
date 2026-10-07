@@ -10,6 +10,12 @@ class PermisoService
 {
     protected $arrayPermisos = [
         "ADMINISTRADOR" => [
+            "configuracions.index",
+            "configuracions.create",
+            "configuracions.edit",
+            "configuracions.update",
+            "configuracions.destroy",
+
             "usuarios.paginado",
             "usuarios.index",
             "usuarios.listado",
