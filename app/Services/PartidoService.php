@@ -327,8 +327,10 @@ class PartidoService
     public function getGanador($partido)
     {
 
-        $goles_local = PartidoDetalle::where("campeonato_inscripcion_id", $partido->ci_local_id)->sum("goles");
-        $goles_visitante = PartidoDetalle::where("campeonato_inscripcion_id", $partido->ci_visitante_id)->sum("goles");
+        $goles_local = PartidoDetalle::where("campeonato_inscripcion_id", $partido->ci_local_id)
+            ->where("partido_id", $partido->id)->sum("goles");
+        $goles_visitante = PartidoDetalle::where("campeonato_inscripcion_id", $partido->ci_visitante_id)
+            ->where("partido_id", $partido->id)->sum("goles");
 
         $partido->goles_local = $goles_local;
         $partido->goles_visitante = $goles_visitante;

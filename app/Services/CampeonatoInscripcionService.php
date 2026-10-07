@@ -254,7 +254,10 @@ class CampeonatoInscripcionService
             })
             ->get();
 
-        $deudas = ["local" => $partidos_local, "visitante" => $partidos_visitante];
+
+        $deuda_inscripcion = $campeonato_inscripcion->pago_inscripcion == 0 ? $campeonato_inscripcion->total_inscripcion : 0;
+
+        $deudas = ["local" => $partidos_local, "visitante" => $partidos_visitante, "deuda_inscripcion" => $deuda_inscripcion];
 
         return $deudas;
     }

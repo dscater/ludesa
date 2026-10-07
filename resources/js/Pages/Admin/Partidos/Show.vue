@@ -509,11 +509,12 @@ const deudasRojasVisitante = computed(() => {
 
 const recargarDeudas = () => {
     router.reload({
-        only: ["deudas_local", "deudas_visitante"],
+        only: ["deudas_local", "deudas_visitante", "partido"],
     });
 };
 
 const mostrarDeudas = (item) => {
+    console.log(item);
     limpiarCampeonatoInscripcion();
     setCampeonatoInscripcion(item);
     muestra_formulario_pagos.value = true;
@@ -596,9 +597,18 @@ const mostrarDeudas = (item) => {
                 <div class="card">
                     <div class="card-header bg-principal text-white">
                         <div class="row">
+                            <div class="col-12 align-items-end">
+                                <h4
+                                    class="fs-6 text-white fw-bold bg-success p-2 rounded"
+                                >
+                                    <span>Local:</span>
+                                    {{ partido.ci_local.carrera.nombre }}
+                                </h4>
+                            </div>
                             <div
                                 class="col-12"
                                 v-if="
+                                    deudas_local.deuda_inscripcion > 0 ||
                                     deudasDerechosLocal > 0 ||
                                     deudasAmarillasLocal > 0 ||
                                     deudasRojasLocal > 0
@@ -609,6 +619,15 @@ const mostrarDeudas = (item) => {
                                         <div class="col-12 fs-5">
                                             <i class="fa fa-info-circle"></i>
                                             El equipo tiene deudas acumuladas
+                                        </div>
+                                        <div class="col-4 text-end fw-bold">
+                                            Por inscripción:
+                                        </div>
+                                        <div class="col-8">
+                                            Bs.
+                                            {{
+                                                deudas_visitante.deuda_inscripcion
+                                            }}
                                         </div>
                                         <div class="col-4 text-end fw-bold">
                                             Por derecho de cancha:
@@ -645,11 +664,6 @@ const mostrarDeudas = (item) => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-12 align-items-end">
-                                <h4 class="fs-6 text-white fw-bold">
-                                    Local: {{ partido.ci_local.carrera.nombre }}
-                                </h4>
                             </div>
                         </div>
                         <div class="row">
@@ -1012,14 +1026,26 @@ const mostrarDeudas = (item) => {
                 </div>
             </div>
 
+            <div class="col-12 my-1">
+                <hr />
+            </div>
             <!-- VISITANTE -->
             <div class="col-12">
                 <div class="card">
                     <div class="card-header bg-principal text-white">
                         <div class="row">
+                            <div class="col-12 align-items-end">
+                                <h4
+                                    class="fs-6 text-white fw-bold bg-dark p-2 rounded"
+                                >
+                                    <span>Visitante:</span>
+                                    {{ partido.ci_visitante.carrera.nombre }}
+                                </h4>
+                            </div>
                             <div
                                 class="col-12"
                                 v-if="
+                                    deudas_visitante.deuda_inscripcion > 0 ||
                                     deudasDerechosVisitante > 0 ||
                                     deudasAmarillasVisitante > 0 ||
                                     deudasRojasVisitante > 0
@@ -1030,6 +1056,15 @@ const mostrarDeudas = (item) => {
                                         <div class="col-12 fs-5">
                                             <i class="fa fa-info-circle"></i>
                                             El equipo tiene deudas acumuladas
+                                        </div>
+                                        <div class="col-4 text-end fw-bold">
+                                            Por inscripción:
+                                        </div>
+                                        <div class="col-8">
+                                            Bs.
+                                            {{
+                                                deudas_visitante.deuda_inscripcion
+                                            }}
                                         </div>
                                         <div class="col-4 text-end fw-bold">
                                             Por derecho de cancha:
@@ -1066,12 +1101,6 @@ const mostrarDeudas = (item) => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-12 align-items-end">
-                                <h4 class="fs-6 text-white fw-bold">
-                                    Visitante:
-                                    {{ partido.ci_visitante.carrera.nombre }}
-                                </h4>
                             </div>
                         </div>
                         <div class="row">
