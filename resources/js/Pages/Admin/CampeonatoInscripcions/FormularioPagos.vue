@@ -110,6 +110,8 @@ const actualizarDatosDetalle = (id, col, lv, index_partido) => {
 
     if (
         !lista[index][col] &&
+        col != "total_amarillas" &&
+        col != "total_rojas" &&
         col != "pagado_amarillas" &&
         col != "pagado_rojas" &&
         col != "amarillas" &&
@@ -134,6 +136,22 @@ const actualizarDatosDetalle = (id, col, lv, index_partido) => {
                 !lista[index]["total_rojas"] ||
                 parseFloat(lista[index]["total_rojas"]) < 0
             ) {
+                toast.info("El pago no puede estar vacío o menor a 0");
+                return;
+            }
+    }
+
+    if (col == "total_amarillas" || col == "total_rojas") {
+        console.log(col);
+        console.log(lista[index][col]);
+        if (col == "total_amarillas")
+            if (parseFloat(lista[index]["total_amarillas"]) < 0) {
+                toast.info("El pago no puede estar vacío o menor a 0");
+                return;
+            }
+
+        if (col == "total_rojas")
+            if (parseFloat(lista[index]["total_rojas"]) < 0) {
                 toast.info("El pago no puede estar vacío o menor a 0");
                 return;
             }
@@ -334,8 +352,8 @@ onMounted(() => {
                         <div
                             class="col-12 fw-bold text-center border-bottom pb-2 d-flex align-items-center justify-content-center"
                             :class="{
-                                bgDanger3: !form.pago_inscripcion,
-                                bgSuccess2: form.pago_inscripcion,
+                                'bgInactivo text-white': !form.pago_inscripcion,
+                                bgActivo: form.pago_inscripcion,
                             }"
                         >
                             Por inscripción Bs. {{ form.total_inscripcion }}
@@ -373,59 +391,58 @@ onMounted(() => {
                 </div>
                 <div
                     class="col-12 mt-2 border-top"
-                    style="max-height: 40vh; overflow: auto"
                     v-for="(item, index_partido) in listDeudas.local"
                     :key="item.id"
                 >
                     <div class="row">
                         <div class="col-12 text-primary fw-bold py-2">
-                            <i class="fa fa-calendar-alt"></i> Fecha:
+                            <i class="fa fa-calendar-alt"></i> Fecha Partido:
                             {{ item.fecha_hora_t }}
                         </div>
                         <div class="col-12">
-                            <div class="col-12">
-                                <div class="input-group">
-                                    <span class="input-group-text px-1"
-                                        ><i class="fa fa-money-bill me-1"></i
-                                        >Derecho de Cancha</span
-                                    >
-                                    <span
-                                        class="form-control text-center"
-                                        :class="{
-                                            'bgInactivo text-white':
-                                                !item.pago_local,
-                                            bgActivo: item.pago_local,
-                                        }"
-                                        >{{ item.total_local }}</span
-                                    >
-                                    <div
-                                        class="input-group-text"
-                                        v-if="
-                                            props_page.auth?.user.permisos ==
-                                                '*' ||
-                                            props_page.auth?.user.permisos.includes(
-                                                'partidos.actualizaDatosPartido',
+                            <div class="input-group">
+                                <span class="input-group-text px-1"
+                                    ><i class="fa fa-money-bill me-1"></i
+                                    >Derecho de Cancha</span
+                                >
+                                <span
+                                    class="form-control text-center"
+                                    :class="{
+                                        'bgInactivo text-white':
+                                            !item.pago_local,
+                                        bgActivo: item.pago_local,
+                                    }"
+                                    >{{ item.total_local }}</span
+                                >
+                                <div
+                                    class="input-group-text"
+                                    v-if="
+                                        props_page.auth?.user.permisos == '*' ||
+                                        props_page.auth?.user.permisos.includes(
+                                            'partidos.actualizaDatosPartido',
+                                        )
+                                    "
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="form-conrtol"
+                                        :true-value="1"
+                                        :false-value="0"
+                                        v-model="item.pago_local"
+                                        @change="
+                                            actualizarDatosPartido(
+                                                item,
+                                                'pago_local',
                                             )
                                         "
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            class="form-conrtol"
-                                            :true-value="1"
-                                            :false-value="0"
-                                            v-model="item.pago_local"
-                                            @change="
-                                                actualizarDatosPartido(
-                                                    item,
-                                                    'pago_local',
-                                                )
-                                            "
-                                        />
-                                    </div>
+                                    />
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div
+                            class="col-12"
+                            style="max-height: 40vh; overflow: auto"
+                        >
                             <table class="table table-bordered table-hovered">
                                 <thead>
                                     <tr>
@@ -438,6 +455,7 @@ onMounted(() => {
                                 </thead>
                                 <tbody>
                                     <template
+                                        v-if="item.partido_detalles.length > 0"
                                         v-for="jugador in item.partido_detalles"
                                         :key="jugador.id"
                                     >
@@ -695,6 +713,17 @@ onMounted(() => {
                                             </td>
                                         </tr>
                                     </template>
+                                    <template v-else>
+                                        <tr>
+                                            <td
+                                                colspan="4"
+                                                class="text-center text-muted"
+                                            >
+                                                SIN AMARILLAS/ROJAS EN EL
+                                                PARTIDO
+                                            </td>
+                                        </tr>
+                                    </template>
                                 </tbody>
                             </table>
                         </div>
@@ -702,59 +731,58 @@ onMounted(() => {
                 </div>
                 <div
                     class="col-12 mt-2 border-top"
-                    style="max-height: 40vh; overflow: auto"
                     v-for="(item, index_partido) in listDeudas.visitante"
                     :key="item.id"
                 >
                     <div class="row">
                         <div class="col-12 text-primary fw-bold py-2">
-                            <i class="fa fa-calendar-alt"></i> Fecha:
+                            <i class="fa fa-calendar-alt"></i> Fecha Partido:
                             {{ item.fecha_hora_t }}
                         </div>
                         <div class="col-12">
-                            <div class="col-12">
-                                <div class="input-group">
-                                    <span class="input-group-text px-1"
-                                        ><i class="fa fa-money-bill me-1"></i
-                                        >Derecho de Cancha</span
-                                    >
-                                    <span
-                                        class="form-control text-center"
-                                        :class="{
-                                            'bgInactivo text-white':
-                                                !item.pago_visitante,
-                                            bgActivo: item.pago_visitante,
-                                        }"
-                                        >{{ item.total_visitante }}</span
-                                    >
-                                    <div
-                                        class="input-group-text"
-                                        v-if="
-                                            props_page.auth?.user.permisos ==
-                                                '*' ||
-                                            props_page.auth?.user.permisos.includes(
-                                                'partidos.actualizaDatosPartido',
+                            <div class="input-group">
+                                <span class="input-group-text px-1"
+                                    ><i class="fa fa-money-bill me-1"></i
+                                    >Derecho de Cancha</span
+                                >
+                                <span
+                                    class="form-control text-center"
+                                    :class="{
+                                        'bgInactivo text-white':
+                                            !item.pago_visitante,
+                                        bgActivo: item.pago_visitante,
+                                    }"
+                                    >{{ item.total_visitante }}</span
+                                >
+                                <div
+                                    class="input-group-text"
+                                    v-if="
+                                        props_page.auth?.user.permisos == '*' ||
+                                        props_page.auth?.user.permisos.includes(
+                                            'partidos.actualizaDatosPartido',
+                                        )
+                                    "
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="form-conrtol"
+                                        :true-value="1"
+                                        :false-value="0"
+                                        v-model="item.pago_visitante"
+                                        @change="
+                                            actualizarDatosPartido(
+                                                item,
+                                                'pago_visitante',
                                             )
                                         "
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            class="form-conrtol"
-                                            :true-value="1"
-                                            :false-value="0"
-                                            v-model="item.pago_visitante"
-                                            @change="
-                                                actualizarDatosPartido(
-                                                    item,
-                                                    'pago_visitante',
-                                                )
-                                            "
-                                        />
-                                    </div>
+                                    />
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div
+                            class="col-12"
+                            style="max-height: 40vh; overflow: auto"
+                        >
                             <table class="table table-bordered table-hovered">
                                 <thead>
                                     <tr>
@@ -767,6 +795,7 @@ onMounted(() => {
                                 </thead>
                                 <tbody>
                                     <template
+                                        v-if="item.partido_detalles.length > 0"
                                         v-for="jugador in item.partido_detalles"
                                         :key="jugador.id"
                                     >
@@ -1019,6 +1048,17 @@ onMounted(() => {
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    <template v-else>
+                                        <tr>
+                                            <td
+                                                colspan="4"
+                                                class="text-center text-muted"
+                                            >
+                                                SIN AMARILLAS/ROJAS EN EL
+                                                PARTIDO
                                             </td>
                                         </tr>
                                     </template>
