@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer("periodo");
             $table->integer("gestion");
             $table->string("tipo"); //FUTSAL, CAMPO
+            $table->boolean("inicio_fechas")->default(0); //0: sin generar, 1:fechas generadas
             $table->text("descripcion")->nullable();
             $table->string("estado")->default("VIGENTE"); //VIGENTE, FINALIZADO
             $table->date("fecha_registro")->nullable();

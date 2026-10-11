@@ -55,7 +55,9 @@ class PermisoService
             "campeonatos.show",
             "campeonatos.update",
             "campeonatos.destroy",
+            "campeonatos.generar_fechas",
             "campeonatos.finalizar",
+            "campeonatos.getFechas",
 
             "campeonato_inscripcions.paginado",
             "campeonato_inscripcions.index",
@@ -129,6 +131,7 @@ class PermisoService
             "reportes.resultado_partidos",
             "reportes.r_resultado_partidos",
             "reportes.r_fixture",
+            "reportes.r_partidos_fecha",
             "reportes.r_partido_detalles",
             "r_partido_detalles",
             "reportes.goleadores",

@@ -11,6 +11,7 @@ class Campeonato extends Model
         "periodo",
         "gestion",
         "tipo", //FUTSAL, CAMPO
+        "inicio_fechas", // 0: sin generar, 1:fechas generadas
         "descripcion",
         "estado", //VIGENTE, FINALIZADO
         "fecha_registro",
@@ -32,5 +33,10 @@ class Campeonato extends Model
     public function getFechaRegistroTAttribute()
     {
         return date("d/m/Y", strtotime($this->fecha_registro));
+    }
+
+    public function campeonato_inscripcions()
+    {
+        return $this->hasMany(CampeonatoInscripcion::class, 'campeonato_id');
     }
 }

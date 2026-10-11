@@ -239,6 +239,7 @@ class ReporteController extends Controller
 
         $fecha_ini = $request->fecha_ini;
         $fecha_fin = $request->fecha_fin;
+        $nro_fecha = $request->nro_fecha;
         $campeonato_id = $request->campeonato_id;
 
 
@@ -247,6 +248,11 @@ class ReporteController extends Controller
 
         if ($fecha_ini && $fecha_fin) {
             $partidos->whereBetween("fecha", [$fecha_ini, $fecha_fin]);
+        }
+
+
+        if ($nro_fecha) {
+            $partidos->where("nro_fecha", $nro_fecha);
         }
 
         $partidos = $partidos->get();
@@ -263,6 +269,46 @@ class ReporteController extends Controller
         $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
 
         return $pdf->stream('fixture.pdf');
+    }
+
+    public function r_partidos_fecha(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+
+        $campeonato_id = $request->campeonato_id;
+
+        $campeonato = Campeonato::findOrFail($campeonato_id);
+
+        $fechas = Partido::where('campeonato_id', $campeonato_id)
+            ->orderBy('nro_fecha')
+            ->orderBy('id')
+            ->get()
+            ->groupBy('nro_fecha');
+
+        $pdf = PDF::loadView(
+            'reportes.partidos_fecha',
+            compact('fechas', 'campeonato')
+        )->setPaper('letter', 'portrait');
+
+        // Numeración de páginas
+        $pdf->output();
+
+        $canvas = $pdf->getDomPDF()->get_canvas();
+
+        $ancho = $canvas->get_width();
+        $alto = $canvas->get_height();
+
+        $canvas->page_text(
+            $ancho - 100,
+            $alto - 25,
+            "Página {PAGE_NUM} de {PAGE_COUNT}",
+            null,
+            9,
+            [0, 0, 0]
+        );
+
+        return $pdf->stream('partidos_fecha.pdf');
     }
 
     public function r_partido_detalles(Request $request)

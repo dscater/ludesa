@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\CampeonatoInscripcion;
 use App\Services\HistorialAccionService;
 use App\Models\Campeonato;
+use App\Models\Partido;
 use App\Models\Producto;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -126,6 +127,174 @@ class CampeonatoService
         $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN CAMPEONATO", $old_campeonato, $campeonato->withoutRelations());
 
         return $campeonato;
+    }
+
+    public function generar_fechas(Campeonato $campeonato)
+    {
+        $old_campeonato = clone $campeonato;
+
+        // Round Robin mediante rotación circular (Circle Method)
+        //1)Se colocan los equipos en una lista.
+        //2)Se emparejan los equipos de los extremos: el primero con el último, el segundo con el penúltimo, y así sucesivamente.
+        //3)Se mantiene fijo el primer equipo y se rotan los demás para generar la siguiente jornada.
+        //4)Si hay un número impar de equipos, se agrega un equipo ficticio que representa el descanso.
+        //5)Para la segunda vuelta, se invierte la localía de cada enfrentamiento.
+        //6)Obtener los equipos inscritos
+        $inscripciones = $campeonato
+            ->campeonato_inscripcions()
+            ->get();
+
+        if ($inscripciones->count() < 2) {
+            throw ValidationException::withMessages([
+                'campeonato' =>
+                'Se necesitan al menos 2 equipos inscritos.',
+            ]);
+        }
+
+        // Evitar generar partidos si ya éxisten
+        if (
+            Partido::where('campeonato_id', $campeonato->id)
+            ->exists()
+        ) {
+            throw ValidationException::withMessages([
+                'campeonato' =>
+                'El campeonato ya tiene partidos generados.',
+            ]);
+        }
+
+        // Cada elemento conserva el ID de inscripción
+        // y el ID del equipo.
+        $equipos = $inscripciones->map(fn($inscripcion) => [
+            'ci_id' => $inscripcion->id,
+            'carrera_id' => $inscripcion->carrera_id,
+        ])->values()->all();
+
+        $cantidad = count($equipos);
+
+        // Si es impar, agregar un descanso.
+        if ($cantidad % 2 !== 0) {
+            $equipos[] = null;
+        }
+
+        $cantidadPorFecha = count($equipos);
+        $totalFechasPrimeraVuelta = $cantidadPorFecha - 1;
+        $partidosPorFecha = intdiv($cantidadPorFecha, 2);
+
+        $fechasPrimeraVuelta = [];
+
+        // Generar primera vuelta
+        for ($jornada = 0; $jornada < $totalFechasPrimeraVuelta; $jornada++) {
+
+            $partidosFecha = [];
+
+            for ($i = 0; $i < $partidosPorFecha; $i++) {
+
+                $equipoA = $equipos[$i];
+                $equipoB = $equipos[$cantidadPorFecha - 1 - $i];
+
+                // Si alguno descansa, no se crea partido.
+                if ($equipoA === null || $equipoB === null) {
+                    continue;
+                }
+
+                // Alternar localía para equilibrar
+                // la condición de local y visitante.
+                if (($jornada + $i) % 2 === 0) {
+                    $local = $equipoA;
+                    $visitante = $equipoB;
+                } else {
+                    $local = $equipoB;
+                    $visitante = $equipoA;
+                }
+
+                $partidosFecha[] = [
+                    'local' => $local,
+                    'visitante' => $visitante,
+                ];
+            }
+
+            $fechasPrimeraVuelta[] = $partidosFecha;
+
+            // Rotación circular: mantener fijo el primer equipo.
+            $ultimo = array_pop($equipos);
+
+            array_splice($equipos, 1, 0, [$ultimo]);
+        }
+
+        // Generar ida y vuelta
+        $todasLasFechas = $fechasPrimeraVuelta;
+
+        foreach ($fechasPrimeraVuelta as $partidosFecha) {
+            $partidosVuelta = [];
+
+            foreach ($partidosFecha as $partido) {
+                // Invertir localía en la segunda vuelta.
+                $partidosVuelta[] = [
+                    'local' => $partido['visitante'],
+                    'visitante' => $partido['local'],
+                ];
+            }
+
+            $todasLasFechas[] = $partidosVuelta;
+        }
+
+        // Registrar todos los partidos.
+        foreach ($todasLasFechas as $indiceFecha => $partidosFecha) {
+
+            $nroFecha = $indiceFecha + 1;
+
+            foreach ($partidosFecha as $partido) {
+
+                Partido::create([
+                    'campeonato_id' => $campeonato->id,
+
+                    'ci_local_id' => $partido['local']['ci_id'],
+                    'local_id' => $partido['local']['carrera_id'],
+
+                    'ci_visitante_id' => $partido['visitante']['ci_id'],
+                    'visitante_id' => $partido['visitante']['carrera_id'],
+
+                    'nro_fecha' => $nroFecha,
+                    'fecha_asignada' => 0,
+
+                    'goles_local' => 0,
+                    'goles_visitante' => 0,
+
+                    'ganador_id' => null,
+                    'ci_ganador_id' => null,
+
+                    'total_local' => 0,
+                    'pago_local' => 0,
+                    'total_visitante' => 0,
+                    'pago_visitante' => 0,
+
+                    'fecha' => null,
+                    'hora' => null,
+                    'estado' => 'PENDIENTE',
+                ]);
+            }
+        }
+
+        $campeonato->inicio_fechas = 1;
+        $campeonato->save();
+
+        // Registrar acción en el historial
+        $this->historialAccionService->registrarAccion(
+            $this->modulo,
+            'MODIFICACIÓN',
+            'GENERÓ LAS FECHAS DE UN CAMPEONATO',
+            $old_campeonato,
+            $campeonato->withoutRelations()
+        );
+    }
+
+    public function getFechas(Campeonato $campeonato)
+    {
+        return Partido::where("campeonato_id", $campeonato->id)
+            ->select("nro_fecha")
+            ->distinct()
+            ->orderBy("nro_fecha", "desc")
+            ->pluck("nro_fecha");
     }
 
     public function finalizar(Campeonato $campeonato): bool|Exception

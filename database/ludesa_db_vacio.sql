@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 04-10-2026 a las 01:08:05
+-- Tiempo de generación: 10-10-2026 a las 23:34:45
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -32,8 +32,9 @@ CREATE TABLE `campeonatos` (
   `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `periodo` int NOT NULL,
   `gestion` int NOT NULL,
-  `tipo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descripcion` text COLLATE utf8mb4_unicode_ci,
+  `tipo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `inicio_fechas` tinyint(1) NOT NULL DEFAULT '0',
+  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `estado` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'VIGENTE',
   `fecha_registro` date DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL,
@@ -61,7 +62,7 @@ CREATE TABLE `campeonato_inscripcions` (
   `pg` int NOT NULL DEFAULT '0',
   `pe` int NOT NULL DEFAULT '0',
   `pp` int NOT NULL DEFAULT '0',
-  `estado` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PARTICIPANTE',
+  `estado` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PARTICIPANTE',
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -77,7 +78,7 @@ CREATE TABLE `campeonato_inscripcions` (
 CREATE TABLE `carreras` (
   `id` bigint UNSIGNED NOT NULL,
   `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `logo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `descripcion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -213,6 +214,8 @@ CREATE TABLE `partidos` (
   `local_id` bigint UNSIGNED NOT NULL,
   `ci_visitante_id` bigint UNSIGNED NOT NULL,
   `visitante_id` bigint UNSIGNED NOT NULL,
+  `nro_fecha` int NOT NULL,
+  `fecha_asignada` tinyint(1) NOT NULL DEFAULT '0',
   `goles_local` int NOT NULL DEFAULT '0',
   `goles_visitante` int NOT NULL DEFAULT '0',
   `ganador_id` bigint UNSIGNED DEFAULT NULL,
@@ -221,8 +224,8 @@ CREATE TABLE `partidos` (
   `pago_local` tinyint(1) NOT NULL,
   `total_visitante` decimal(24,2) NOT NULL,
   `pago_visitante` tinyint(1) NOT NULL,
-  `fecha` date NOT NULL,
-  `hora` time NOT NULL,
+  `fecha` date DEFAULT NULL,
+  `hora` time DEFAULT NULL,
   `estado` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PENDIENTE',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL

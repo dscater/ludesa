@@ -59,6 +59,7 @@ class PartidoService
         $fecha_ini,
         $fecha_fin,
         $estado,
+        $nro_fecha,
         $porCampeonato = true,
         array $orderBy = []
     ): LengthAwarePaginator {
@@ -82,6 +83,11 @@ class PartidoService
 
         if ($estado) {
             $partidos->where("estado", $estado);
+        }
+
+
+        if ($nro_fecha) {
+            $partidos->where("nro_fecha", $nro_fecha);
         }
 
         if ($fecha_ini && $fecha_fin) {

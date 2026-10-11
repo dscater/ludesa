@@ -12,6 +12,8 @@ class Partido extends Model
         "local_id",
         "ci_visitante_id",
         "visitante_id",
+        "nro_fecha", // 1, 2, 3,...
+        "fecha_asignada", // 0: NO, 1: SI
         "goles_local",
         "goles_visitante",
         "ganador_id",
@@ -34,7 +36,10 @@ class Partido extends Model
 
     public function getFechaHoraTAttribute()
     {
-        return date("d/m/Y H:i:s", strtotime($this->fecha . ' ' . $this->hora));
+        if ($this->fecha && $this->hora)
+            return date("d/m/Y H:i:s", strtotime($this->fecha . ' ' . $this->hora));
+
+        return "";
     }
 
     public function campeonato()

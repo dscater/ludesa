@@ -168,6 +168,7 @@ class CampeonatoInscripcionController extends Controller
             ]);
         }
     }
+
     /**
      * Registrar un nuevo campeonato_inscripcion
      *

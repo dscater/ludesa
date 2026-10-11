@@ -30,9 +30,10 @@ onMounted(() => {});
 
 const { setCampeonatoInscripcion, limpiarCampeonatoInscripcion, form } =
     useCampeonatoInscripcions();
-const { axiosDelete } = useAxios();
+const { axiosDelete, axiosPost } = useAxios();
 
 const listCampeonatos = ref([]);
+const campeonatoSeleccionado = ref(null);
 const multiSearch = ref({
     search: "",
     campeonato_id: "",
@@ -71,8 +72,13 @@ const cargarCampeonatoInscripcions = async () => {
 
 const detectarCambioSelect = () => {
     currentPage.value = 1;
+    campeonatoSeleccionado.value = null;
+
     cargarCampeonatoInscripcions();
     if (multiSearch.value.campeonato_id) {
+        campeonatoSeleccionado.value = listCampeonatos.value.filter(
+            (elem) => elem.id == multiSearch.value.campeonato_id,
+        )[0];
         form.campeonato = listCampeonatos.value.filter(
             (item) => item.id == multiSearch.value.campeonato_id,
         )[0];
@@ -113,9 +119,13 @@ const editarRegistro = (item) => {
 
 const updateDatatable = async () => {
     limpiarCampeonatoInscripcion();
+    campeonatoSeleccionado.value = null;
     muestra_formulario.value = false;
     muestra_formulario_carrera_jugador.value = false;
     if (multiSearch.value.campeonato_id) {
+        campeonatoSeleccionado.value = listCampeonatos.value.filter(
+            (elem) => elem.id == multiSearch.value.campeonato_id,
+        )[0];
         cargarCampeonatoInscripcions();
     }
 };
@@ -146,6 +156,38 @@ const eliminarCampeonatoInscripcion = (item) => {
             if (respuesta && respuesta.sw) {
                 updateDatatable();
             }
+        }
+    });
+};
+
+const generando = ref(false);
+const generarPartidos = () => {
+    Swal.fire({
+        title: "¿Quierés iniciar el calendario de partidos?",
+        html: `<strong>Esta acción no se podrá deshacer después.</strong><br/>No podrá inscribirse ningún equipo mas.`,
+        showCancelButton: true,
+        confirmButtonText: "Si, iniciar",
+        cancelButtonText: "No, cancelar",
+        denyButtonText: `No, cancelar`,
+        customClass: {
+            confirmButton: "bg1",
+        },
+    }).then(async (result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            generando.value = true;
+            let respuesta = await axiosPost(
+                route(
+                    "campeonatos.generar_fechas",
+                    multiSearch.value.campeonato_id,
+                ),
+            );
+            console.log(respuesta.campeonato);
+            campeonatoSeleccionado.value = respuesta.campeonato;
+            form.campeonato = respuesta.campeonato;
+            console.log(form.campeonato);
+            console.log(campeonatoSeleccionado.value);
+            generando.value = false;
         }
     });
 };
@@ -214,10 +256,12 @@ const mostrarJugadores = (item) => {
             <div class="col-4">
                 <button
                     v-if="
-                        props_page.auth?.user.permisos == '*' ||
-                        props_page.auth?.user.permisos.includes(
-                            'campeonato_inscripcions.create',
-                        )
+                        campeonatoSeleccionado &&
+                        campeonatoSeleccionado.inicio_fechas == 0 &&
+                        (props_page.auth?.user.permisos == '*' ||
+                            props_page.auth?.user.permisos.includes(
+                                'campeonato_inscripcions.create',
+                            ))
                     "
                     type="button"
                     class="btn btn-primary text-sm w-100"
@@ -226,6 +270,42 @@ const mostrarJugadores = (item) => {
                 >
                     <i class="fa fa-plus"></i> Nueva Inscripción
                 </button>
+                <button
+                    v-if="
+                        campeonatoSeleccionado &&
+                        campeonatoSeleccionado.inicio_fechas == 0 &&
+                        (props_page.auth?.user.permisos == '*' ||
+                            props_page.auth?.user.permisos.includes(
+                                'campeonatos.generar_fechas',
+                            ))
+                    "
+                    type="button"
+                    class="btn btn-success text-sm w-100"
+                    :disabled="!multiSearch.campeonato_id || generando"
+                    @click="generarPartidos"
+                >
+                    <i class="fa fa-table"></i> Generar Calendario de Partidos
+                </button>
+                <a
+                    v-if="
+                        multiSearch.campeonato_id &&
+                        campeonatoSeleccionado &&
+                        campeonatoSeleccionado.inicio_fechas == 1 &&
+                        (props_page.auth?.user.permisos == '*' ||
+                            props_page.auth?.user.permisos.includes(
+                                'reportes.r_fixture',
+                            ))
+                    "
+                    :disabled="!multiSearch.campeonato_id"
+                    class="btn btn-info text-sm w-100"
+                    :href="
+                        route('reportes.r_partidos_fecha') +
+                        `?campeonato_id=${multiSearch.campeonato_id}`
+                    "
+                    target="_blank"
+                >
+                    <i class="fa fa-table"></i> Exportar Calendario de Partidos
+                </a>
             </div>
         </div>
         <div class="row">
@@ -273,7 +353,7 @@ const mostrarJugadores = (item) => {
                                 >
                                     <i class="fa fa-edit"></i>
                                 </button>
-                                <h4 class="fw-bold fs-6 text-primary">
+                                <h4 class="fw-bold fs-6 text-info">
                                     {{ item.carrera.nombre }}
                                 </h4>
                             </div>
@@ -284,7 +364,7 @@ const mostrarJugadores = (item) => {
                             <div class="col-12">
                                 <div class="row">
                                     <div
-                                        class="col-8 text-center py-2 fs-5"
+                                        class="col-7 text-center py-2 fs-5"
                                         title="Jugadores Inscritos"
                                     >
                                         <div class="fw-bold">
@@ -296,14 +376,14 @@ const mostrarJugadores = (item) => {
                                         </div>
                                     </div>
                                     <div
-                                        class="col-4 border-start py-3 text-md text-center"
+                                        class="col-5 border-start py-3 text-md text-center"
                                     >
                                         <div>
                                             Bs. {{ item.total_inscripcion }}
                                         </div>
                                         <div>
                                             <span
-                                                class="badge"
+                                                class="badge text-break"
                                                 :class="{
                                                     'bg-danger':
                                                         !item.pago_inscripcion,

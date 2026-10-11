@@ -33,9 +33,10 @@ const listCampeonatos = ref([]);
 const multiSearch = ref({
     search: "",
     campeonato_id: "",
-    fecha_ini: useDate().getFechaActual(),
-    fecha_fin: useDate().getFechaActual(),
+    fecha_ini: "",
+    fecha_fin: "",
     estado: "",
+    nro_fecha: "",
     filtro: [],
 });
 const campeonatoSeleccionado = computed(() => {
@@ -66,6 +67,7 @@ const cargarPartidos = async () => {
                 fecha_ini: multiSearch.value.fecha_ini,
                 fecha_fin: multiSearch.value.fecha_fin,
                 estado: multiSearch.value.estado,
+                nro_fecha: multiSearch.value.nro_fecha,
                 porCampeonato: true,
             },
         });
@@ -85,9 +87,20 @@ const detectarCambiosFiltros = () => {
         form.campeonato = listCampeonatos.value.filter(
             (item) => item.id == multiSearch.value.campeonato_id,
         )[0];
+        cargarFechasCampeonato();
     } else {
         limpiarPartido();
     }
+};
+
+const listFechas = ref([]);
+const cargarFechasCampeonato = () => {
+    listFechas.value = [];
+    axios
+        .get(route("campeonatos.getFechas", form.campeonato.id))
+        .then((response) => {
+            listFechas.value = response.data.fechas;
+        });
 };
 
 const cargarCampeonatos = async () => {
@@ -245,7 +258,7 @@ const iniciarPartido = (item) => {
                     </div>
                     <div class="col-12">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <span class="text-xs text-muted">Desde</span>
                                 <input
                                     type="date"
@@ -255,7 +268,7 @@ const iniciarPartido = (item) => {
                                     @keyup="detectarCambiosFiltros"
                                 />
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <span class="text-xs text-muted">Hasta</span>
                                 <input
                                     type="date"
@@ -265,13 +278,15 @@ const iniciarPartido = (item) => {
                                     @keyup="detectarCambiosFiltros"
                                 />
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <span class="text-xs text-muted">Estado</span>
                                 <el-select
                                     v-model="multiSearch.estado"
                                     placeholder="Estado del Partido"
                                     filterable
                                     clearable
+                                    no-data-text="Sin datos"
+                                    no-match-text="Sin resultados"
                                     @change="detectarCambiosFiltros"
                                 >
                                     <el-option
@@ -280,6 +295,27 @@ const iniciarPartido = (item) => {
                                             'INICIADO',
                                             'FINALIZADO',
                                         ]"
+                                        :key="item"
+                                        :value="item"
+                                        :label="item"
+                                    ></el-option>
+                                </el-select>
+                            </div>
+                            <div class="col-md-3">
+                                <span class="text-xs text-muted"
+                                    >Nro. de Fecha</span
+                                >
+                                <el-select
+                                    v-model="multiSearch.nro_fecha"
+                                    placeholder="Nro. de Fecha"
+                                    no-data-text="Sin datos"
+                                    no-match-text="Sin resultados"
+                                    filterable
+                                    clearable
+                                    @change="detectarCambiosFiltros"
+                                >
+                                    <el-option
+                                        v-for="item in listFechas"
                                         :key="item"
                                         :value="item"
                                         :label="item"
@@ -295,6 +331,7 @@ const iniciarPartido = (item) => {
                     v-if="
                         campeonatoSeleccionado &&
                         campeonatoSeleccionado.estado == 'VIGENTE' &&
+                        campeonatoSeleccionado.inicio_fechas == 0 &&
                         (props_page.auth?.user.permisos == '*' ||
                             props_page.auth?.user.permisos.includes(
                                 'partidos.create',
@@ -309,6 +346,23 @@ const iniciarPartido = (item) => {
                 </button>
                 <a
                     v-if="
+                        props_page.auth?.user.permisos == '*' ||
+                        props_page.auth?.user.permisos.includes(
+                            'reportes.r_fixture',
+                        )
+                    "
+                    :disabled="!multiSearch.campeonato_id"
+                    class="btn btn-success text-sm w-100"
+                    :href="
+                        route('reportes.r_fixture') +
+                        `?fecha_ini=${multiSearch.fecha_ini}&fecha_fin=${multiSearch.fecha_fin}&campeonato_id=${multiSearch.campeonato_id}&nro_fecha=${multiSearch.nro_fecha}`
+                    "
+                    target="_blank"
+                >
+                    <i class="fa fa-table"></i> Exportar Fixture
+                </a>
+                <a
+                    v-if="
                         multiSearch.campeonato_id &&
                         (props_page.auth?.user.permisos == '*' ||
                             props_page.auth?.user.permisos.includes(
@@ -316,14 +370,14 @@ const iniciarPartido = (item) => {
                             ))
                     "
                     :disabled="!multiSearch.campeonato_id"
-                    class="btn btn-success text-sm w-100"
+                    class="btn btn-info text-sm w-100"
                     :href="
-                        route('reportes.r_fixture') +
-                        `?fecha_ini=${multiSearch.fecha_ini}&fecha_fin=${multiSearch.fecha_fin}&campeonato_id=${multiSearch.campeonato_id}`
+                        route('reportes.r_partidos_fecha') +
+                        `?campeonato_id=${multiSearch.campeonato_id}`
                     "
                     target="_blank"
                 >
-                    <i class="fa fa-table"></i> Exportar Fixture
+                    <i class="fa fa-table"></i> Exportar Calendario de Partidos
                 </a>
             </div>
         </div>
@@ -373,7 +427,16 @@ const iniciarPartido = (item) => {
                                     <i class="fa fa-edit"></i>
                                 </button>
                                 <h4 class="fw-bold fs-6 text-primary">
-                                    {{ item.fecha_hora_t }}
+                                    <span class="badge bg-info"
+                                        >FECHA {{ item.nro_fecha }}</span
+                                    >
+                                    <span class="text-info">
+                                        {{
+                                            item.fecha_hora_t
+                                                ? ` - ${item.fecha_hora_t}`
+                                                : ""
+                                        }}
+                                    </span>
                                 </h4>
                                 <h4
                                     class="fs-8 fw-bold mb-0"

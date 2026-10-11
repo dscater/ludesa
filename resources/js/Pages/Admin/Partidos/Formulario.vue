@@ -173,6 +173,7 @@ onMounted(() => {
                             placeholder="- Seleccione -"
                             no-data-text="Sin datos"
                             no-match-text="Sin resultados"
+                            :disabled="form.id != 0"
                             filterable
                         >
                             <el-option
@@ -198,6 +199,7 @@ onMounted(() => {
                             placeholder="- Seleccione -"
                             no-data-text="Sin datos"
                             no-match-text="Sin resultados"
+                            :disabled="form.id != 0"
                             filterable
                         >
                             <el-option

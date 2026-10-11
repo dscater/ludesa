@@ -96,6 +96,8 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("campeonatos/paginado", [CampeonatoController::class, 'paginado'])->name("campeonatos.paginado");
     Route::get("campeonatos/listado", [CampeonatoController::class, 'listado'])->name("campeonatos.listado");
     Route::patch("campeonatos/finalizar/{campeonato}", [CampeonatoController::class, 'finalizar'])->name("campeonatos.finalizar");
+    Route::post("campeonatos/generar_fechas/{campeonato}", [CampeonatoController::class, 'generar_fechas'])->name("campeonatos.generar_fechas");
+    Route::get("campeonatos/getFechas/{campeonato}", [CampeonatoController::class, 'getFechas'])->name("campeonatos.getFechas");
     Route::resource("campeonatos", CampeonatoController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );
@@ -168,6 +170,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get('reportes/r_resultado_partidos', [ReporteController::class, 'r_resultado_partidos'])->name("reportes.r_resultado_partidos");
 
     Route::get('reportes/r_fixture', [ReporteController::class, 'r_fixture'])->name("reportes.r_fixture");
+    Route::get('reportes/r_partidos_fecha', [ReporteController::class, 'r_partidos_fecha'])->name("reportes.r_partidos_fecha");
 
     Route::get('reportes/r_partido_detalles', [ReporteController::class, 'r_partido_detalles'])->name("reportes.r_partido_detalles");
 

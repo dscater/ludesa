@@ -125,6 +125,30 @@ class CampeonatoController extends Controller
     }
 
 
+    public function generar_fechas(Campeonato $campeonato, Request $request): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $this->campeonatoService->generar_fechas($campeonato);
+            DB::commit();
+            return response()->JSON([
+                'sw' => true,
+                "campeonato" => $campeonato,
+                'message' => 'Las fechas de partidos se generarón correctamente'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getFechas(Campeonato $campeonato): JsonResponse
+    {
+        return response()->JSON(["fechas" => $this->campeonatoService->getFechas($campeonato)]);
+    }
+
     public function finalizar(Campeonato $campeonato): JsonResponse|Response
     {
         DB::beginTransaction();

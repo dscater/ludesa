@@ -18,6 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger("local_id");
             $table->unsignedBigInteger("ci_visitante_id");
             $table->unsignedBigInteger("visitante_id");
+            $table->integer("nro_fecha"); // 1, 2, 3,...
+            $table->boolean("fecha_asignada")->default(0); // 0: NO, 1: SI
             $table->integer("goles_local")->default(0);
             $table->integer("goles_visitante")->default(0);
             $table->unsignedBigInteger("ganador_id")->nullable();
@@ -26,8 +28,8 @@ return new class extends Migration
             $table->boolean("pago_local");
             $table->decimal("total_visitante", 24, 2);
             $table->boolean("pago_visitante");
-            $table->date("fecha");
-            $table->time("hora");
+            $table->date("fecha")->nullable();
+            $table->time("hora")->nullable();
             $table->string("estado")->default("PENDIENTE"); //PENDIENTE, INICIADO, FINALIZADO
             $table->timestamps();
 

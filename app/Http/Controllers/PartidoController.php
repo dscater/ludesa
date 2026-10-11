@@ -63,6 +63,7 @@ class PartidoController extends Controller
         $fecha_ini = (string)$request->input("fecha_ini", "");
         $fecha_fin = (string)$request->input("fecha_fin", "");
         $estado = (string)$request->input("estado", "");
+        $nro_fecha = (string)$request->input("nro_fecha", "");
         $porCampeonato = (string)$request->input("porCampeonato", true);
         $orderBy = $request->orderBy;
         $orderAsc = $request->orderAsc;
@@ -85,6 +86,7 @@ class PartidoController extends Controller
             $fecha_ini,
             $fecha_fin,
             $estado,
+            $nro_fecha,
             $porCampeonato,
             $arrayOrderBy
         );
