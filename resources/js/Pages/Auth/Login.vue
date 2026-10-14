@@ -103,7 +103,7 @@ onMounted(() => {
                             :src="oConfiguracion.url_logo"
                             alt="Logo"
                             class="logo_login mb-2"
-                            width="180px"
+                            width="110px"
                             lazy
                         />
                         <br />
@@ -242,6 +242,6 @@ onMounted(() => {
 body #app .contenedor_login {
     min-height: 100vh;
     width: 100vw;
-    background-color: var(--bgGrayLight);
+    background-color: var(--bg1);
 }
 </style>

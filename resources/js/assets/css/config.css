@@ -16,10 +16,6 @@ td .descripcion {
     font-style: italic;
 }
 
-.app-content {
-    background-color: var(--bg6);
-}
-
 .user-image {
     width: 35px;
     height: 35px;

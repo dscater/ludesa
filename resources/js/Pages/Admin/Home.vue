@@ -308,7 +308,7 @@ onMounted(() => {
 
         <div class="row">
             <div class="col-md-8">
-                <div class="card">
+                <div class="card mt-2">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
@@ -380,8 +380,8 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 col-sm-6">
-                <div class="card">
+            <div class="col-md-4 col-sm-12">
+                <div class="card mt-2">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12">

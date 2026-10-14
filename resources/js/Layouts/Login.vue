@@ -21,19 +21,19 @@ onBeforeUnmount(() => {
 <style scoped>
 .content-principal-login {
     position: relative;
-    /* background-image: url("/imgs/fondo.jpg"); */
-    /* background-size: cover; */
-    /* background-repeat: none; */
+    background-image: url("/imgs/1.jpeg");
+    background-size: cover;
+    background-repeat: none;
 }
 
 .capa {
-    /* background-color: rgba(0, 0, 0, 0.507);
+    background-color: rgba(0, 0, 0, 0.507);
     position: absolute;
     top: 0;
     left: 0;
     z-index: 1;
     height: 100%;
-    width: 100%; */
+    width: 100%;
 }
 
 .content-login {
